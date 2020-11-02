@@ -1,0 +1,119 @@
+.FarmCard {
+  overflow: hidden;
+}
+
+.FarmCard-icon {
+  height: 40px;
+  box-shadow: -2px -1px 4px 0 #BD10E0, 2px 2px 4px 0 #D0021B;
+  border-radius: 50%;
+}
+
+.FarmCard-title {
+  /*font-family: "MonacoB Bold",sans-serif;*/
+  font-size: 14px;
+  color: #FFFFFF;
+  letter-spacing: 3px;
+  text-align: center;
+}
+.FarmCard-title span {
+  text-shadow: 0 0 8px #FFFFFF;
+}
+
+.FarmCard-name {
+  font-size: 11px;
+  color: #FFFFFF;
+  opacity: 0.6;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: none;
+}
+
+.FarmCard-pct {
+  font-size: 22px;
+  color: #F8E71C;
+  letter-spacing: 3px;
+  text-align: center;
+  text-shadow: 0 0 6px #F8E71C;
+  text-transform: none;
+}
+
+.FarmCard-value-locked {
+  text-align: center;
+  font-size: 16px;
+  text-transform: none;
+  font-weight: bold;
+  /*margin-top: 30px;*/
+  display: block;
+}
+
+.FarmCard-contract {
+  background: rgba(0,0,0,0.4);
+  text-transform: none;
+}
+
+.FarmCard-contract-link {
+  color: #fff;
+  text-decoration: none;
+}
+.FarmCard-contract-link:hover {
+  text-decoration: underline;
+}
+
+.FarmCard-stakeButton,
+.FarmCard-unstakeButton {
+  outline: none;
+  cursor: pointer;
+  display: block;
+  border: 1px solid #7ED321;
+  box-shadow: inset 0 1px 6px 0 #7ED321;
+  border-radius: 8px;
+  height: 45px;
+  background: transparent;
+  color: #fff;
+  /*font-family: "MonacoB Bold", sans-serif;*/
+  font-weight: bold;
+  font-size: 15px;
+  color: #FFFFFF;
+  letter-spacing: 2.25px;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px #FFFFFF;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.FarmCard-stakeButton:hover {
+  /*box-shadow: inset 0 1px 8px 0 #7ED321;*/
+}
+.FarmCard-stakeButton:hover,
+.FarmCard-unstakeButton:hover {
+  transform: scale(1.03);
+}
+
+.FarmCard-unstakeButton {
+  border: 1px solid #fff;
+  box-shadow: inset 0 1px 6px 0 rgba(255, 255, 255, 0.5);
+}
+.FarmCard-unstakeButton:hover {
+  /*box-shadow: inset 0 1px 8px 0 rgba(255, 255, 255, 0.5);*/
+}
+
+.Block.Block-expandable {
+  /*border-bottom-left-radius: 0;*/
+  /*border-bottom-right-radius: 0;*/
+}
+
+.Block-expendable-toggle {
+   border-top: 2px solid #fff;
+   cursor: pointer;
+}
+
+.Block-expendable-toggle.arrow-down {
+  background:#f7fafc5e url('/components/FarmCard/arrow.png') center center no-repeat;
+  background-size: 20px;
+  padding: 20px 0;
+}
+
+.Block-expendable-toggle.arrow-up {
+  background:#f7fafc5e url('/components/FarmCard/arrow-up.png') center center no-repeat;
+  background-size: 20px;
+  padding: 20px 0;
+}

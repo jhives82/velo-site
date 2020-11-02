@@ -1,0 +1,29 @@
+.Block {
+   background: #f7fafc2b;
+   border: 2px solid #fff;
+   border-radius: 19px;
+   width: 300px;
+   position: relative;
+   max-width: 100%;
+}
+
+.Block.disabled {
+  opacity: 0.5;
+}
+
+/* GLOW */
+
+.Block.is-glowing {
+  /*border: 2px #7ED321 solid;*/
+  border: 2px transparent solid;
+  animation: glowingBorder 2s ease-out infinite; 
+}
+
+@keyframes glowingBorder {
+  0%, 100% {
+    box-shadow: 0 0 4px 4px #7ED321;
+  }
+  50% {
+    box-shadow: 0 0 4px 2px #7ED321;
+  }
+}

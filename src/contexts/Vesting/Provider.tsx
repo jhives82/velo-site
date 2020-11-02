@@ -3,13 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { useWallet } from 'use-wallet'
 
-import useYam from 'hooks/useYam'
+import useVelo from 'hooks/useVelo'
 import { 
   claimVested,
   currUnclaimedMigratorVesting,
   currUnclaimedDelegatorRewards,
   currVested,
-} from 'yam-sdk/utils'
+} from 'velo-sdk/utils'
 
 import ConfirmTransactionModal from 'components/ConfirmTransactionModal'
 
@@ -17,7 +17,7 @@ import Context from './Context'
 
 const Provider: React.FC = ({ children }) => {
   const { account } = useWallet()
-  const yam = useYam()
+  const velo = useVelo()
 
   const [vestedBalance, setVestedBalance] = useState<BigNumber>()
   const [vestedDelegatorRewardBalance, setVestedDelegatorRewardBalance] = useState<BigNumber>()
@@ -27,9 +27,9 @@ const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmtxModalIsOpen] = useState(false)
 
   const fetchVestedBalances = useCallback(async () => {
-    const vBal = await currVested(yam, account)
-    const dRVBal = await currUnclaimedDelegatorRewards(yam, account)
-    const mVBal = await currUnclaimedMigratorVesting(yam, account)
+    const vBal = await currVested(velo, account)
+    const dRVBal = await currUnclaimedDelegatorRewards(velo, account)
+    const mVBal = await currUnclaimedMigratorVesting(velo, account)
     setVestedBalance(vBal)
     setVestedDelegatorRewardBalance(dRVBal)
     setVestedMigratedBalance(mVBal)
@@ -38,7 +38,7 @@ const Provider: React.FC = ({ children }) => {
     setVestedBalance,
     setVestedDelegatorRewardBalance,
     setVestedMigratedBalance,
-    yam,
+    velo,
   ])
 
   const handleClaimTxSent = useCallback(() => {
@@ -51,35 +51,35 @@ const Provider: React.FC = ({ children }) => {
 
   const handleClaim = useCallback(async () => {
     setConfirmtxModalIsOpen(true)
-    await claimVested(yam, account, handleClaimTxSent)
+    await claimVested(velo, account, handleClaimTxSent)
     setIsClaiming(false)
   }, [
     account,
     handleClaimTxSent,
     setConfirmtxModalIsOpen,
     setIsClaiming,
-    yam
+    velo
   ])
 
   useEffect(() => {
-    if (account && yam) {
+    if (account && velo) {
       fetchVestedBalances()
     }
   }, [
     account,
     fetchVestedBalances,
-    yam,
+    velo,
   ])
 
   useEffect(() => {
-    if (account && yam) {
+    if (account && velo) {
       fetchVestedBalances()
       let refreshInterval = setInterval(fetchVestedBalances, 10000)
       return () => clearInterval(refreshInterval)
     }
   }, [
     account,
-    yam,
+    velo,
     fetchVestedBalances,
   ])
 

@@ -1,0 +1,43 @@
+
+.SocialIcons {
+  /*background: #21194c;*/
+}
+
+.SocialIcons-social-channels {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 25px 0;
+}
+
+.SocialIcons-social-channels > * {
+  display: block;
+  margin: 0 10px;
+  max-width: 50px;
+}
+
+.SocialIcons-social-channels img {
+  width: 100%;
+  max-width: 100%;
+}
+
+.SocialIcons-social-channels > :first-child {
+  margin-top: 4px;
+}
+.SocialIcons-social-channels > :nth-child(2) {
+  max-width: 43px;
+}
+.SocialIcons-social-channels > :nth-child(4) {
+  margin-top: 4px;
+}
+
+.SocialIcons-github-image {
+  filter: invert(100%);
+  opacity: 0.45;
+  margin-top: -9px;
+}
+
+.SocialIcons-social-channels > *:hover {
+  filter: blur(1px);
+}
+

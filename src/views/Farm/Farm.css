@@ -1,0 +1,19 @@
+.Farm {
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: "Trispace", sans-serif;
+  min-height: 900px;
+  font-size: 18px;
+  width: 100%;
+  padding-top: 20px;
+}
+
+.Farm-info-text {
+  width: 800px;
+  max-width: 100%;
+  margin: 25px auto;
+  color: #aaa;
+  text-transform: none;
+}

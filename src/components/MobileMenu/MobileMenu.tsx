@@ -14,12 +14,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
       <StyledMobileMenuWrapper>
         <StyledBackdrop onClick={onDismiss} />
         <StyledMobileMenu>
-          <StyledRouterLink exact activeClassName="active" to="/" onClick={onDismiss}>Home</StyledRouterLink>
-          <StyledRouterLink exact activeClassName="active" to="/dashboard" onClick={onDismiss}>Dashboard</StyledRouterLink>
-          <StyledRouterLink exact activeClassName="active" to="/governance" onClick={onDismiss}>Govern</StyledRouterLink>
-          <StyledRouterLink exact activeClassName="active" to="/farm" onClick={onDismiss}>Farm</StyledRouterLink>
-          <StyledRouterLink exact activeClassName="active" to="/migrate" onClick={onDismiss}>Migrate</StyledRouterLink>
-          <StyledRouterLink exact activeClassName="active" to="/faq" onClick={onDismiss}>FAQ</StyledRouterLink>
+          <StyledLink exact activeClassName="active" to="/" onClick={onDismiss}>Home</StyledLink>
+          <StyledLink exact activeClassName="active" to="/farm" onClick={onDismiss}>Farm</StyledLink>
+          <StyledLink exact activeClassName="active" to="/migrate" onClick={onDismiss}>Migrate</StyledLink>
         </StyledMobileMenu>
       </StyledMobileMenuWrapper>
     )
@@ -28,7 +25,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onDismiss, visible }) => {
 }
 
 const StyledBackdrop = styled.div`
-  background-color: ${props => props.theme.colors.black};
+  background-color: ${props => props.theme.colors.grey[600]};
   opacity: 0.75;
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -53,7 +50,7 @@ const slideIn = keyframes`
 
 const StyledMobileMenu = styled.div`
   animation: ${slideIn} 0.3s forwards ease-out;
-  background: ${props => props.theme.baseBg};
+  background-color: ${props => props.theme.colors.grey[200]};
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -63,7 +60,7 @@ const StyledMobileMenu = styled.div`
   width: calc(100% - 48px);
 `
 
-const StyledRouterLink = styled(NavLink)`
+const StyledLink = styled(NavLink)`
   box-sizing: border-box;
   color: ${props => props.theme.colors.grey[500]};
   font-size: 24px;
@@ -78,23 +75,6 @@ const StyledRouterLink = styled(NavLink)`
   &.active {
     color: ${props => props.theme.colors.primary.main};
   }
-`
-
-const StyledLink = styled.a`
-    box-sizing: border-box;
-    color: ${props => props.theme.colors.grey[500]};
-    font-size: 24px;
-    font-weight: 700;
-    padding: ${props => props.theme.spacing[3]}px ${props => props.theme.spacing[4]}px;
-    text-align: center;
-    text-decoration: none;
-    width: 100%;
-    &:hover {
-        color: ${props => props.theme.colors.grey[600]};
-    }
-    &.active {
-        color: ${props => props.theme.colors.primary.main};
-    }
 `
 
 export default MobileMenu

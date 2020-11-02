@@ -1,0 +1,30 @@
+.App-bg {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000 center center no-repeat url(/views/Home/background.png);
+  background-size: cover;
+}
+
+.App-bg {
+  background: #000 center center no-repeat url(/views/Home/alt/bg-phone.jpg);
+  background-size: cover;
+}
+
+@media(min-width: 480px) {
+  .App-bg {
+    background: #000 center center no-repeat url(/views/Home/alt/bg-desktop-optimized.jpg);
+    background-size: cover;
+  }
+}
+.App-stars-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}

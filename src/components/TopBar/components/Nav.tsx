@@ -5,12 +5,8 @@ import { NavLink } from 'react-router-dom'
 const Nav: React.FC = () => {
   return (
     <StyledNav>
-      <StyledRouterLink exact activeClassName="active" to="/">Home</StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/dashboard">Dashboard</StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/governance">Govern</StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/farm">Farm</StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/migrate">Migrate</StyledRouterLink>
-      <StyledRouterLink exact activeClassName="active" to="/faq">FAQ</StyledRouterLink>
+      <StyledLink exact activeClassName="active" to="/">Home</StyledLink>
+      <StyledLink exact activeClassName="active" to="/farm">Farm</StyledLink>
     </StyledNav>
   )
 }
@@ -20,7 +16,7 @@ const StyledNav = styled.nav`
   display: flex;
 `
 
-const StyledRouterLink = styled(NavLink)`
+const StyledLink = styled(NavLink)`
   color: ${props => props.theme.colors.grey[500]};
   font-weight: 700;
   padding-left: ${props => props.theme.spacing[3]}px;
@@ -31,17 +27,6 @@ const StyledRouterLink = styled(NavLink)`
   }
   &.active {
     color: ${props => props.theme.colors.primary.main};
-  }
-`
-
-const StyledLink = styled.a`
-  color: ${props => props.theme.colors.grey[500]};
-  padding-left: ${props => props.theme.spacing[3]}px;
-  padding-right: ${props => props.theme.spacing[3]}px;
-  text-decoration: none;
-  font-weight: bold;
-  &:hover {
-    color: ${props => props.theme.colors.grey[600]};
   }
 `
 

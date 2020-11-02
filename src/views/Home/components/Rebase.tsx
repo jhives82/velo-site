@@ -1,64 +1,107 @@
-import React, { useCallback, useEffect, useState, useMemo } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import moment from 'moment';
 
 import Countdown, { CountdownRenderProps} from 'react-countdown'
 import {
   Box,
-  Button,
   Card,
   CardContent,
   CardIcon,
-  Modal,
-  ModalTitle,
   ModalContent,
   ModalActions,
   Spacer,
 } from 'react-neu'
+import {
+  Modal,
+  ModalTitle
+} from 'components/Modal';
+import Button from 'components/Button/Button'
 import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
 
 import Dial from 'components/Dial'
 import Label from 'components/Label'
 
-import useYam from 'hooks/useYam'
+import UnlockWalletModal from 'components/UnlockWalletModal'
+import WalletModal from 'components/WalletModal'
 
-import { getNextRebaseTimestamp } from 'yam-sdk/utils'
-import Bar from 'components/Bar'
+import useVelo from 'hooks/useVelo'
 
+import { getLastRebaseTimestamp, getNextRebaseTimestamp, getNextRebaseInSecondsRemaining } from 'velo-sdk/utils'
 
-interface RebaseProps {
-    type?: 'bar' | 'circle',
-}
-
-const Rebase: React.FC<RebaseProps> = ({ type }) => {
-  const yam = useYam()
-
-  const [nextRebase, setNextRebase] = useState(0)
-  const [rebaseWarningModal, setRebaseWarningModal] = useState(false)
-  
+const Rebase: React.FC = () => {
+  const velo = useVelo()
   const { account } = useWallet()
+
+  const [walletModalIsOpen, setWalletModalIsOpen] = useState(false)
+  const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false)
+
+  const [lastRebaseTimestamp, setLastRebaseTimestamp] = useState(0)
+  const [nextRebaseTimestamp, setNextRebaseTimestamp] = useState(0)
+  const [rebaseWarningModal, setRebaseWarningModal] = useState(false)
+  const [time, setTime] = useState(0)
+
+  const handleDismissUnlockModal = useCallback(() => {
+    setUnlockModalIsOpen(false)
+  }, [setUnlockModalIsOpen])
+
+  const handleDismissWalletModal = useCallback(() => {
+    setWalletModalIsOpen(false)
+  }, [setWalletModalIsOpen])
+
+  const handleUnlockWalletClick = useCallback(() => {
+    setUnlockModalIsOpen(true)
+  }, [setUnlockModalIsOpen])
+
+  // Reload every .5 second
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      setTime(Date.now());
+    }, 500)
+    return () => clearInterval(refreshInterval)
+  }, [setTime])
+
   const fetchNextRebase = useCallback( async() => {
-    if (!yam) return
-    const nextRebaseTimestamp = await getNextRebaseTimestamp(yam)
+    if (!velo) return;
+    const nextRebaseTimestamp = await getNextRebaseTimestamp(velo);
     if (nextRebaseTimestamp) {
-      setNextRebase(Date.now() + nextRebaseTimestamp * 1000)
+      setNextRebaseTimestamp(nextRebaseTimestamp)
     } else {
-      setNextRebase(0)
+      setNextRebaseTimestamp(0)
     }
   }, [
-    setNextRebase,
-    yam
+    setNextRebaseTimestamp,
+    velo
+  ])
+
+  const fetchLastRebase = useCallback( async() => {
+    if (!velo) return;
+    const lastRebaseTimestamp = await getLastRebaseTimestamp(velo);
+    if (lastRebaseTimestamp) {
+      setLastRebaseTimestamp(lastRebaseTimestamp)
+    } else {
+      setLastRebaseTimestamp(0)
+    }
+  }, [
+    setLastRebaseTimestamp,
+    velo
   ])
 
   useEffect(() => {
-    if (yam) {
+    if (velo) {
+      fetchLastRebase()
       fetchNextRebase()
     }
-  }, [fetchNextRebase, yam])
+  }, [fetchNextRebase, velo])
 
   const handleRebaseClick = useCallback(async () => {
-    if (!yam) return
-    await yam.contracts.rebaser.methods.rebase().send({ from: account, gas: 500000 })
-  }, [account, yam])
+    if (!velo) return
+    await velo.contracts.rebaser.methods.rebase().send({
+      from: account, gas: 500000
+    })
+    // Hide modal
+    setRebaseWarningModal(false)
+  }, [account, velo])
 
   const renderer = (countdownProps: CountdownRenderProps) => {
     const { hours, minutes, seconds } = countdownProps
@@ -70,70 +113,96 @@ const Rebase: React.FC<RebaseProps> = ({ type }) => {
     )
   }
 
-  const dialValue = (nextRebase - Date.now()) / (1000 * 60 * 60 * 12) * 100
+  const renderCountdown = (nextRebaseTimestamp: any) => {
+    const remainingDays = moment.unix(nextRebaseTimestamp).diff(moment(), 'days')
+    const remainingHours = moment.unix(nextRebaseTimestamp).diff(moment(), 'hours') - (remainingDays * 24);
+    const remainingMinutes = moment.unix(nextRebaseTimestamp).diff(moment(), 'minutes') - (remainingDays * 24 * 60) - (remainingHours * 60);
+    const remainingSeconds = moment.unix(nextRebaseTimestamp).diff(moment(), 'seconds') - (remainingDays * 24 * 60 * 60) - (remainingHours * 60 * 60) - (remainingMinutes * 60);
 
-  const DisplayRebaseProgress = useMemo(() => {
-    if (type === "bar") {
-      return (
-        <Box alignItems="center" justifyContent="center">
-          <Bar value={dialValue}></Bar>
-          <StyledCountdown>
-            <StyledCountdownTextBar>
-              {!nextRebase ? "--" : <Countdown date={new Date(nextRebase)} renderer={renderer} />}
-            </StyledCountdownTextBar>
-            <Label text="Next rebase" />
-          </StyledCountdown>
-        </Box>
-      );
-    } else {
-      return (
-        <Box alignItems="center" justifyContent="center" row>
-          <Dial size={196} value={dialValue}>
-            <StyledCountdown>
-              <StyledCountdownText>
-                {!nextRebase ? "--" : <Countdown date={new Date(nextRebase)} renderer={renderer} />}
-              </StyledCountdownText>
-              <Label text="Next rebase" />
-            </StyledCountdown>
-          </Dial>
-        </Box>
-      );
+    const paddedHours = remainingHours < 10 ? `0${remainingHours}` : remainingHours
+    const paddedMinutes = remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes
+    const paddedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds
+
+    if(nextRebaseTimestamp > moment().unix() && lastRebaseTimestamp != 0) {
+      return <div>
+        00<div className="colon">&nbsp;:&nbsp;</div>00<div className="colon">&nbsp;:&nbsp;</div>00
+      </div>
     }
-  }, [dialValue]);
 
+    if(remainingDays >= 1) {
+      return (
+        <div>
+          {remainingDays}<div className="colon">&nbsp;:&nbsp;</div>{paddedHours}<div className="colon">&nbsp;:&nbsp;</div>{paddedMinutes}
+        </div>
+      )
+    }
+
+    return (
+      <div>
+        {paddedHours}<div className="colon">&nbsp;:&nbsp;</div>{paddedMinutes}<div className="colon">&nbsp;:&nbsp;</div>{paddedSeconds}
+      </div>
+    )
+  }
 
   return (
-    <>
-      <Card>
-        <CardContent>
-          {DisplayRebaseProgress}
-          <Spacer />
-          <Button
-            disabled={!account}
-            onClick={() => setRebaseWarningModal(true)}
-            text="Rebase"
-            variant="secondary"
-          />
-        </CardContent>
-      </Card>
-      <Modal isOpen={rebaseWarningModal}>
-        <CardIcon>⚠️</CardIcon>
-        <ModalContent>
-          WARNING: Only 1 rebase transaction succeeds every 12 hours. This transaction will likely fail.
-        </ModalContent>
-        <ModalActions>
-          <Button
-            onClick={() => setRebaseWarningModal(false)}
-            text="Cancel"
-            variant="secondary"
-          />
-          <Button
-            onClick={handleRebaseClick}
-            text="Confirm rebase"
-          />
-        </ModalActions>
-      </Modal>
-    </>
+    <div className="Rebase">
+      <div className="Rocket-rebase-button">
+
+        {<div
+          className="
+          "
+          onClick={() => {
+            if(account) {
+              setRebaseWarningModal(true)
+            } else {
+              handleUnlockWalletClick()
+            }
+          }}
+          style={{
+            height: '100%',
+            cursor: 'pointer'
+          }}
+          />} 
+        <Modal isOpen={rebaseWarningModal}>
+          <div className="my-4 px-2">
+            <CardIcon>⚠️</CardIcon>
+          </div>
+          <div className="my-4 px-2">
+            WARNING: Only 1 rebase transaction succeeds every 12 hours. This transaction will likely fail.
+          </div>
+          <div
+            className="flex justify-end"
+            style={{paddingRight: '24px', paddingLeft: '24px'}}
+            >
+            <Button
+              onClick={() => setRebaseWarningModal(false)}
+              classes="btn-theme mr-2"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleRebaseClick}
+              classes="btn-theme ml-2"
+            >
+              Confirm rebase
+            </Button>
+          </div>
+        </Modal>
+
+      </div>
+      <div className="Rocket-rebase-countdown">
+        {nextRebaseTimestamp > 0 && renderCountdown(nextRebaseTimestamp)}
+        {nextRebaseTimestamp <= 0 && (<div>00<div className="colon">&nbsp;:&nbsp;</div>00<div className="colon">&nbsp;:&nbsp;</div>00</div>)}
+      </div>
+      <WalletModal
+        isOpen={walletModalIsOpen} 
+        onDismiss={handleDismissWalletModal}
+      />
+      <UnlockWalletModal
+        isOpen={unlockModalIsOpen}
+        onDismiss={handleDismissUnlockModal}
+      />
+    </div>
   )
 }
 
@@ -142,19 +211,10 @@ const StyledCountdown = styled.div`
   display: flex;
   flex-direction: column;
 `
-
 const StyledCountdownText = styled.span`
   color: ${props => props.theme.colors.primary.main};
   font-size: 36px;
   font-weight: 700;
 `
-
-const StyledCountdownTextBar = styled.span`
-  color: ${props => props.theme.colors.primary.main};
-  font-size: 36px;
-  font-weight: 700;
-  height: 41px;
-`
-
 
 export default Rebase

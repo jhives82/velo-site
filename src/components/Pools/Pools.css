@@ -1,0 +1,19 @@
+.Pools {
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: "MonacoB Bold",sans-serif;
+  min-height: 900px;
+  font-size: 18px;
+  width: 100%;
+  padding-top: 20px;
+}
+
+.Pools-info-text {
+  width: 700px;
+  max-width: 100%;
+  margin: 25px auto;
+  color: #aaa;
+  text-transform: none;
+}

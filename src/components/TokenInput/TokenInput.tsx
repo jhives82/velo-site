@@ -2,11 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 
 import {
-  Button,
   Input,
   InputProps
 } from 'react-neu'
-
+import Button from 'components/Button/Button';
 interface TokenInputProps extends InputProps {
   max: number | string,
   symbol: string,
@@ -22,7 +21,11 @@ const TokenInput: React.FC<TokenInputProps> = ({
 }) => {
   return (
     <StyledTokenInput>
-      <StyledMaxText>{max.toLocaleString()} {symbol} Available</StyledMaxText>
+      <StyledMaxText>
+        {max.toLocaleString()}
+        &nbsp;<span className="uppercase">{symbol}</span>
+        &nbsp;available
+      </StyledMaxText>
       <Input
         endAdornment={(
           <StyledTokenAdornmentWrapper>
@@ -31,10 +34,10 @@ const TokenInput: React.FC<TokenInputProps> = ({
             <div>
               <Button
                 onClick={onSelectMax}
-                size="sm"
-                text="Max"
-                variant="secondary"
-              />
+                classes="btn-theme btn-theme-small text-black uppercase"
+              >
+                Max
+              </Button>
             </div>
           </StyledTokenAdornmentWrapper>
         )}
@@ -70,6 +73,7 @@ const StyledMaxText = styled.div`
 const StyledTokenSymbol = styled.span`
   color: ${props => props.theme.colors.grey[600]};
   font-weight: 700;
+  text-transform: uppercase;
 `
 
 export default TokenInput

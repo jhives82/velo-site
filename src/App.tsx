@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
+import { Web3ReactProvider, useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
 import { createTheme, ThemeProvider } from 'react-neu'
 import {
   BrowserRouter as Router,
@@ -7,27 +8,24 @@ import {
 } from 'react-router-dom'
 import { UseWalletProvider } from 'use-wallet'
 
-import MobileMenu from 'components/MobileMenu'
-import TopBar from 'components/TopBar'
-
 import { BalancesProvider } from 'contexts/Balances'
 import { FarmingProvider } from 'contexts/Farming'
-import { MigrationProvider } from 'contexts/Migration'
-import { PricesProvider } from 'contexts/Prices'
-import { VestingProvider } from 'contexts/Vesting'
-import { GovernanceProvider } from 'contexts/Governance'
-import YamProvider from 'contexts/YamProvider'
+import VeloProvider from 'contexts/VeloProvider'
+import { Web3Provider } from '@ethersproject/providers'
+
+import { NetworkConnector } from '@web3-react/network-connector'
 
 import useLocalStorage from 'hooks/useLocalStorage'
 
 import Farm from 'views/Farm'
 import FAQ from 'views/FAQ'
-import Home from 'views/Home'
-import Migrate from 'views/Migrate'
-import Dashboard from 'views/Dashboard'
-import Governance from 'views/Governance'
+import Stats from 'views/Home/components/Stats'
+import Rebase from 'views/Home/components/Rebase'
+import Landing from 'views/Landing'
+import WalletButton from 'components/TopBar/components/WalletButton'
+import AppFooter from 'components/AppFooter/AppFooter'
 
-import styled from 'styled-components'
+import './App.css'
 
 const App: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false)
@@ -35,7 +33,7 @@ const App: React.FC = () => {
   const handleDismissMobileMenu = useCallback(() => {
     setMobileMenu(false)
   }, [setMobileMenu])
-
+  
   const handlePresentMobileMenu = useCallback(() => {
     setMobileMenu(true)
   }, [setMobileMenu])
@@ -43,32 +41,58 @@ const App: React.FC = () => {
   return (
     <Router>
       <Providers>
-        <TopBar onPresentMobileMenu={handlePresentMobileMenu} />
-        <MobileMenu onDismiss={handleDismissMobileMenu} visible={mobileMenu} />
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/farm">
-            <Farm />
-          </Route>
-          <Route path="/faq">
-            <FAQ />
-          </Route>
-          <Route exact path="/migrate">
-            <Migrate />
-          </Route>
-          <Route exact path="/dashboard">
-            <Dashboard />
-          </Route>
-          <Route exact path="/governance">
-            <Governance />
-          </Route>
-          <StyledLink href="https://yam.gitbook.io/yam/" target="_blank">Docs</StyledLink>
-        </Switch>
+        <div className={`App-bg`} />
+        <div className="App-stars-wrapper">
+          <div id='stars'></div>
+          <div id='stars2'></div>
+          <div id='stars3'></div>
+        </div>
+        <div style={{
+          position: 'relative',
+          minHeight: '100%',
+          background: 'rgba(0,0,0,0.5)'
+        }}>
+          <Switch>
+            <Route exact path="/">
+              <Landing />
+            </Route>
+          </Switch>
+          <AppFooter />
+        </div>
       </Providers>
     </Router>
   )
+}
+
+const getWalletProviderConfig = () => {
+  // Find chainIDs at
+  // https://github.com/aragon/use-wallet/blob/master/src/utils.js#L1
+  let chainId: number, rpcUrl: string;
+  if(true) {
+    chainId = 1;
+    rpcUrl = 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+  }
+
+  else if(false) {
+    chainId = 5;
+    rpcUrl = 'https://rpc.slock.it/goerli/';
+  }
+
+  else if(false) {
+    chainId = 1337;//Local
+    rpcUrl = 'http://localhost:7545';
+  }
+
+  // Kovan
+  else {
+    chainId = 42;
+    rpcUrl = 'https://kovan.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+  }
+
+  return {
+    chainId: chainId,
+    rpcUrl: rpcUrl
+  }
 }
 
 const Providers: React.FC = ({ children }) => {
@@ -80,6 +104,8 @@ const Providers: React.FC = ({ children }) => {
       borderRadius: 28,
     })
   }, [])
+  const walletProviderConfig = getWalletProviderConfig()
+
   return (
     <ThemeProvider
       darkModeEnabled={darkModeSetting}
@@ -87,39 +113,23 @@ const Providers: React.FC = ({ children }) => {
       lightTheme={lightTheme}
     >
       <UseWalletProvider
-        chainId={1}
+        chainId={walletProviderConfig.chainId}
         connectors={{
-          walletconnect: { rpcUrl: 'https://mainnet.eth.aragon.network/' },
+          walletconnect: {
+            rpcUrl: walletProviderConfig.rpcUrl
+          }
         }}
       >
-        <YamProvider>
-          <PricesProvider>
-            <BalancesProvider>
-              <FarmingProvider>
-                <MigrationProvider>
-                  <VestingProvider>
-                    <GovernanceProvider>
-                      {children}
-                    </GovernanceProvider>
-                  </VestingProvider>
-                </MigrationProvider>
-              </FarmingProvider>
-            </BalancesProvider>
-          </PricesProvider>
-        </YamProvider>
+        <VeloProvider>
+          <BalancesProvider>
+            <FarmingProvider>
+              {children}
+            </FarmingProvider>
+          </BalancesProvider>
+        </VeloProvider>
       </UseWalletProvider>
     </ThemeProvider>
   )
 }
-
-const StyledLink = styled.a`
-  color: ${props => props.theme.colors.grey[500]};
-  padding-left: ${props => props.theme.spacing[3]}px;
-  padding-right: ${props => props.theme.spacing[3]}px;
-  text-decoration: none;
-  &:hover {
-    color: ${props => props.theme.colors.grey[600]};
-  }
-`
 
 export default App

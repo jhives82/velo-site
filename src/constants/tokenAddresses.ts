@@ -1,7 +1,17 @@
-export const yam = '0x0e2298e3b3390e3b945a5456fbf59ecc3f55da16'
+export const velo = '0x98ad9B32dD10f8D8486927D846D4Df8BAf39Abe2';
+
+export const dai = '0x6b175474e89094c44da98b954eedeac495271d0f'
+export const ycrv = '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8'//yCRV-LP
+
+export const pump = '0x8cF94875733B9C11475076B2452c08ca3036F3aC'
 export const yamv2 = '0xaba8cac6866b83ae4eec97dd07ed254282f6ad8a'
-export const yamv3 = '0x0AaCfbeC6a24756c20D41914F2caba817C0d8521'
-export const yUsd = '0x5dbcf33d8c2e976c6b560249878e6f1491bca25c'
-export const yycrvUniLp = '0xb93Cc05334093c6B3b8Bfd29933bb8d5C031caBC'
-export const migrator = '0x72cfed9293cbfb2bfc7515c413048c697c6c811c'
-export const DPI = '0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b'
+
+// export const yycrvUniLp = '0xb93Cc05334093c6B3b8Bfd29933bb8d5C031caBC'
+// export const daiPool = '0x3a12bcC0933Ec9daeAe4057c7caB070E578F3e3D'
+export const daiUniLp = '0xa51e4043899535704080875732516cF3101Fd6ba'
+
+export const addresses: any = {
+  'velo': '0x98ad9B32dD10f8D8486927D846D4Df8BAf39Abe2',
+  'dai': '0x6b175474e89094c44da98b954eedeac495271d0f',
+  'ycrv': '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8'
+}

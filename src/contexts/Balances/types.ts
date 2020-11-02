@@ -1,7 +1,9 @@
 import BigNumber from 'bignumber.js'
 
 export interface ContextValues {
-  yamV2Balance?: BigNumber,
-  yamV3Balance?: BigNumber,
+  veloBalance?: BigNumber,
+  daiBalance?: BigNumber,
+  ycrvBalance?: BigNumber,
+  pumpBalance?: BigNumber,
   yycrvUniLpBalance?: BigNumber
 }

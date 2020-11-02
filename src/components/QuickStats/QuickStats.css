@@ -1,0 +1,13 @@
+.QuickStats {
+  top: 0;
+  padding: 10px 10px;
+  background: linear-gradient(900deg, #E91E63, transparent);
+  font-weight: bold;
+  line-height: 22px;
+  margin-top: -25px;
+}
+
+.QuickStats-data-list > div {
+  width: 33%;
+  margin-bottom: 20px;
+}

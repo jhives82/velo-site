@@ -1,0 +1,18 @@
+
+.PageHeader img {
+  max-width: 90%;
+  display: block;
+}
+
+.PageHeader-brand {
+  margin: 0 auto;
+  display: block;
+}
+
+.PageHeader-logo {
+  display: block;
+  margin: 0 auto;
+  width: 511px;
+  max-width: 90%;
+  margin-top: 40px;
+}

@@ -1,0 +1,12 @@
+.App-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+}
+.App-footer-super-mises img {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+}
