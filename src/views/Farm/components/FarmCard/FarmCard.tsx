@@ -1,0 +1,382 @@
+import React, { useCallback, useMemo, useState } from 'react'
+import useFarming from '../../../../hooks/useFarming'
+import Countdown, { CountdownRenderProps} from 'react-countdown'
+import numeral from 'numeral'
+import {
+  Box,
+  Card,
+  CardActions,
+  CardContent,
+  CardIcon,
+} from 'react-neu'
+import Label from 'components/Label'
+import Value from 'components/Value'
+
+import { useWallet } from 'use-wallet'
+import useApproval from 'hooks/useApproval'
+import useVelo from 'hooks/useVelo'
+
+import { bnToDec } from 'utils'
+
+import './FarmCard.css';
+
+import StakeModal from './components/StakeModal'
+import UnstakeModal from './components/UnstakeModal'
+
+import {
+  addresses,
+} from 'constants/tokenAddresses'
+
+// Import components
+import Block from '../../../../components/Block/Block'
+import Button from '../../../../components/Button/Button'
+import Harvest from '../../../../views/Farm/components/Harvest/Harvest'
+
+interface FarmCardProps {
+  icon: string,
+  emoticon?: string,
+  title: string
+  name: string,
+  pct: number,
+  disabled?: boolean,
+  poolName?: string,
+  coinName?: string
+}
+
+interface PoolStatus {
+  isStaking: boolean,
+  isUnstaking: boolean,
+  isHarvesting: boolean
+}
+
+const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, disabled, poolName, coinName }) => {
+  const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false)
+  const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false)
+  const [farmCardIsExpanded, setFarmCardIsExpanded] = useState(false)
+
+  const velo = useVelo()
+  const { status } = useWallet()
+
+  const {
+    poolContracts,
+    farmingStartTime,
+    poolStatus,
+    isStaking,
+    isUnstaking,
+    onStake,
+    onUnstake,
+    stakedBalance,
+    earnedBalance,
+    totalStakedForPool,
+    price
+  } = useFarming()
+
+  const getPoolName = () => {
+    return poolName ? poolName : name.toLowerCase() + '_pool';
+  }
+
+  const poolAddress = velo
+    ? velo.contracts[getPoolName()]
+      ? velo.contracts[getPoolName()].options.address
+      : ''
+    : null;
+
+  const { isApproved, isApproving, onApprove } = useApproval(
+    addresses[coinName || 'pump'],// tokenAddress
+    poolAddress,//spenderAddress
+    () => {}
+  )
+
+  const hasStakedForPool = (poolName: string) => {
+    return stakedBalance && stakedBalance[poolName] && stakedBalance[poolName].toNumber() > 0
+  }
+
+  const handleDismissStakeModal = useCallback(() => {
+    setStakeModalIsOpen(false)
+  }, [setStakeModalIsOpen])
+
+  const handleDismissUnstakeModal = useCallback(() => {
+    setUnstakeModalIsOpen(false)
+  }, [setUnstakeModalIsOpen])
+
+  const handleOnStake = useCallback((poolName: string, amount: string) => {
+    onStake(poolName, amount)
+    handleDismissStakeModal()
+  }, [handleDismissStakeModal, onStake])
+
+  const handleOnUnstake = useCallback((poolName: string, amount: string) => {
+    onUnstake(poolName, amount)
+    handleDismissUnstakeModal()
+  }, [
+    handleDismissUnstakeModal,
+    onUnstake,
+  ])
+
+  const handleStakeClick = useCallback(() => {
+    setStakeModalIsOpen(true)
+  }, [setStakeModalIsOpen])
+
+  const handleUnstakeClick = useCallback(() => {
+    setUnstakeModalIsOpen(true)
+  }, [setUnstakeModalIsOpen])
+
+  const handleFarmCardToggle = useCallback(() => {
+    setFarmCardIsExpanded(! farmCardIsExpanded)
+  }, [
+    farmCardIsExpanded,
+    setFarmCardIsExpanded
+  ])
+
+  const getPoolStatus = () => {
+    if(! poolStatus) return {isStaking: false, isUnstaking: false, isHarvesting: false};
+    const lePoolStatus = poolStatus[getPoolName()];
+    if(! lePoolStatus) return {isStaking: false, isUnstaking: false, isHarvesting: false};
+    return {
+      isStaking: lePoolStatus.isStaking || false,
+      isUnstaking: lePoolStatus.isUnstaking || false,
+      isHarvesting: lePoolStatus.isHarvesting || false
+    }
+  }
+
+  const getPrice = useCallback((price: any, coinName: string) => {
+    // For DAI, 1 DAI = 1 USD
+    if(coinName == 'dai') return 1;
+    // Return 0 if prices are not loaded yet
+    if(! price) return 0;
+    // Get price of our coin, denominated in ETH
+    const coinPrice = price[coinName.toUpperCase() + '_WETH'];
+    // Return if price was found
+    if(coinPrice && price.WETH_DAI) {
+      return Number(coinPrice) * Number(price.WETH_DAI);
+    }
+    // Return 0 if no price was found
+    return 0;
+  }, [price])
+
+  const getTotalDeposited = useCallback((price: any, coinName: string) => {
+    const coinPriceInDai = getPrice(price, coinName);
+    let totalDeposited = 0;
+    if(totalStakedForPool && totalStakedForPool[getPoolName()]) {
+      totalDeposited = bnToDec(totalStakedForPool[getPoolName()]);
+    }
+    if(! coinPriceInDai || ! totalDeposited) return 0;
+    return Number(coinPriceInDai) * Number(totalDeposited);
+  }, [price])
+
+  const StakeButton = useMemo(() => {
+    if (status !== 'connected') {
+      return (
+        <Button
+          disabled
+          full
+          variant="secondary"
+          classes="FarmCard-stakeButton flex-1 ml-1"
+        >
+          Stake
+        </Button>
+      )
+    }
+    if (getPoolStatus().isStaking) {
+      return (
+        <Button
+          disabled
+          full
+          variant="secondary"
+          classes="FarmCard-stakeButton flex-1 ml-1"
+        >
+          Staking...
+        </Button>
+      )
+    }
+    if (! isApproved) {
+      return (
+        <Button
+          disabled={isApproving}
+          full
+          onClick={onApprove}
+          variant={isApproving || status !== 'connected' ? 'secondary' : 'default'}
+          classes="FarmCard-stakeButton flex-1 ml-1"
+        >
+          {!isApproving ? "Unlock" : "Unlocking..."}
+        </Button>
+      )
+    }
+
+    if (isApproved) {
+      return (
+        <Button
+          full
+          onClick={handleStakeClick}
+          classes="FarmCard-stakeButton flex-1 ml-1"
+        >
+          Stake
+        </Button>
+      )
+    }
+  }, [
+    // countdown,
+    handleStakeClick,
+    isApproving,
+    onApprove,
+    status,
+  ])
+
+  const UnstakeButton = useMemo(() => {
+    const hasStaked = hasStakedForPool(getPoolName())
+    if (status !== 'connected' || !hasStaked) {
+      return (
+        <Button
+          disabled
+          full
+          variant="secondary"
+          classes="FarmCard-unstakeButton flex-1 mr-1"
+        >
+          Unstake
+        </Button>
+      )
+    }
+    if (getPoolStatus().isUnstaking) {
+      return (
+        <Button
+          disabled
+          full
+          variant="secondary"
+          classes="FarmCard-unstakeButton flex-1 mr-1"
+        >
+          Unstaking...
+        </Button>
+      )
+    }
+    return (
+      <Button
+        full
+        onClick={handleUnstakeClick}
+        variant="secondary"
+        classes="FarmCard-unstakeButton flex-1 mr-1"
+      >
+        Unstake
+      </Button>
+    )
+  }, [
+    handleUnstakeClick,
+    isApproving,
+    onApprove,
+    status,
+  ])
+
+  const formattedStakedBalance = (stakedBalance: any) => {
+    if (stakedBalance && stakedBalance[getPoolName()]) {
+      return numeral(bnToDec(stakedBalance[getPoolName()])).format('0.00a')
+    } else {
+      return '--'
+    }
+  }
+
+  const didStake = (stakedBalance: any) => {
+    const balance = formattedStakedBalance(stakedBalance);
+    return (balance != '0.00' && balance != '--');
+  }
+
+  const getEmissionRatePerWeek = (poolName: string) => {
+    if(poolName == 'dai_pool' || poolName == 'ycrv_pool') return 5000000;
+    if(poolName == 'velo_eth_uni_pool') return 15000000;
+    if(poolName == 'velo_eth_blp_pool') return 5000000;
+    if(poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool') return 3000000;
+    return 2000000;
+  }
+
+  const expandedFarmCard = hasStakedForPool(getPoolName()) || farmCardIsExpanded;
+
+  return (
+    <div>
+      <Block classes={`
+        FarmCard
+        ${disabled ? 'disabled' : ''}
+        ${didStake(stakedBalance) ? ' is-glowing' : ''}
+        Block-expandable
+      `} style={{
+        borderColor: poolName == 'velo_eth_uni_pool' ? '#fd027c' : '#fff'
+      }}>
+        <img src={icon} alt="Coin icon" className="FarmCard-icon mt-1" style={{marginTop: '50px'}}/>
+        <h1 className="FarmCard-title my-2 mt-4">
+          <span>{title}</span> {emoticon}
+        </h1>
+        <h2 className="FarmCard-name my-2">
+          Deposit {name}, earn VLO
+        </h2>
+        <div style={{
+          textAlign: 'center',
+          marginTop: '20px',
+          marginBottom: '60px'
+        }}>
+          <div className="FarmCard-value-locked my-4">
+            Total deposited: {getTotalDeposited(price, coinName || '').toFixed(0)} USD
+          </div>
+          <div className="FarmCard-value-locked my-4">
+            VLO release/week: {getEmissionRatePerWeek(getPoolName())}
+          </div>
+        </div>
+        {(! expandedFarmCard && poolAddress) && <div className={`FarmCard-contract p-2 -ml-4 -mr-4 ${! expandedFarmCard ? '' : ''}`}>
+          <a href={`https://etherscan.io/address/${poolAddress}`} target="_blank" rel="external" className="FarmCard-contract-link">
+            contract link
+          </a>
+        </div>}
+
+        {expandedFarmCard && <div className="mb-4 relative">
+          <div className="FarmCard-value-locked my-4">
+            VLO earned: {formattedStakedBalance(earnedBalance)}
+          </div>
+          <div className="FarmCard-value-locked my-4">
+            Total staked: {formattedStakedBalance(stakedBalance)}
+          </div>
+
+          <div className="
+            flex justify-between mt-2
+          ">
+            {didStake(stakedBalance) && UnstakeButton}
+            {StakeButton}
+          </div>
+          {earnedBalance && <div className="mt-4">
+            <Harvest
+              poolName={getPoolName()}
+              />
+          </div>}
+          {disabled &&
+            <div className="absolute top-0 right-0 bottom-0 left-0" />
+          }
+        </div>}
+
+        {! expandedFarmCard && <div className="Block-expendable-toggle arrow-down py-2 -mb-2 -mx-4" onClick={handleFarmCardToggle}>
+          
+        </div>}
+
+        {(expandedFarmCard && poolAddress) && <div className={`FarmCard-contract p-2 -ml-4 -mr-4 ${! expandedFarmCard ? '' : ''}`}>
+          <a href={`https://etherscan.io/address/${poolAddress}`} target="_blank" rel="external" className="FarmCard-contract-link">
+            contract link
+          </a>
+        </div>}
+
+        {(expandedFarmCard && ! hasStakedForPool(getPoolName())) && <div className="Block-expendable-toggle arrow-up py-2 -mb-2 -mx-4" onClick={handleFarmCardToggle}>
+          
+        </div>}
+
+      </Block>
+      <StakeModal
+        coinName={coinName || ''}
+        poolName={getPoolName()}
+        isOpen={stakeModalIsOpen}
+        onDismiss={handleDismissStakeModal}
+        onStake={handleOnStake}
+      />
+      <UnstakeModal
+        coinName={coinName || ''}
+        poolName={getPoolName()}
+        isOpen={unstakeModalIsOpen}
+        onDismiss={handleDismissUnstakeModal}
+        onUnstake={handleOnUnstake}
+      />
+    </div>
+  )
+}
+
+export default FarmCard

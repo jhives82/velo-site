@@ -1,0 +1,474 @@
+{
+  "contractName": "IRebaser",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "registerVelocity",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "sEMA",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "fEMA",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"fEMA\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"registerVelocity\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"sEMA\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/bmaas/Sites/velo/velo-protocol-master/contracts/lib/IRebaser.sol\":\"IRebaser\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":50000},\"remappings\":[]},\"sources\":{\"/Users/bmaas/Sites/velo/velo-protocol-master/contracts/lib/IRebaser.sol\":{\"keccak256\":\"0x2f65a2ca4540209a3de4b69e732d793f5dd4b20f45aed64fb627a936755928c4\",\"urls\":[\"bzz-raw://51e8e9f9978c1199823818c61be38d401e0059bbe6130146ce026d8eba153df1\",\"dweb:/ipfs/QmUN3KSbYVAcYcKswqnEMk2a2bgNTuhyWCxwjzGUwr25Nt\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity 0.5.17;\n\ninterface IRebaser {\n  function registerVelocity(uint256 amount) external;\n  function sEMA() external view returns (uint256); \n  function fEMA() external view returns (uint256); \n}\n",
+  "sourcePath": "/Users/bmaas/Sites/velo/velo-protocol-master/contracts/lib/IRebaser.sol",
+  "ast": {
+    "absolutePath": "/Users/bmaas/Sites/velo/velo-protocol-master/contracts/lib/IRebaser.sol",
+    "exportedSymbols": {
+      "IRebaser": [
+        26775
+      ]
+    },
+    "id": 26776,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 26759,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:26"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 26775,
+        "linearizedBaseContracts": [
+          26775
+        ],
+        "name": "IRebaser",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "id": 26764,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "registerVelocity",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 26762,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 26761,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 26764,
+                  "src": "74:14:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 26760,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "74:7:26",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "73:16:26"
+            },
+            "returnParameters": {
+              "id": 26763,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "98:0:26"
+            },
+            "scope": 26775,
+            "src": "48:51:26",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 26769,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "sEMA",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 26765,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "115:2:26"
+            },
+            "returnParameters": {
+              "id": 26768,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 26767,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 26769,
+                  "src": "141:7:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 26766,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "141:7:26",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "140:9:26"
+            },
+            "scope": 26775,
+            "src": "102:48:26",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 26774,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "fEMA",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 26770,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "167:2:26"
+            },
+            "returnParameters": {
+              "id": 26773,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 26772,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 26774,
+                  "src": "193:7:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 26771,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "193:7:26",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "192:9:26"
+            },
+            "scope": 26775,
+            "src": "154:48:26",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 26776,
+        "src": "25:180:26"
+      }
+    ],
+    "src": "0:206:26"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/bmaas/Sites/velo/velo-protocol-master/contracts/lib/IRebaser.sol",
+    "exportedSymbols": {
+      "IRebaser": [
+        26775
+      ]
+    },
+    "id": 26776,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 26759,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:26"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 26775,
+        "linearizedBaseContracts": [
+          26775
+        ],
+        "name": "IRebaser",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "id": 26764,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "registerVelocity",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 26762,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 26761,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 26764,
+                  "src": "74:14:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 26760,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "74:7:26",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "73:16:26"
+            },
+            "returnParameters": {
+              "id": 26763,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "98:0:26"
+            },
+            "scope": 26775,
+            "src": "48:51:26",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 26769,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "sEMA",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 26765,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "115:2:26"
+            },
+            "returnParameters": {
+              "id": 26768,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 26767,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 26769,
+                  "src": "141:7:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 26766,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "141:7:26",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "140:9:26"
+            },
+            "scope": 26775,
+            "src": "102:48:26",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 26774,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "fEMA",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 26770,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "167:2:26"
+            },
+            "returnParameters": {
+              "id": 26773,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 26772,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 26774,
+                  "src": "193:7:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 26771,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "193:7:26",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "192:9:26"
+            },
+            "scope": 26775,
+            "src": "154:48:26",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 26776,
+        "src": "25:180:26"
+      }
+    ],
+    "src": "0:206:26"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.17+commit.d19bba13.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.0",
+  "updatedAt": "2020-10-17T09:37:47.911Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

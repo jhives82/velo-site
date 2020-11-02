@@ -1,0 +1,79 @@
+.Landing {
+  padding: 25px 0 80vw;
+  text-align: center;
+  color: #fff;
+  font-family: "Trispace",sans-serif;
+  width: 800px;
+  max-width: 100%;
+  min-height: 850px;
+  font-size: 15px;
+}
+
+@media(min-width: 641px) {
+  .Landing {
+    padding: 100px 0 80vw;
+    min-height: 800px;
+  }
+}
+
+.Landing-userStats {
+  width: auto;
+}
+
+.Landing img {
+  max-width: 90%;
+}
+
+.Landing-coming-soon {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: bold;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.Landing-discord-logo {
+  width: 140px;
+  display: block;
+  margin: 40px auto;
+}
+
+.Landing-join-now-button {
+  color: #f5e757;
+  font-weight: bold;
+  border-bottom: solid #f5e757 2px;
+  text-decoration: none;
+  font-size: 38px;
+  line-height: 42px;
+  margin-bottom: 10px;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.Landing-join-now-button:hover {
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.Landing-velo-brand {
+  width: 120px;
+}
+
+.Landing-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+}
+.Landing-footer img {
+  width: 100%;
+  max-width: 100%;
+}
+
+.Landing-addVloTokenButton {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  right: 10px;
+}

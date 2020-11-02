@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import Logo from 'components/Logo'
 import MenuIcon from 'components/icons/Menu'
 
-import DarkModeSwitch from '../DarkModeSwitch'
 import Nav from './components/Nav'
 import WalletButton from './components/WalletButton'
 
@@ -26,38 +25,34 @@ const TopBar: React.FC<TopBarProps> = ({ onPresentMobileMenu }) => {
             <Nav />
           </StyledNavWrapper>
           <StyledAccountButtonWrapper>
-            <StyledTopBarDarkModeSwitch>
-              <DarkModeSwitch />
-            </StyledTopBarDarkModeSwitch>
             <Spacer />
             <WalletButton />
           </StyledAccountButtonWrapper>
-          <StyledMenuButton onClick={onPresentMobileMenu}>
+          {/*<StyledMenuButton onClick={onPresentMobileMenu}>
             <MenuIcon />
-          </StyledMenuButton>
+          </StyledMenuButton>*/}
         </StyledTopBarInner>
       </Container>
     </StyledTopBar>
   )
 }
 
-const StyledLogoWrapper = styled.div`
-  width: 156px;
-  @media (max-width: 400px) {
-    width: auto;
-  }
-`
+const StyledLogoWrapper = styled.div``
 
 const StyledTopBar = styled.div``
 
 const StyledTopBarInner = styled.div`
-  align-items: center;
   display: flex;
-  height: 72px;
   justify-content: space-between;
-  max-width: ${props => props.theme.siteWidth}px;
-  width: 100%;
+
 `
+
+  // align-items: center;
+  // display: flex;
+  // height: 72px;
+  // justify-content: space-between;
+  // max-width: ${props => props.theme.siteWidth}px;
+  // width: 100%;
 
 const StyledNavWrapper = styled.div`
   display: flex;
@@ -92,12 +87,6 @@ const StyledMenuButton = styled.button`
     height: 44px;
     justify-content: center;
     width: 44px;
-  }
-`
-
-const StyledTopBarDarkModeSwitch = styled.div`
-  @media (max-width: 980px) {
-    display: none;
   }
 `
 

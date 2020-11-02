@@ -1,11 +1,11 @@
 import React from 'react'
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
   CardIcon,
 } from 'react-neu'
+import Button from 'components/Button/Button';
 import styled from 'styled-components'
 
 interface WalletProviderCardProps {
@@ -18,20 +18,22 @@ const WalletProviderCard: React.FC<WalletProviderCardProps> = ({
   name,
   onSelect,
 }) => (
-  <Card>
+  <div className="
+    
+  ">
     <CardIcon>{icon}</CardIcon>
     <CardContent>
       <StyledName>{name}</StyledName>
     </CardContent>
     <CardActions>
       <Button
-        full
         onClick={onSelect}
-        text="Select"
-        variant="secondary"
-      />
+        classes="btn-theme"
+      >
+        Select
+      </Button>
     </CardActions>
-  </Card>
+  </div>
 )
 
 const StyledName = styled.div`

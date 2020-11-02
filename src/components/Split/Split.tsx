@@ -1,5 +1,5 @@
 import React from 'react'
-import { Spacer } from 'react-neu'
+import { Box, Spacer } from 'react-neu'
 import styled from 'styled-components'
 
 const Split: React.FC = ({ children }) => {

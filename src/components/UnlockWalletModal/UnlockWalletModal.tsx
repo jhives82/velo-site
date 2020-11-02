@@ -1,16 +1,21 @@
 import React, { useCallback, useEffect } from 'react'
+import { Web3ReactProvider, useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
+import { Web3Provider } from '@ethersproject/providers'
 import {
   Box,
-  Button,
-  Modal,
   ModalActions,
   ModalContent,
   ModalProps,
-  ModalTitle,
   Spacer,
 } from 'react-neu'
+import Button from 'components/Button/Button';
+import {
+  Modal,
+  ModalTitle
+} from 'components/Modal';
 import styled from 'styled-components'
 import { useWallet } from 'use-wallet'
+import { NetworkConnector } from '@web3-react/network-connector'
 
 import metamaskLogo from 'assets/metamask-fox.svg'
 import walletConnectLogo from 'assets/wallet-connect.svg'
@@ -21,7 +26,7 @@ const UnlockWalletModal: React.FC<ModalProps> = ({
   isOpen,
   onDismiss,
 }) => {
-  const { account, connector, connect } = useWallet()
+  const { account, connect } = useWallet()
 
   const handleConnectMetamask = useCallback(() => {
     connect('injected')
@@ -35,14 +40,13 @@ const UnlockWalletModal: React.FC<ModalProps> = ({
     if (account) {
       onDismiss && onDismiss()
     }
-    if(connector) {
-      localStorage.setItem("walletProvider", connector);
-    }
   }, [account, onDismiss])
 
   return (
     <Modal isOpen={isOpen}>
-      <ModalTitle text="Select a wallet provider." />
+      <ModalTitle>
+        Select a wallet provider
+      </ModalTitle>
       <ModalContent>
         <StyledWalletsWrapper>
           <Box flex={1}>
@@ -62,11 +66,14 @@ const UnlockWalletModal: React.FC<ModalProps> = ({
           </Box>
         </StyledWalletsWrapper>
       </ModalContent>
-      <ModalActions>
-        <Box flex={1} row justifyContent="center">
-          <Button onClick={onDismiss} text="Cancel" variant="secondary" />
-        </Box>
-      </ModalActions>
+      <div className="flex justify-center">
+        <Button
+          onClick={onDismiss}
+          classes="btn-theme"
+          >
+          Cancel
+        </Button>
+      </div>
     </Modal>
   )
 }

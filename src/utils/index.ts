@@ -3,10 +3,10 @@ import { ethers } from 'ethers'
 import Web3 from 'web3'
 import { provider, TransactionReceipt } from 'web3-core'
 import { AbiItem } from 'web3-utils'
-
 import ERC20ABI from 'constants/abi/ERC20.json'
+import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk'
 
-export const sleep = (ms: number) => {
+const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
@@ -49,7 +49,7 @@ export const approve = async (
         return true
       })
   } catch (e) {
-    console.log("error", e)
+    console.log('here')
     return false
   }
 }
@@ -79,6 +79,15 @@ export const getBalance = async (provider: provider, tokenAddress: string, userA
   }
 }
 
+// https://uniswap.org/docs/v2/javascript-SDK/pricing/
+export const getUniswapPrice = async (pair1Token: any, pair2Token: any, inputToken: any): Promise<string> => {
+  const pair = await Fetcher.fetchPairData(pair1Token, pair2Token)
+  const route = new Route([pair], inputToken)
+  // console.log(route.midPrice.toSignificant(6)) // 201.306
+  // console.log(route.midPrice.invert().toSignificant(6)) // 0.00496756
+  return route.midPrice.toSignificant(6);
+}
+
 export const getERC20Contract = (provider: provider, address: string) => {
   const web3 = new Web3(provider)
   const contract = new web3.eth.Contract(ERC20ABI.abi as unknown as AbiItem, address)
@@ -95,25 +104,4 @@ export const decToBn = (dec: number, decimals = 18) => {
 
 export const getFullDisplayBalance = (balance: BigNumber, decimals = 18) => {
   return balance.dividedBy(new BigNumber(10).pow(decimals)).toFixed()
-}
-
-export const getNearestBlock = (from: Array<any>, target: number) => {
-  return from.reduce(function (prev: any, curr: any) {
-    return Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev;
-  });
-}
-
-export const getAMPM = (date: any) => {
-  const hours = date.getHours();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  return ampm;
-}
-
-export const getTimestampDate = (obj: {ts: number, ap?: boolean}) => {
-  const d = new Date(obj.ts * 1000);
-  const s = ".";
-  const day = d.getDate();
-  const month = (d.getMonth() + 1);
-  const year = (d.getFullYear()).toString().substring(0, 2) + (obj.ap ? " " + getAMPM(d) : "");
-  return (day < 9 ? "0" + day : day) + s + (month <= 9 ? "0" + month : month) + s + year;
 }

@@ -1,0 +1,14 @@
+.Pool-title {
+   color: #cd94ff;
+   text-transform: uppercase;
+   font-size: 30;
+   font-weight: 1000;
+   padding-top: 15%;
+}
+
+.Pool-coins {
+  width: 820px;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}

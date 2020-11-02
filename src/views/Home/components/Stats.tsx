@@ -9,17 +9,17 @@ import {
 } from 'react-neu'
 
 import FancyValue from 'components/FancyValue'
-import useYam from 'hooks/useYam'
+import useVelo from 'hooks/useVelo'
 import { bnToDec } from 'utils'
 import {
   getCurrentPrice,
   getScalingFactor,
-} from 'yam-sdk/utils'
+} from 'velo-sdk/utils'
 
 const Stats: React.FC = () => {
   const [currentPrice, setCurrentPrice] = useState<string>()
   const [scalingFactor, setScalingFactor] = useState<string>()
-  const yam = useYam()
+  const yam = useVelo()
   const fetchStats = useCallback(async () => {
     if (!yam) return
     const price = await getCurrentPrice(yam)
@@ -66,7 +66,7 @@ const Stats: React.FC = () => {
           <FancyValue
             icon="🚀"
             label="Scaling factor"
-            value={scalingFactor ? 'x' + scalingFactor : '--'}
+            value={scalingFactor ? scalingFactor : '--'}
           />
         </CardContent>
       </Card>

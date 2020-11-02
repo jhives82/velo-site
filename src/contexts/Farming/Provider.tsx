@@ -2,24 +2,68 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
 import { useWallet } from 'use-wallet'
+import { bnToDec, decToBn } from 'utils'
+import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk'
 
 import ConfirmTransactionModal from 'components/ConfirmTransactionModal'
-import { yycrvUniLp as yycrvUniLpAddress } from 'constants/tokenAddresses'
 import useApproval from 'hooks/useApproval'
-import useYam from 'hooks/useYam'
+import useVelo from 'hooks/useVelo'
 
 import {
   getEarned,
   getStaked,
+  getTotalStakedForPool,
+  getTotalSupply,
   harvest,
   redeem,
   stake,
   unstake,
-} from 'yam-sdk/utils'
+  getPoolContracts,
+  getStartTime,
+  getPoolDuration,
+  getRelativeVelocity,
+  getPoolBalance
+} from 'velo-sdk/utils'
+
+import {
+  getUniswapPrice
+} from 'utils';
 
 import Context from './Context'
 
 const farmingStartTime = 1600545500*1000
+
+interface EarnedBalance {
+  [key: string]: BigNumber;
+}
+
+interface StakedBalance {
+  [key: string]: BigNumber;
+}
+
+interface TotalStakedForPool {
+  [key: string]: BigNumber;
+}
+
+interface PoolStatus {
+  [key: string]: {
+    isStaking: boolean,
+    isUnstaking: boolean,
+    isHarvesting: boolean
+  }
+}
+
+interface PoolInfo {
+  [key: string]: {
+    startTime: number,
+    duration: number,
+    balance: number
+  }
+}
+
+interface Price {
+  [key: string]: Number
+}
 
 const Provider: React.FC = ({ children }) => {
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false)
@@ -29,74 +73,211 @@ const Provider: React.FC = ({ children }) => {
   const [isStaking, setIsStaking] = useState(false)
   const [isUnstaking, setIsUnstaking] = useState(false)
 
-  const [earnedBalance, setEarnedBalance] = useState<BigNumber>()
-  const [stakedBalance, setStakedBalance] = useState<BigNumber>()
+  const [earnedBalance, setEarnedBalance] = useState<EarnedBalance>({})
+  const [stakedBalance, setStakedBalance] = useState<StakedBalance>({})
+  const [totalStakedForPool, setTotalStakedForPool] = useState<TotalStakedForPool>()
+  const [totalStakedBalance, setTotalStakedBalance] = useState<BigNumber>()
+  const [poolContracts, setPoolContracts] = useState<Object>()
+  const [poolStatus, setPoolStatus] = useState<PoolStatus>({})
+  const [poolInfo, setPoolInfo] = useState<PoolInfo>({})
 
-  const yam = useYam()
+  const [relativeVelocity, setRelativeVelocity] = useState<BigNumber>()
+  const [totalSupply, setTotalSupply] = useState<BigNumber>()
+  const [price, setPrice] = useState<Price>({})
+
+  const velo = useVelo()
   const { account } = useWallet()
-  
-  const yycrvPoolAddress = yam ? yam.contracts.yycrv_pool.options.address : ''
-  const { isApproved, isApproving, onApprove } = useApproval(
-    yycrvUniLpAddress,
-    yycrvPoolAddress,
-    () => setConfirmTxModalIsOpen(false)
-  )
 
-  const fetchEarnedBalance = useCallback(async () => {
-    if (!account || !yam) return
-    const balance = await getEarned(yam, yam.contracts.yycrv_pool, account)
-    setEarnedBalance(balance)
+  let stakedBalances: {
+    [poolName: string]: BigNumber
+  } = {};
+
+  let totalStakedForPools: {
+    [poolName: string]: BigNumber
+  } = {};
+
+  let earnedBalances: {
+    [poolName: string]: BigNumber
+  } = {};
+
+  let prices: {
+    [poolName: string]: Number
+  } = {};
+
+  let poolStatuses: {
+    [poolName: string]: {
+      isStaking: boolean,
+      isUnstaking: boolean,
+      isHarvesting: boolean
+    }
+  } = {};
+
+  let poolInfos: {
+    [poolName: string]: {
+      startTime: number,
+      duration: number,
+      balance: number
+    }
+  } = {};
+
+  const daiPoolAddress = velo ? velo.contracts.dai_pool.options.address : ''
+
+  const fetchPoolContracts = useCallback(async () => {
+    if (!velo) return
+    const pools = await getPoolContracts(velo)
+    setPoolContracts(pools)
+    return pools;
+  }, [
+    setPoolContracts,
+    velo
+  ])
+
+  const fetchEarnedBalance = useCallback(async (poolContracts: any) => {
+    if (!account || !velo) return
+    for(let poolName in poolContracts) {
+      const balance = await getEarned(velo, velo.contracts[poolName], account)
+      if(balance) {
+        earnedBalances[poolName] = balance;
+      }
+    }
+   
+    setEarnedBalance(earnedBalances)
   }, [
     account,
     setEarnedBalance,
-    yam
+    earnedBalance,
+    earnedBalances,
+    velo
   ])
 
-  const fetchStakedBalance = useCallback(async () => {
-    if (!account || !yam) return
-    const balance = await getStaked(yam, yam.contracts.yycrv_pool, account)
-    setStakedBalance(balance)
+  // Get total staked balance (of all addresses)
+  const fetchTotalStakedBalance = useCallback(async () => {
+    if (! velo) return;
+    let total = 0;
+    for(let poolName in poolContracts) {
+      const totalStaked = await getTotalStakedForPool(velo, velo.contracts[poolName])
+      if(totalStaked) {
+        totalStakedForPools[poolName] = totalStaked;
+        total += bnToDec(totalStaked);
+      }
+    }
+    setTotalStakedBalance(decToBn(total));
+    setTotalStakedForPool(totalStakedForPools);
   }, [
     account,
-    setStakedBalance,
-    yam
+    setTotalStakedBalance,
+    poolContracts,
+    setTotalStakedForPool,
+    totalStakedForPools,
+    velo
   ])
 
-  const fetchBalances = useCallback(async () => {
-    fetchEarnedBalance()
-    fetchStakedBalance()
+  const fetchStakedBalance = useCallback(async (poolContracts: any) => {
+    if (!account || !velo) return
+
+    for(let poolName in poolContracts) {
+      const balance = await getStaked(velo, velo.contracts[poolName], account)
+      if(balance) {
+        stakedBalances[poolName] = balance;
+      }
+    }
+
+    setStakedBalance(stakedBalances)
   }, [
-    fetchEarnedBalance,
-    fetchStakedBalance,
+    account,
+    stakedBalance,
+    stakedBalances,
+    setStakedBalance,
+    velo
+  ])
+
+  const fetchRelativeVelocity = useCallback(async () => {
+    if (! velo) return;
+    const relativeVelocity = await getRelativeVelocity(velo)
+    setRelativeVelocity(relativeVelocity);
+  }, [
+    velo,
+    setRelativeVelocity
   ])
 
   const handleApprove = useCallback(() => {
     setConfirmTxModalIsOpen(true)
-    onApprove()
+    // onApprove()
   }, [
-    onApprove,
+    // onApprove,
     setConfirmTxModalIsOpen,
   ])
 
-  const handleHarvest = useCallback(async () => {
-    if (!yam) return
+  // Get total supply
+  const fetchTotalSupply = useCallback(async () => {
+    if (! velo) return;
+    const totalSupply = await getTotalSupply(velo)
+    setTotalSupply(totalSupply);
+  }, [
+    velo,
+    setTotalSupply
+  ])
+
+  const fetchPrices = useCallback(async () => {
+    // VLO price in ETH
+    const VLO_WETH: any = await getUniswapPrice(
+      WETH[ChainId.MAINNET],
+      new Token(ChainId.MAINNET, '0x98ad9B32dD10f8D8486927D846D4Df8BAf39Abe2', 18),// VLO
+      new Token(ChainId.MAINNET, '0x98ad9B32dD10f8D8486927D846D4Df8BAf39Abe2', 18) // VLO
+    );
+    const YCRV_WETH: any = await getUniswapPrice(
+      WETH[ChainId.MAINNET],
+      new Token(ChainId.MAINNET, '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8', 18),// YCRV-LP
+      new Token(ChainId.MAINNET, '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8', 18),// YCRV-LP
+    );
+    const WETH_DAI: any = await getUniswapPrice(
+      WETH[ChainId.MAINNET],
+      new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18),// DAI
+      WETH[ChainId.MAINNET]
+    );
+
+    if(VLO_WETH) prices['VLO_WETH'] = VLO_WETH;
+    if(WETH_DAI) prices['WETH_DAI'] = WETH_DAI;
+    if(WETH_DAI) prices['YCRV_WETH'] = YCRV_WETH;
+
+    setPrice(prices)
+  }, [
+    prices,
+    setPrice,
+    getUniswapPrice,
+    velo
+  ])
+
+  const handleHarvest = useCallback(async (poolName: string) => {
+    if (!velo) return;
+    if(! poolStatuses[poolName]) {
+      poolStatuses[poolName] = {
+        isStaking: false,
+        isUnstaking: false,
+        isHarvesting: false
+      }
+    }
     setConfirmTxModalIsOpen(true)
-    await harvest(yam, account, () => {
+    await harvest(velo, poolName, account, () => {
       setConfirmTxModalIsOpen(false)
-      setIsHarvesting(true)
+      poolStatuses[poolName].isHarvesting = true;
+      setPoolStatus(poolStatuses)
     })
-    setIsHarvesting(false)
+    poolStatuses[poolName].isHarvesting = true;
+    setPoolStatus(poolStatuses)
   }, [
     account,
     setConfirmTxModalIsOpen,
     setIsHarvesting,
-    yam
+    setPoolStatus,
+    poolStatuses,
+    velo
   ])
 
   const handleRedeem = useCallback(async () => {
-    if (!yam) return
+    if (!velo) return
     setConfirmTxModalIsOpen(true)
-    await redeem(yam, account, () => {
+    await redeem(velo, account, () => {
       setConfirmTxModalIsOpen(false)
       setIsRedeeming(true)
     })
@@ -105,67 +286,151 @@ const Provider: React.FC = ({ children }) => {
     account,
     setConfirmTxModalIsOpen,
     setIsRedeeming,
-    yam
+    velo
   ])
 
-  const handleStake = useCallback(async (amount: string) => {
-    if (!yam) return
+  const handleStake = useCallback(async (poolName: string, amount: string) => {
+    if (!velo) return
+    if(! poolStatuses[poolName]) {
+      poolStatuses[poolName] = {
+        isStaking: false,
+        isUnstaking: false,
+        isHarvesting: false
+      }
+    }
     setConfirmTxModalIsOpen(true)
-    await stake(yam, amount, account, () => {
+    await stake(velo, poolName, amount, account, () => {
       setConfirmTxModalIsOpen(false)
-      setIsStaking(true)
+      poolStatuses[poolName].isStaking = true;
+      setPoolStatus(poolStatuses)
     })
-    setIsStaking(false)
+    poolStatuses[poolName].isStaking = false;
+    setPoolStatus(poolStatuses)
   }, [
     account,
     setConfirmTxModalIsOpen,
-    setIsStaking,
-    yam
+    setPoolStatus,
+    poolStatuses,
+    velo
   ])
 
-  const handleUnstake = useCallback(async (amount: string) => {
-    if (!yam) return
+  const handleUnstake = useCallback(async (poolName: string, amount: string) => {
+    if (!velo) return;
+    if(! poolStatuses[poolName]) {
+      poolStatuses[poolName] = {
+        isStaking: false,
+        isUnstaking: false,
+        isHarvesting: false
+      }
+    }
     setConfirmTxModalIsOpen(true)
-    await unstake(yam, amount, account, () => {
+    await unstake(velo, poolName, amount, account, () => {
       setConfirmTxModalIsOpen(false)
-      setIsUnstaking(true)
+      poolStatuses[poolName].isUnstaking = true;
+      setPoolStatus(poolStatuses)
     })
-    setIsUnstaking(false)
+    poolStatuses[poolName].isUnstaking = false;
+    setPoolStatus(poolStatuses)
   }, [
     account,
     setConfirmTxModalIsOpen,
     setIsUnstaking,
-    yam
+    poolStatuses,
+    setPoolStatus,
+    velo
+  ])
+
+  const fetchPoolInfo = useCallback(async () => {
+    if (!velo || !account) return;
+
+    for(let poolName in poolContracts) {
+      const startTime = await getStartTime(velo, poolName)
+      const balance = await getPoolBalance(velo, poolName)
+      // const duration = await getPoolDuration(velo, poolName)
+      const duration = 0
+      if(startTime) {
+        if(! poolInfos[poolName] ) {
+          poolInfos[poolName] = {
+            startTime: 0,
+            duration: 0,
+            balance: 0,
+          };
+        }
+        poolInfos[poolName].startTime = startTime;
+        poolInfos[poolName].duration = duration;
+        poolInfos[poolName].balance = balance;
+      }
+    }
+
+    setPoolInfo(poolInfos)
+  }, [
+    setPoolInfo,
+    poolInfos,
+    velo,
+    account
   ])
 
   useEffect(() => {
-    fetchBalances()
-    let refreshInterval = setInterval(() => fetchBalances(), 10000)
-    return () => clearInterval(refreshInterval)
-  }, [fetchBalances])
+    fetchPoolContracts()
+    return () => {}
+  }, [
+    fetchPoolContracts
+  ])
 
   useEffect(() => {
-    let refreshInterval = setInterval(() => setCountdown(farmingStartTime - Date.now()), 1000)
+    const fetchBalances = () => {
+      fetchStakedBalance(poolContracts);
+      fetchEarnedBalance(poolContracts);
+      // Fetch total staked balance (for all accounts)
+      fetchPoolInfo()
+    }
+    fetchBalances();
+    let refreshInterval = setInterval(() => fetchBalances(), account ? 20000 : 120000)
     return () => clearInterval(refreshInterval)
-  }, [setCountdown])
+  }, [poolContracts, account])
+
+  useEffect(() => {
+    fetchPrices();
+    fetchTotalStakedBalance();
+    const refreshInterval = setInterval(() => {
+      fetchPrices()
+      fetchTotalStakedBalance();
+    }, account ? 1000*60*3 : 1000*60*120)
+    return () => clearInterval(refreshInterval)
+  }, [account])
+
+  useEffect(() => {
+    fetchRelativeVelocity()
+    fetchTotalSupply()
+    return () => {}
+  }, [
+    fetchRelativeVelocity,
+    fetchTotalSupply
+  ])
 
   return (
     <Context.Provider value={{
       farmingStartTime,
       countdown,
       earnedBalance,
-      isApproved,
-      isApproving,
       isHarvesting,
       isRedeeming,
       isStaking,
       isUnstaking,
+      poolContracts,
       onApprove: handleApprove,
       onHarvest: handleHarvest,
       onRedeem: handleRedeem,
       onStake: handleStake,
       onUnstake: handleUnstake,
       stakedBalance,
+      totalStakedBalance,
+      totalStakedForPool,
+      poolStatus,
+      poolInfo,
+      relativeVelocity,
+      totalSupply,
+      price,
     }}>
       {children}
       <ConfirmTransactionModal isOpen={confirmTxModalIsOpen} />

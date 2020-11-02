@@ -3,8 +3,8 @@ import { useWallet } from 'use-wallet'
 
 import { yamv2 as yamV2Address } from 'constants/tokenAddresses'
 import useApproval from 'hooks/useApproval'
-import useYam from 'hooks/useYam'
-import { migrateV3 } from 'yam-sdk/utils'
+import useVelo from 'hooks/useVelo'
+import { migrateV3 } from 'velo-sdk/utils'
 
 import ConfirmTransactionModal from 'components/ConfirmTransactionModal'
 
@@ -12,13 +12,13 @@ import Context from './Context'
 
 const Provider: React.FC = ({ children }) => {
   const { account } = useWallet()
-  const yam = useYam()
+  const velo = useVelo()
   const [isMigrating, setIsMigrating] = useState(false)
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false)
 
   const { isApproved, isApproving, onApprove } = useApproval(
     yamV2Address,
-    yam ? yam.contracts.migrator.options.address : undefined,
+    velo ? velo.contracts.migrator.options.address : undefined,
     () => setConfirmTxModalIsOpen(false)
   )
 
@@ -40,14 +40,14 @@ const Provider: React.FC = ({ children }) => {
 
   const handleMigrate = useCallback(async () => {
     setConfirmTxModalIsOpen(true)
-    await migrateV3(yam, account, handleMigrationTxSent)
+    await migrateV3(velo, account, handleMigrationTxSent)
     setIsMigrating(false)
   }, [
     account,
     handleMigrationTxSent,
     setConfirmTxModalIsOpen,
     setIsMigrating,
-    yam
+    velo
   ])
 
   return (
