@@ -7,7 +7,7 @@
 
 .Rocket-illustration {
   z-index: -1;
-  background: url('/components/Rocket/rocket3whiteNOcountdown.png') center center no-repeat;
+  background: url('/components/Rocket/rocket2.png') center center no-repeat;
   background-size: contain;
   position: relative;
   display: none;
@@ -15,7 +15,7 @@
   width: 312px;
   height: 600px;
   padding: 0 20px;
-  padding-top: 70px;
+  padding-top: 50px;
   color: #000;
   font-size: 10px;
   z-index: 10;
@@ -29,11 +29,13 @@
 }
 
 .Rocket-rebase-button {
-  height: calc(600px * 0.13);
+  height: calc(600px * 0.128);
 }
 
 .Rocket-rebase-countdown {
-  margin-top: calc(600px * 0.026);
+  margin-top: calc(600px * 0.010);
+  margin-left: -5px;
+  margin-bottom: 17px;
   background: #1c2c4f;
   background: -moz-linear-gradient(left,  #1c2c4f 0%, #334f8b 100%);
   background: -webkit-linear-gradient(left,  #1c2c4f 0%,#334f8b 100%);
@@ -55,7 +57,7 @@
 }
 
 .Rocket-data-list {
-  margin-top: calc(600px * -0.0013);
+  margin-top: calc(600px * 0.01);
 }
 .Rocket-data-list label {
   font-size: 11px;
@@ -77,10 +79,10 @@
   height: calc(600px * 0.125);
 }
 .Rocket-data-list > div:nth-child(4) {
-  height: calc(600px * 0.125);
+  height: calc(600px * 0.115);
 }
 .Rocket-data-list > div:nth-child(5) {
-  height: calc(600px * 0.145);
+  height: calc(600px * 0.1);
 }
 .Rocket-data-list-stat {
   font-size: 18px;

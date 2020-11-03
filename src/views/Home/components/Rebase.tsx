@@ -27,6 +27,8 @@ import WalletModal from 'components/WalletModal'
 
 import useVelo from 'hooks/useVelo'
 
+import './Rebase.css'
+
 import { getLastRebaseTimestamp, getNextRebaseTimestamp, getNextRebaseInSecondsRemaining } from 'velo-sdk/utils'
 
 const Rebase: React.FC = () => {
@@ -150,6 +152,7 @@ const Rebase: React.FC = () => {
 
         {<div
           className="
+            Rocket-rebase-button--click-area
           "
           onClick={() => {
             if(account) {

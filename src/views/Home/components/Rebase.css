@@ -1,0 +1,11 @@
+.Rocket-rebase-button--click-area {
+  background: center center no-repeat;
+  background-size: 74px;
+  width: 100%;
+  height: 75px;
+  background-image: url('/components/Rebase/buttoninactive.png');
+}
+.Rocket-rebase-button--click-area:hover,
+.Rocket-rebase-button--click-area:focus {
+  background-image: url('/components/Rebase/buttonactive.png');
+}
