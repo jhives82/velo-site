@@ -36,8 +36,8 @@ const TotalLockedValue: React.FC = () => {
     return Number(number) / Math.pow(10, decimals)
   }
 
-  const format = (value: BigNumber) => {
-    return numeral(getValueInTokens(value)).format('0.00a');
+  const format = (value: any) => {
+    return numeral(value).format('0.00a');
   }
 
   const getPrice = useCallback((price: any, coinName: string) => {
@@ -73,7 +73,7 @@ const TotalLockedValue: React.FC = () => {
 
   return (
     <div className="TotalLockedValue inline-block">
-      {(getTotalDeposited(price) && getTotalDeposited(price) > 0) ? getTotalDeposited(price).toFixed(0) : '--'}
+      $ {(getTotalDeposited(price) && getTotalDeposited(price) > 0) ? format(getTotalDeposited(price)) : '--'}
     </div>
   )
 }

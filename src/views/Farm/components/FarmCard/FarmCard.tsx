@@ -138,6 +138,10 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
     }
   }
 
+  const format = (value: any) => {
+    return numeral(value).format('0.00a');
+  }
+
   const getPrice = useCallback((price: any, coinName: string) => {
     // For DAI, 1 DAI = 1 USD
     if(coinName == 'dai') return 1;
@@ -310,7 +314,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
           marginBottom: '60px'
         }}>
           <div className="FarmCard-value-locked my-4">
-            Total deposited: {getTotalDeposited(price, coinName || '').toFixed(0)} USD
+            Total deposited: $ {format(getTotalDeposited(price, coinName || ''))}
           </div>
           <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}

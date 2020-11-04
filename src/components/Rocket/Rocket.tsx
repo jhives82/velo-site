@@ -93,7 +93,6 @@ const Rocket: React.FC<RocketProps> = () => {
         position: 'relative',
         top: '-120px'
       }}>
-        {/*<div className="Rocket-fire" />*/}
         <RocketFlame />
       </div>
     </div>
