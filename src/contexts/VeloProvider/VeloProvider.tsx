@@ -29,9 +29,8 @@ const VeloProvider: React.FC = ({ children }) => {
 
   // const provider = ethereum;
   useEffect(() => {
-    const provider = ethereum;
-    // const provider = ethereum || 'https://kovan.infura.io/v3/7aef3f0cd1f64408b163814b22cc643c';//mm
-    // const provider = ethereum || 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+    // const provider = ethereum;
+    const provider = ethereum || 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
     if (provider) {
       const veloLib = new Velo(
         provider,

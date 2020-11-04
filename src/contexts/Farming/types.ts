@@ -9,7 +9,8 @@ interface PoolStatus {
 interface PoolInfo {
   startTime: number,
   duration: number,
-  balance: number
+  balance: number,
+  vloBalance: number
 }
 
 interface Price {

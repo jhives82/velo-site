@@ -2,11 +2,13 @@ import React, {useCallback, useEffect} from 'react'
 import useFarming from '../../hooks/useFarming'
 import BigNumber from 'bignumber.js'
 import numeral from 'numeral'
+import { bnToDec, decToBn } from 'utils'
 
 import Rebase from 'views/Home/components/Rebase'
 import RelativeVelocity from 'views/Landing/components/RelativeVelocity'
 import TotalLockedValue from 'views/Landing/components/TotalLockedValue'
 import TotalSupply from 'views/Landing/components/TotalSupply'
+import VeloInCirculation from 'views/Landing/components/VeloInCirculation'
 import RocketFlame from './RocketFlame'
 
 import './Rocket.css';
@@ -25,20 +27,39 @@ const Rocket: React.FC<RocketProps> = () => {
 
   const {
     totalSupply,
-    price
+    price,
+    poolInfo
   } = useFarming()
 
-  const getValueInTokens = (number: BigNumber, decimals = 18) => {
+  const getValueInTokens = (number: any, decimals = 18) => {
     return Number(number) / Math.pow(10, decimals)
   }
 
-  const displayMarketCap = useCallback((value?: BigNumber) => {
+  const formatValue = useCallback((value?: any) => {
     if (value) {
-      return numeral(getValueInTokens(value) * 0.01).format('0.00a')
+      return numeral(value).format('0.00a')
     } else {
       return '--'
     }
   }, [])
+
+  const getCirculatingMarketCap = useCallback((price: any, totalSupply: any) => {
+    const circulatingSupply = getCirculatingSupply(price, totalSupply);
+    const veloPrice = getVloPrice(price);
+    return circulatingSupply * veloPrice;
+  }, [price, poolInfo])
+
+  const getCirculatingSupply = useCallback((price: any, totalSupply: any) => {
+    if(! poolInfo || ! totalSupply) return 0;
+    const vloPrice = getVloPrice(price);
+    let sumVloStillInPools = 0;
+    for(let poolName in poolInfo) {
+      sumVloStillInPools += getValueInTokens(poolInfo[poolName].vloBalance);
+    }
+    if(sumVloStillInPools <= 0) return 0;
+    const vloInCirculation = getValueInTokens(totalSupply) - sumVloStillInPools;
+    return vloInCirculation;
+  }, [price, poolInfo])
 
   const getVloPrice = useCallback((price: any) => {
     if(! price) return 0;
@@ -77,15 +98,18 @@ const Rocket: React.FC<RocketProps> = () => {
           <div>
             <label>Market cap</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
-              $ {(totalSupply && false) ? displayMarketCap(totalSupply) : '--'}
+              $ {formatValue(getCirculatingMarketCap(price, totalSupply))}
             </div>
           </div>
           <div>
-            {/*<label>VLO in circulation</label>*/}
-            <label>Total supply</label>
+            <label>VLO in circulation</label>
             <div className="Rocket-data-list-stat">
               <TotalSupply />
             </div>
+            {/*<label>Total supply</label>
+            <div className="Rocket-data-list-stat">
+              <TotalSupply />
+            </div>*/}
           </div>
         </div>
       </div>

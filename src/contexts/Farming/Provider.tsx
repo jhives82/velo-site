@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 
 import BigNumber from 'bignumber.js'
+import { provider } from 'web3-core'
 import { useWallet } from 'use-wallet'
 import { bnToDec, decToBn } from 'utils'
 import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk'
@@ -22,7 +23,9 @@ import {
   getStartTime,
   getPoolDuration,
   getRelativeVelocity,
-  getPoolBalance
+  getPoolBalance,
+  getDelegatedBalance,
+  getVloBalanceForPool
 } from 'velo-sdk/utils'
 
 import {
@@ -45,6 +48,10 @@ interface TotalStakedForPool {
   [key: string]: BigNumber;
 }
 
+interface PoolContract {
+  [key: string]: any;
+}
+
 interface PoolStatus {
   [key: string]: {
     isStaking: boolean,
@@ -57,7 +64,8 @@ interface PoolInfo {
   [key: string]: {
     startTime: number,
     duration: number,
-    balance: number
+    balance: number,
+    vloBalance: number
   }
 }
 
@@ -77,7 +85,7 @@ const Provider: React.FC = ({ children }) => {
   const [stakedBalance, setStakedBalance] = useState<StakedBalance>({})
   const [totalStakedForPool, setTotalStakedForPool] = useState<TotalStakedForPool>()
   const [totalStakedBalance, setTotalStakedBalance] = useState<BigNumber>()
-  const [poolContracts, setPoolContracts] = useState<Object>()
+  const [poolContracts, setPoolContracts] = useState<PoolContract>({})
   const [poolStatus, setPoolStatus] = useState<PoolStatus>({})
   const [poolInfo, setPoolInfo] = useState<PoolInfo>({})
 
@@ -86,7 +94,7 @@ const Provider: React.FC = ({ children }) => {
   const [price, setPrice] = useState<Price>({})
 
   const velo = useVelo()
-  const { account } = useWallet()
+  const { account, ethereum }: { account: string | null, ethereum: provider } = useWallet()
 
   let stakedBalances: {
     [poolName: string]: BigNumber
@@ -116,7 +124,8 @@ const Provider: React.FC = ({ children }) => {
     [poolName: string]: {
       startTime: number,
       duration: number,
-      balance: number
+      balance: number,
+      vloBalance: any
     }
   } = {};
 
@@ -344,8 +353,9 @@ const Provider: React.FC = ({ children }) => {
     if (!velo || !account) return;
 
     for(let poolName in poolContracts) {
-      const startTime = await getStartTime(velo, poolName)
-      const balance = await getPoolBalance(velo, poolName)
+      const startTime = await getStartTime(velo, poolName);
+      const balance = await getPoolBalance(velo, poolName);
+      const vloBalanceForPool = await getVloBalanceForPool(velo, ethereum, poolName);
       // const duration = await getPoolDuration(velo, poolName)
       const duration = 0
       if(startTime) {
@@ -354,11 +364,13 @@ const Provider: React.FC = ({ children }) => {
             startTime: 0,
             duration: 0,
             balance: 0,
+            vloBalance: 0
           };
         }
         poolInfos[poolName].startTime = startTime;
         poolInfos[poolName].duration = duration;
         poolInfos[poolName].balance = balance;
+        poolInfos[poolName].vloBalance = vloBalanceForPool;
       }
     }
 

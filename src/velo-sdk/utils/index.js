@@ -2,6 +2,14 @@ import {ethers} from 'ethers'
 import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
 
+import {
+  getBalance,
+} from 'utils';
+
+import {
+  velo as veloAddress,
+} from 'constants/tokenAddresses';
+
 BigNumber.config({
   EXPONENTIAL_AT: 1000,
   DECIMAL_PLACES: 80,
@@ -163,6 +171,18 @@ export const getPoolBalance = async (velo, poolName) => {
   const poolContract = velo.contracts[poolName]
   try {
     return await poolContract.methods.totalSupply().call()
+  } catch (e) {
+    console.log(e)
+    return 0
+  }
+}
+
+export const getVloBalanceForPool = async (velo, provider, poolName) => {
+  const poolContract = velo.contracts[poolName];
+
+  try {
+    const poolBalance = await getBalance(provider, veloAddress, poolContract.options.address)
+    return poolBalance;
   } catch (e) {
     console.log(e)
     return 0

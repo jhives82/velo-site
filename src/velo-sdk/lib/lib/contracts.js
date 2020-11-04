@@ -94,7 +94,7 @@ export class Contracts {
     this.comp_pool = new this.web3.eth.Contract(VeloCompPoolJson.abi);
     this.lend_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
     this.aave_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
-    this.link_pool = new this.web3.eth.Contract(VeloLinkPoolJson.abi);
+    // this.link_pool = new this.web3.eth.Contract(VeloLinkPoolJson.abi);
     this.snx_pool = new this.web3.eth.Contract(VeloSnxPoolJson.abi);
     this.sushi_pool = new this.web3.eth.Contract(VeloSushiPoolJson.abi);
     this.pickle_pool = new this.web3.eth.Contract(VeloPicklePoolJson.abi);
@@ -135,7 +135,7 @@ export class Contracts {
       { contract: this.comp_pool, json: VeloCrvPoolJson },
       { contract: this.lend_pool, json: VeloCrvPoolJson },
       { contract: this.aave_pool, json: VeloCrvPoolJson },
-      { contract: this.link_pool, json: VeloCrvPoolJson },
+      // { contract: this.link_pool, json: VeloCrvPoolJson },
       { contract: this.snx_pool, json: VeloCrvPoolJson },
       { contract: this.sushi_pool, json: VeloCrvPoolJson },
       { contract: this.pickle_pool, json: VeloCrvPoolJson },
@@ -170,7 +170,7 @@ export class Contracts {
     this.comp_pool.options.address = addressMap["comp_pool"];
     this.lend_pool.options.address = addressMap["lend_pool"];
     this.aave_pool.options.address = addressMap["aave_pool"];
-    this.link_pool.options.address = addressMap["link_pool"];
+    // this.link_pool.options.address = addressMap["link_pool"];
     this.snx_pool.options.address = addressMap["snx_pool"];
     this.sushi_pool.options.address = addressMap["sushi_pool"];
     this.pickle_pool.options.address = addressMap["pickle_pool"];
