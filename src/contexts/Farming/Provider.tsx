@@ -381,13 +381,21 @@ const Provider: React.FC = ({ children }) => {
     const fetchBalances = () => {
       fetchStakedBalance(poolContracts);
       fetchEarnedBalance(poolContracts);
+    }
+    fetchBalances();
+    let refreshInterval = setInterval(() => fetchBalances(), account ? 20000 : 120000)
+    return () => clearInterval(refreshInterval)
+  }, [poolContracts, account])
+
+  useEffect(() => {
+    const fetchBalances = () => {
       // Fetch total staked balance (for all accounts)
       fetchPoolInfo()
       fetchTotalStakedBalance();
       fetchPrices()
     }
     fetchBalances();
-    let refreshInterval = setInterval(() => fetchBalances(), account ? 20000 : 120000)
+    let refreshInterval = setInterval(() => fetchBalances(), account ? 50000 : 120000)
     return () => clearInterval(refreshInterval)
   }, [poolContracts, account])
 
