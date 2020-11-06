@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import useFarming from '../../../../hooks/useFarming'
 import Countdown, { CountdownRenderProps} from 'react-countdown'
 import numeral from 'numeral'
+import BigNumber from 'bignumber.js'
 import {
   Box,
   Card,
@@ -16,7 +17,10 @@ import { useWallet } from 'use-wallet'
 import useApproval from 'hooks/useApproval'
 import useVelo from 'hooks/useVelo'
 
-import { bnToDec } from 'utils'
+import {
+  bnToDec,
+  veloCoinNameToCoinGeckoCoinName
+} from 'utils'
 
 import './FarmCard.css';
 
@@ -49,17 +53,25 @@ interface PoolStatus {
   isHarvesting: boolean
 }
 
-const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, disabled, poolName, coinName }) => {
+const FarmCard: React.FC<FarmCardProps> = ({
+  title,
+  emoticon,
+  name,
+  icon,
+  pct,
+  disabled,
+  poolName,
+  coinName
+}) => {
   const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false)
   const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false)
   const [farmCardIsExpanded, setFarmCardIsExpanded] = useState(false)
 
-  const velo = useVelo()
+  const { velo } = useVelo()
   const { status } = useWallet()
 
   const {
     poolContracts,
-    farmingStartTime,
     poolStatus,
     isStaking,
     isUnstaking,
@@ -68,7 +80,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
     stakedBalance,
     earnedBalance,
     totalStakedForPool,
-    price
+    price,
   } = useFarming()
 
   const getPoolName = () => {
@@ -88,7 +100,9 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
   )
 
   const hasStakedForPool = (poolName: string) => {
-    return stakedBalance && stakedBalance[poolName] && stakedBalance[poolName].toNumber() > 0
+    if(! stakedBalance || ! stakedBalance[poolName]) return false;
+    if(typeof(stakedBalance[poolName]) == 'string') return Number(stakedBalance[poolName]) > 0;
+    return stakedBalance[poolName].toNumber() > 0
   }
 
   const handleDismissStakeModal = useCallback(() => {
@@ -139,32 +153,35 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
   }
 
   const format = (value: any) => {
-    return numeral(value).format('0.00a');
+    return value > 0 ? numeral(value).format('0.00a') : '--';
   }
 
   const getPrice = useCallback((price: any, coinName: string) => {
-    // For DAI, 1 DAI = 1 USD
-    if(coinName == 'dai') return 1;
     // Return 0 if prices are not loaded yet
     if(! price) return 0;
     // Get price of our coin, denominated in ETH
-    const coinPrice = price[coinName.toUpperCase() + '_WETH'];
+    const coinPrice = price[veloCoinNameToCoinGeckoCoinName(coinName)];
     // Return if price was found
-    if(coinPrice && price.WETH_DAI) {
-      return Number(coinPrice) * Number(price.WETH_DAI);
+    if(coinPrice) {
+      return Number(coinPrice);
     }
     // Return 0 if no price was found
     return 0;
   }, [price])
 
-  const getTotalDeposited = useCallback((price: any, coinName: string) => {
-    const coinPriceInDai = getPrice(price, coinName);
+  const getTotalDepositedInTokens = useCallback((price: any, coinName: string) => {
     let totalDeposited = 0;
     if(totalStakedForPool && totalStakedForPool[getPoolName()]) {
-      totalDeposited = bnToDec(totalStakedForPool[getPoolName()]);
+      totalDeposited = bnToDec(new BigNumber(totalStakedForPool[getPoolName()]));
     }
-    if(! coinPriceInDai || ! totalDeposited) return 0;
-    return Number(coinPriceInDai) * Number(totalDeposited);
+    return totalDeposited;
+  }, [price, totalStakedForPool])
+
+  const getTotalDepositedInUsd = useCallback((price: any, coinName: string) => {
+    const coinPriceInUsd = getPrice(price, coinName);
+    let totalDeposited = getTotalDepositedInTokens(price, coinName);
+    if(! coinPriceInUsd || ! totalDeposited) return 0;
+    return Number(coinPriceInUsd) * Number(totalDeposited);
   }, [price, totalStakedForPool])
 
   const StakeButton = useMemo(() => {
@@ -270,7 +287,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
 
   const formattedStakedBalance = (stakedBalance: any) => {
     if (stakedBalance && stakedBalance[getPoolName()]) {
-      return numeral(bnToDec(stakedBalance[getPoolName()])).format('0.00a')
+      return numeral(bnToDec(new BigNumber(stakedBalance[getPoolName()]))).format('0.00a')
     } else {
       return '--'
     }
@@ -314,7 +331,11 @@ const FarmCard: React.FC<FarmCardProps> = ({ title, emoticon, name, icon, pct, d
           marginBottom: '60px'
         }}>
           <div className="FarmCard-value-locked my-4">
-            Total deposited: $ {format(getTotalDeposited(price, coinName || ''))}
+            Total deposited: {getTotalDepositedInUsd(price, coinName || '') > 0 ? <span>
+              $ {format(getTotalDepositedInUsd(price, coinName || ''))}
+            </span> : <span>
+              {format(getTotalDepositedInTokens(price, coinName || ''))} tokens
+            </span>}
           </div>
           <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}

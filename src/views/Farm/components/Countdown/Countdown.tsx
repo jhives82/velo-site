@@ -1,10 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment';
-
-// import './Countdown.css';
-
-// Import components
-// import Block from '../../../../components/Block/Block'
 
 interface CountdownProps {
   percentageToDistribute: number,

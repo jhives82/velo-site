@@ -3,14 +3,9 @@ import React, { createContext, useEffect, useState } from 'react'
 import { useWallet } from 'use-wallet'
 import { Velo } from 'velo-sdk/lib'
 
-import {
-  injected,
-  network,
-  walletconnect
-} from './connectors'
-
 export interface VeloContext {
-  velo?: any
+  velo?: any,
+  walletStatus?: string
 }
 
 export const Context = createContext<VeloContext>({
@@ -24,13 +19,22 @@ declare global {
 }
 
 const VeloProvider: React.FC = ({ children }) => {
-  const { ethereum } = useWallet()
-  const [velo, setVelo] = useState<any>()
+  const { ethereum, status } = useWallet()
 
-  // const provider = ethereum;
+  const [velo, setVelo] = useState<any>()
+  const [walletStatus, setWalletStatus] = useState<string>()
+
+  useEffect(() => {
+    if(status) {
+      setWalletStatus(status);
+    }
+  }, [status])
+
   useEffect(() => {
     // const provider = ethereum;
-    const provider = ethereum || 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+    // const provider = ethereum || 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+    // const provider = ethereum || 'https://eth-kovan.alchemyapi.io/v2/HGgrm9x6IQ9fI4oa48gzP-YSNmyVqaRL';
+    const provider = ethereum || 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk';
     if (provider) {
       const veloLib = new Velo(
         provider,
@@ -53,7 +57,10 @@ const VeloProvider: React.FC = ({ children }) => {
   }, [ethereum])
 
   return (
-    <Context.Provider value={{ velo }}>
+    <Context.Provider value={{
+      velo,
+      walletStatus
+    }}>
       {children}
     </Context.Provider>
   )

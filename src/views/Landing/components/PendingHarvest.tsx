@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
 import useFarming from '../../../hooks/useFarming'
 import BigNumber from 'bignumber.js'
-import {
-  getPendingVeloToHarvest
-} from 'velo-sdk/utils'
 import useVelo from 'hooks/useVelo'
 
 import {
@@ -24,23 +21,11 @@ const PendingHarvest: React.FC = () => {
 
   // Init wallet
   const { reset } = useWallet()
-  const velo = useVelo()
+  const { velo } = useVelo()
 
   const {
     earnedBalance
   } = useFarming()
-
-  // Get total supply
-  // const [pendingVeloToHarvest, setPendingVeloToHarvest] = useState<BigNumber>()
-  // const fetchPendingHarvest = useCallback(async () => {
-  //   if (! velo) return;
-  //   const pendingVeloToHarvest = await getPendingVeloToHarvest(velo)
-  //   setPendingVeloToHarvest(pendingVeloToHarvest);
-  // }, [
-  //   velo,
-  //   setPendingVeloToHarvest
-  // ])
-  // fetchPendingHarvest();
 
   const getValueInTokens = (number: BigNumber, decimals = 18) => {
     return Number(number) / Math.pow(10, decimals)
@@ -58,7 +43,7 @@ const PendingHarvest: React.FC = () => {
     if (earnedBalance) {
       let totalVloBalance = 0;
       for(let key in earnedBalance) {
-        totalVloBalance += bnToDec(earnedBalance[key]);
+        totalVloBalance += bnToDec(new BigNumber(earnedBalance[key]));
       }
       return numeral(totalVloBalance).format('0.00a')
     } else {

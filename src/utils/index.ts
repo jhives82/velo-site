@@ -5,6 +5,10 @@ import { provider, TransactionReceipt } from 'web3-core'
 import { AbiItem } from 'web3-utils'
 import ERC20ABI from 'constants/abi/ERC20.json'
 import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk'
+import { getDefaultProvider, getNetwork, EtherscanProvider, InfuraProvider } from '@ethersproject/providers'
+
+const CoinGecko = require('coingecko-api');
+const CoinGeckoClient = new CoinGecko();
 
 const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -71,6 +75,7 @@ export const getAllowance = async (
 
 export const getBalance = async (provider: provider, tokenAddress: string, userAddress: string): Promise<string> => {
   const tokenContract = getERC20Contract(provider, tokenAddress)
+  
   try {
     const balance: string = await tokenContract.methods.balanceOf(userAddress).call()
     return balance
@@ -81,11 +86,28 @@ export const getBalance = async (provider: provider, tokenAddress: string, userA
 
 // https://uniswap.org/docs/v2/javascript-SDK/pricing/
 export const getUniswapPrice = async (pair1Token: any, pair2Token: any, inputToken: any): Promise<string> => {
-  const pair = await Fetcher.fetchPairData(pair1Token, pair2Token)
+  const pair = await Fetcher.fetchPairData(
+    pair1Token,
+    pair2Token,
+    new InfuraProvider(getNetwork(pair1Token.chainId), 'e508c065786d4624a93f30b6e5c4bbee')
+  )
   const route = new Route([pair], inputToken)
-  // console.log(route.midPrice.toSignificant(6)) // 201.306
-  // console.log(route.midPrice.invert().toSignificant(6)) // 0.00496756
   return route.midPrice.toSignificant(6);
+}
+
+// https://uniswap.org/docs/v2/javascript-SDK/pricing/
+export const getCoinGeckoPrices = async (): Promise<any> => {
+  let response = await CoinGeckoClient.simple.price({
+    ids: [
+      'dai',
+      'curve-fi-ydai-yusdc-yusdt-ytusd'
+    ],
+    vs_currencies: ['usd'],
+  });
+  if(response.success) {
+    return response.data;
+  }
+  return {};
 }
 
 export const getERC20Contract = (provider: provider, address: string) => {
@@ -95,7 +117,7 @@ export const getERC20Contract = (provider: provider, address: string) => {
 }
 
 export const bnToDec = (bn: BigNumber, decimals = 18) => {
-  return bn.dividedBy(new BigNumber(10).pow(decimals)).toNumber()
+  return new BigNumber(bn).dividedBy(new BigNumber(10).pow(decimals)).toNumber()
 }
 
 export const decToBn = (dec: number, decimals = 18) => {
@@ -104,4 +126,14 @@ export const decToBn = (dec: number, decimals = 18) => {
 
 export const getFullDisplayBalance = (balance: BigNumber, decimals = 18) => {
   return balance.dividedBy(new BigNumber(10).pow(decimals)).toFixed()
+}
+
+export const veloCoinNameToCoinGeckoCoinName = (veloCoinName: string) => {
+  const conversionArray: {
+    [veloCoinName: string]: string
+  } = {
+    'ycrv': 'curve-fi-ydai-yusdc-yusdt-ytusd',
+    'dai': 'dai'
+  };
+  return conversionArray[veloCoinName] || '';
 }

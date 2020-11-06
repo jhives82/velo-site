@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import moment from 'moment';
 
 import Countdown, { CountdownRenderProps} from 'react-countdown'
+import { getCache, setCache, getDiffInSeconds } from 'utils/cache'
 import {
   Box,
   Card,
@@ -27,10 +28,12 @@ import WalletModal from 'components/WalletModal'
 
 import useVelo from 'hooks/useVelo'
 
+import './Rebase.css'
+
 import { getLastRebaseTimestamp, getNextRebaseTimestamp, getNextRebaseInSecondsRemaining } from 'velo-sdk/utils'
 
 const Rebase: React.FC = () => {
-  const velo = useVelo()
+  const { velo } = useVelo()
   const { account } = useWallet()
 
   const [walletModalIsOpen, setWalletModalIsOpen] = useState(false)
@@ -62,23 +65,40 @@ const Rebase: React.FC = () => {
   }, [setTime])
 
   const fetchNextRebase = useCallback( async() => {
+    const fromCache = getCache('nextRebaseTimestamp')
+    const diffInSeconds = getDiffInSeconds(fromCache.timestamp)
+    if(fromCache && fromCache.timestamp && diffInSeconds <= 60*2) {
+      setNextRebaseTimestamp(fromCache.data);
+      return;
+    }
+
     if (!velo) return;
     const nextRebaseTimestamp = await getNextRebaseTimestamp(velo);
     if (nextRebaseTimestamp) {
       setNextRebaseTimestamp(nextRebaseTimestamp)
+      setCache('nextRebaseTimestamp', nextRebaseTimestamp);
     } else {
       setNextRebaseTimestamp(0)
     }
+
   }, [
     setNextRebaseTimestamp,
     velo
   ])
 
   const fetchLastRebase = useCallback( async() => {
+    const fromCache = getCache('lastRebase')
+    const diffInSeconds = getDiffInSeconds(fromCache.timestamp)
+    if(fromCache && fromCache.timestamp && diffInSeconds <= 60*2) {
+      setLastRebaseTimestamp(fromCache.data);
+      return;
+    }
+
     if (!velo) return;
     const lastRebaseTimestamp = await getLastRebaseTimestamp(velo);
     if (lastRebaseTimestamp) {
       setLastRebaseTimestamp(lastRebaseTimestamp)
+      setCache('lastRebase', lastRebaseTimestamp);
     } else {
       setLastRebaseTimestamp(0)
     }
@@ -150,6 +170,7 @@ const Rebase: React.FC = () => {
 
         {<div
           className="
+            Rocket-rebase-button--click-area
           "
           onClick={() => {
             if(account) {
@@ -165,13 +186,15 @@ const Rebase: React.FC = () => {
           />} 
         <Modal isOpen={rebaseWarningModal}>
           <div className="my-4 px-2">
-            <CardIcon>⚠️</CardIcon>
-          </div>
-          <div className="my-4 px-2">
-            WARNING: Only 1 rebase transaction succeeds every 12 hours. This transaction will likely fail.
+            <p>
+              It's not yet possible to rebase. Come back in
+            </p>
+            <div className="Rocket-rebase-countdown">
+              {nextRebaseTimestamp > 0 && renderCountdown(nextRebaseTimestamp)}
+            </div>
           </div>
           <div
-            className="flex justify-end"
+            className="flex justify-center"
             style={{paddingRight: '24px', paddingLeft: '24px'}}
             >
             <Button
@@ -182,7 +205,7 @@ const Rebase: React.FC = () => {
             </Button>
             <Button
               onClick={handleRebaseClick}
-              classes="btn-theme ml-2"
+              classes="btn-theme ml-2 hidden"
             >
               Confirm rebase
             </Button>

@@ -1,11 +1,8 @@
 import BigNumber from 'bignumber.js/bignumber';
-import Web3 from 'web3';
 import * as Types from "./types.js";
 import { SUBTRACT_GAS_LIMIT, addressMap } from './constants.js';
 
 import ERC20Json from '../clean_build/contracts/IERC20.json';
-import YAMv2Json from '../clean_build/contracts/YAMv2.json';
-import YAMv2MigrationJson from '../clean_build/contracts/YAMv2Migration.json';
 import YAMJson from '../clean_build/contracts/YAMDelegator.json';
 import VELOJson from '../clean_build/contracts/VELODelegator.json';
 import VELORebaserJson from '../clean_build/contracts/VELORebaser.json';
@@ -26,31 +23,11 @@ import VeloPicklePoolJson from '../clean_build/contracts/VELO_PICKLE_Pool.json';
 import VeloDoughPoolJson from '../clean_build/contracts/VELO_DOUGH_Pool.json';
 import VeloYfiPoolJson from '../clean_build/contracts/VELO_YFI_Pool.json';
 
-import YAMRebaserJson from '../clean_build/contracts/YAMRebaser.json';
-import YAMReservesJson from '../clean_build/contracts/YAMReserves.json';
-import YAMGovJson from '../clean_build/contracts/GovernorAlpha.json';
-import YAMTimelockJson from '../clean_build/contracts/Timelock.json';
-import WETHJson from './weth.json';
-import SNXJson from './snx.json';
 import UNIFactJson from './unifact2.json';
 import UNIPairJson from './uni2.json';
 import UNIRouterJson from './uniR.json';
 
-import WETHPoolJson from '../clean_build/contracts/YAMETHPool.json';
-import AMPLPoolJson from '../clean_build/contracts/YAMAMPLPool.json';
-import YFIPoolJson from '../clean_build/contracts/YAMYFIPool.json';
-
-import MKRPoolJson from '../clean_build/contracts/YAMMKRPool.json';
-import LENDPoolJson from '../clean_build/contracts/YAMLENDPool.json';
-import COMPPoolJson from '../clean_build/contracts/YAMCOMPPool.json';
-import SNXPoolJson from '../clean_build/contracts/YAMSNXPool.json';
-import LINKPoolJson from '../clean_build/contracts/YAMLINKPool.json';
-
-import IncOldJson from '../clean_build/contracts/YAMIncentivizerOld.json';
-import IncJson from '../clean_build/contracts/YAMIncentivizer.json';
-
 import MigratorJson from "../clean_build/contracts/Migrator.json"
-import YAMv3Json from "../clean_build/contracts/YAMDelegatorV3.json"
 
 export class Contracts {
   constructor(
@@ -92,9 +69,9 @@ export class Contracts {
     this.velo_eth_wbtc_pool = new this.web3.eth.Contract(VeloCompPoolJson.abi);
     // Stage 3
     this.comp_pool = new this.web3.eth.Contract(VeloCompPoolJson.abi);
-    this.lend_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
+    // this.lend_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
     this.aave_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
-    // this.link_pool = new this.web3.eth.Contract(VeloLinkPoolJson.abi);
+    this.link_pool = new this.web3.eth.Contract(VeloLinkPoolJson.abi);
     this.snx_pool = new this.web3.eth.Contract(VeloSnxPoolJson.abi);
     this.sushi_pool = new this.web3.eth.Contract(VeloSushiPoolJson.abi);
     this.pickle_pool = new this.web3.eth.Contract(VeloPicklePoolJson.abi);
@@ -133,9 +110,9 @@ export class Contracts {
       { contract: this.velo_eth_wbtc_pool, json: VeloCrvPoolJson },
       // Stage 3
       { contract: this.comp_pool, json: VeloCrvPoolJson },
-      { contract: this.lend_pool, json: VeloCrvPoolJson },
+      // { contract: this.lend_pool, json: VeloCrvPoolJson },
       { contract: this.aave_pool, json: VeloCrvPoolJson },
-      // { contract: this.link_pool, json: VeloCrvPoolJson },
+      { contract: this.link_pool, json: VeloCrvPoolJson },
       { contract: this.snx_pool, json: VeloCrvPoolJson },
       { contract: this.sushi_pool, json: VeloCrvPoolJson },
       { contract: this.pickle_pool, json: VeloCrvPoolJson },
@@ -168,9 +145,9 @@ export class Contracts {
     this.velo_eth_wbtc_pool.options.address = addressMap["velo_eth_wbtc_pool"];
     // Stage 3
     this.comp_pool.options.address = addressMap["comp_pool"];
-    this.lend_pool.options.address = addressMap["lend_pool"];
+    // this.lend_pool.options.address = addressMap["lend_pool"];
     this.aave_pool.options.address = addressMap["aave_pool"];
-    // this.link_pool.options.address = addressMap["link_pool"];
+    this.link_pool.options.address = addressMap["link_pool"];
     this.snx_pool.options.address = addressMap["snx_pool"];
     this.sushi_pool.options.address = addressMap["sushi_pool"];
     this.pickle_pool.options.address = addressMap["pickle_pool"];

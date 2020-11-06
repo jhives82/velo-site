@@ -20,7 +20,6 @@ interface Price {
 export interface ContextValues {
   countdown?: number,
   poolContracts?: object,
-  farmingStartTime: number,
   // isApproved?: boolean,
   // isApproving?: boolean,
   isHarvesting?: boolean,

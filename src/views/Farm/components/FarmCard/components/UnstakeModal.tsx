@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import numeral from 'numeral'
 import { bnToDec } from 'utils'
 
 import BigNumber from 'bignumber.js'
 import {
-  ModalActions,
   ModalContent,
   ModalProps,
 } from 'react-neu'
@@ -18,7 +17,6 @@ import {
 import TokenInput from 'components/TokenInput'
 
 import useFarming from 'hooks/useFarming'
-import { getFullDisplayBalance } from 'utils'
 
 interface UnstakeModalProps extends ModalProps {
   coinName: string,

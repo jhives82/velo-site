@@ -1,5 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { Web3ReactProvider, useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
+import React, { useMemo } from 'react'
 import { createTheme, ThemeProvider } from 'react-neu'
 import {
   BrowserRouter as Router,
@@ -11,33 +10,15 @@ import { UseWalletProvider } from 'use-wallet'
 import { BalancesProvider } from 'contexts/Balances'
 import { FarmingProvider } from 'contexts/Farming'
 import VeloProvider from 'contexts/VeloProvider'
-import { Web3Provider } from '@ethersproject/providers'
-
-import { NetworkConnector } from '@web3-react/network-connector'
 
 import useLocalStorage from 'hooks/useLocalStorage'
 
-import Farm from 'views/Farm'
-import FAQ from 'views/FAQ'
-import Stats from 'views/Home/components/Stats'
-import Rebase from 'views/Home/components/Rebase'
 import Landing from 'views/Landing'
-import WalletButton from 'components/TopBar/components/WalletButton'
 import AppFooter from 'components/AppFooter/AppFooter'
 
 import './App.css'
 
 const App: React.FC = () => {
-  const [mobileMenu, setMobileMenu] = useState(false)
-
-  const handleDismissMobileMenu = useCallback(() => {
-    setMobileMenu(false)
-  }, [setMobileMenu])
-  
-  const handlePresentMobileMenu = useCallback(() => {
-    setMobileMenu(true)
-  }, [setMobileMenu])
-
   return (
     <Router>
       <Providers>
@@ -70,7 +51,8 @@ const getWalletProviderConfig = () => {
   let chainId: number, rpcUrl: string;
   if(true) {
     chainId = 1;
-    rpcUrl = 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+    // rpcUrl = 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
+    rpcUrl = 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk';
   }
 
   else if(false) {
