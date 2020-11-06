@@ -1,24 +1,15 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback} from 'react'
 import BigNumber from 'bignumber.js'
 import { addressMap } from 'velo-sdk/lib/lib/constants.js';
-import { NavLink } from 'react-router-dom'
 // import {
 //   getTotalSupply,
 // } from 'velo-sdk/utils'
-import useVelo from 'hooks/useVelo'
 
-import {
-  Container,
-  Spacer,
-  useTheme,
-} from 'react-neu'
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
 
-import Rebase from 'views/Home/components/Rebase'
 import Page from 'components/Page'
 import PageHeader from 'components/PageHeader'
-import Split from 'components/Split'
 import WalletButton from 'components/TopBar/components/WalletButton'
 
 import Pools from '../../components/Pools/Pools'
@@ -27,14 +18,12 @@ import Rocket from '../../components/Rocket/Rocket'
 import QuickStats from '../../components/QuickStats/QuickStats'
 
 import PendingHarvest from './components/PendingHarvest'
-import VeloInCirculation from './components/VeloInCirculation'
 import SocialIcons from 'components/SocialIcons/SocialIcons'
 
+import useFarming from 'hooks/useFarming'
 import useBalances from 'hooks/useBalances'
-import useVesting from 'hooks/useVesting'
 
 import './Landing.css';
-// import '../Home/Home-stars.css';
 
 const Landing: React.FC = () => {
 
@@ -45,11 +34,15 @@ const Landing: React.FC = () => {
   }
 
   // Init wallet
-  const { status, reset, connect } = useWallet()
+  const { status, connect } = useWallet()
   
   const {
     veloBalance
   } = useBalances()
+
+  const {
+    totalStakedForPool,
+  } = useFarming()
 
   const getDisplayBalance = useCallback((value?: BigNumber) => {
     if (value) {
@@ -94,8 +87,6 @@ const Landing: React.FC = () => {
   return (
     <Page>
       <div className="Landing">
-
-        <QuickStats />
 
         <PageHeader />
 

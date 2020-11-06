@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import * as R from 'ramda';
 
 import './Pool.css';

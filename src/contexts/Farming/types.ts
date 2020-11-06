@@ -20,7 +20,6 @@ interface Price {
 export interface ContextValues {
   countdown?: number,
   poolContracts?: object,
-  farmingStartTime: number,
   // isApproved?: boolean,
   // isApproving?: boolean,
   isHarvesting?: boolean,
@@ -31,7 +30,7 @@ export interface ContextValues {
   onHarvest: (poolName: string) => void,
   onRedeem: () => void,
   onStake: (poolName: string, amount: string) => void,
-  onUnstake: (poolName: string, amount: string) => void,
+  onUnstake: (poolName: string, amount: any) => void,
   earnedBalance?: { [key: string]: BigNumber },
   stakedBalance?: { [key: string]: BigNumber },
   poolStatus?: { [key: string]: PoolStatus },
@@ -40,5 +39,7 @@ export interface ContextValues {
   totalStakedForPool?: { [key: string]: BigNumber },
   totalSupply?: BigNumber,
   relativeVelocity?: BigNumber,
+  lastRebaseTimestamp: Number,
+  nextRebaseTimestamp: Number,
   price?: Price,
 }

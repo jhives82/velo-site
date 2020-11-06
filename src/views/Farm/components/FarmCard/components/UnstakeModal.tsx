@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import numeral from 'numeral'
-import { bnToDec } from 'utils'
+import { bnToDec, decToBn } from 'utils'
 
 import BigNumber from 'bignumber.js'
 import {
-  ModalActions,
   ModalContent,
   ModalProps,
 } from 'react-neu'
@@ -18,7 +17,6 @@ import {
 import TokenInput from 'components/TokenInput'
 
 import useFarming from 'hooks/useFarming'
-import { getFullDisplayBalance } from 'utils'
 
 interface UnstakeModalProps extends ModalProps {
   coinName: string,
@@ -35,6 +33,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
 }) => {
 
   const [val, setVal] = useState('')
+  const [valInSatoshis, setValueInSatoshis] = useState('')
   const { stakedBalance } = useFarming()
 
   const fullBalance = (stakedBalance: any) => {
@@ -53,17 +52,28 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
 
   const handleChange = useCallback((e: React.FormEvent<HTMLInputElement>) => {
     setVal(e.currentTarget.value)
+    // setValueInSatoshis(decToBn(e.currentTarget.value))
+    setValueInSatoshis(new BigNumber(e.currentTarget.value).times(new BigNumber(10).pow(18)).toString())
   }, [setVal])
 
   const handleSelectMax = useCallback(() => {
     const fullBalanceInSatoshis = fullBalance(stakedBalance)
+    setValueInSatoshis(fullBalanceInSatoshis)
     const fullBalanceInTokens = bnToDec(fullBalanceInSatoshis)
     setVal(fullBalanceInTokens.toString())
-  }, [fullBalance, setVal])
+  }, [
+    fullBalance,
+    setVal,
+    setValueInSatoshis
+  ])
 
   const handleUnstakeClick = useCallback(() => {
-    onUnstake(poolName, val)
-  }, [onUnstake, val])
+    onUnstake(poolName, valInSatoshis)
+  }, [
+    onUnstake,
+    val,
+    valInSatoshis
+  ])
 
   const getSymbol = () => {
     if(poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool') {

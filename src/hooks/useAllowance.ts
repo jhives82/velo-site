@@ -14,6 +14,7 @@ const useAllowance = (tokenAddress?: string, spenderAddress?: string) => {
     if (!spenderAddress || !tokenAddress) {
       return
     }
+
     const allowance = await getAllowance(userAddress, spenderAddress, tokenAddress, provider)
     setAllowance(new BigNumber(allowance))
   }, [setAllowance, spenderAddress, tokenAddress])
@@ -22,7 +23,7 @@ const useAllowance = (tokenAddress?: string, spenderAddress?: string) => {
     if (account && ethereum && spenderAddress && tokenAddress) {
       fetchAllowance(account, ethereum)
     }
-    let refreshInterval = setInterval(fetchAllowance, 10000)
+    let refreshInterval = setInterval(fetchAllowance, 15000)
     return () => clearInterval(refreshInterval)
   }, [account, ethereum, spenderAddress, tokenAddress])
 

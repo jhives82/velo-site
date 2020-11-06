@@ -31,17 +31,30 @@ const StakeModal: React.FC<StakeModalProps> = ({
 }) => {
 
   const [val, setVal] = useState('')
-  const { ycrvBalance, veloBalance, daiBalance } = useBalances()
+  const {
+    ycrvBalance,
+    veloBalance,
+    daiBalance,
+    pumpBalance,
+    veloEthBlpBalance,
+    veloEthUniBalance,
+  } = useBalances()
 
   const fullBalance = useMemo(() => {
-    if(coinName == 'ycrv') {
+    if(coinName == 'pump') {
+      return getFullDisplayBalance(pumpBalance || new BigNumber(0), 0);
+    } else if(coinName == 'ycrv') {
       return getFullDisplayBalance(ycrvBalance || new BigNumber(0), 0);
     } else if (coinName == 'dai') {
       return getFullDisplayBalance(daiBalance || new BigNumber(0), 0);
+    } else if (coinName == 'velo_eth_blp') {
+      return getFullDisplayBalance(veloEthBlpBalance || new BigNumber(0), 0);
+    } else if (coinName == 'velo_eth_uni') {
+      return getFullDisplayBalance(veloEthUniBalance || new BigNumber(0), 0);
     } else {
       return getFullDisplayBalance(new BigNumber(0), 0);
     }
-  }, [ycrvBalance, daiBalance])
+  }, [ycrvBalance, daiBalance, veloEthBlpBalance, veloEthUniBalance])
 
   const handleChange = useCallback((e: React.FormEvent<HTMLInputElement>) => {
     setVal(e.currentTarget.value)

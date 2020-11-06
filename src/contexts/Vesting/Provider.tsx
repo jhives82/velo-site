@@ -17,7 +17,7 @@ import Context from './Context'
 
 const Provider: React.FC = ({ children }) => {
   const { account } = useWallet()
-  const velo = useVelo()
+  const { velo } = useVelo()
 
   const [vestedBalance, setVestedBalance] = useState<BigNumber>()
   const [vestedDelegatorRewardBalance, setVestedDelegatorRewardBalance] = useState<BigNumber>()

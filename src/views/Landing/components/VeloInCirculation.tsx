@@ -20,7 +20,7 @@ const VeloInCirculation: React.FC = () => {
 
   // Init wallet
   const { reset } = useWallet()
-  const velo = useVelo()
+  const { velo } = useVelo()
 
   // Get total supply
   const [veloInCirculation, setVeloInCirculation] = useState<BigNumber>()

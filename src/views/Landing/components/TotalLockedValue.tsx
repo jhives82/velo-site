@@ -1,30 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
 import useFarming from '../../../hooks/useFarming'
 import BigNumber from 'bignumber.js'
-import {
-  getPendingVeloToHarvest
-} from 'velo-sdk/utils'
 import useVelo from 'hooks/useVelo'
 
-import {
-  Container,
-  Spacer,
-  useTheme,
-} from 'react-neu'
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
-import { bnToDec } from 'utils'
-
-import Rebase from 'views/Home/components/Rebase'
-
-import useBalances from 'hooks/useBalances'
-import useVesting from 'hooks/useVesting'
+import {
+  bnToDec,
+  veloCoinNameToCoinGeckoCoinName
+} from 'utils'
 
 const TotalLockedValue: React.FC = () => {
 
   // Init wallet
-  const { reset } = useWallet()
-  const velo = useVelo()
+  const { velo } = useVelo()
 
   const {
     price,
@@ -41,15 +30,13 @@ const TotalLockedValue: React.FC = () => {
   }
 
   const getPrice = useCallback((price: any, coinName: string) => {
-    // For DAI, 1 DAI = 1 USD
-    if(coinName == 'dai') return 1;
     // Return 0 if prices are not loaded yet
     if(! price) return 0;
     // Get price of our coin, denominated in ETH
-    const coinPrice = price[coinName.toUpperCase() + '_WETH'];
+    const coinPrice = price[veloCoinNameToCoinGeckoCoinName(coinName)];
     // Return if price was found
-    if(coinPrice && price.WETH_DAI) {
-      return Number(coinPrice) * Number(price.WETH_DAI);
+    if(coinPrice) {
+      return Number(coinPrice);
     }
     // Return 0 if no price was found
     return 0;
@@ -60,10 +47,10 @@ const TotalLockedValue: React.FC = () => {
     const ycrvPriceInDai = getPrice(price, 'ycrv');
     let totalDeposited = 0;
     if(totalStakedForPool && totalStakedForPool['dai_pool']) {
-      totalDeposited += (daiPriceInDai * bnToDec(totalStakedForPool['dai_pool']));
+      totalDeposited += (daiPriceInDai * bnToDec(new BigNumber(totalStakedForPool['dai_pool'])));
     }
     if(totalStakedForPool && totalStakedForPool['ycrv_pool']) {
-      totalDeposited += (ycrvPriceInDai * bnToDec(totalStakedForPool['ycrv_pool']));
+      totalDeposited += (ycrvPriceInDai * bnToDec(new BigNumber(totalStakedForPool['ycrv_pool'])));
     }
     if(! daiPriceInDai || ! ycrvPriceInDai || ! totalDeposited) return 0;
     return totalDeposited;

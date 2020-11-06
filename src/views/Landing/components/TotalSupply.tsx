@@ -1,26 +1,15 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback } from 'react'
 import useFarming from '../../../hooks/useFarming'
 import BigNumber from 'bignumber.js'
 import useVelo from 'hooks/useVelo'
 
-import {
-  Container,
-  Spacer,
-  useTheme,
-} from 'react-neu'
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
-
-import Rebase from 'views/Home/components/Rebase'
-
-import useBalances from 'hooks/useBalances'
-import useVesting from 'hooks/useVesting'
 
 const TotalSupply: React.FC = () => {
 
   // Init wallet
   const { reset } = useWallet()
-  const velo = useVelo()
 
   const {
     totalSupply

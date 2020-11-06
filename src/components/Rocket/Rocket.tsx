@@ -1,14 +1,11 @@
-import React, {useCallback, useEffect} from 'react'
+import React, {useCallback} from 'react'
 import useFarming from '../../hooks/useFarming'
-import BigNumber from 'bignumber.js'
 import numeral from 'numeral'
-import { bnToDec, decToBn } from 'utils'
 
 import Rebase from 'views/Home/components/Rebase'
 import RelativeVelocity from 'views/Landing/components/RelativeVelocity'
 import TotalLockedValue from 'views/Landing/components/TotalLockedValue'
 import TotalSupply from 'views/Landing/components/TotalSupply'
-import VeloInCirculation from 'views/Landing/components/VeloInCirculation'
 import RocketFlame from './RocketFlame'
 
 import './Rocket.css';
@@ -42,6 +39,11 @@ const Rocket: React.FC<RocketProps> = () => {
       return '--'
     }
   }, [])
+
+  const getDelutedMarketCap = useCallback((price: any, totalSupply: any) => {
+    const veloPrice = getVloPrice(price);
+    return getValueInTokens(totalSupply) * veloPrice;
+  }, [price, poolInfo])
 
   const getCirculatingMarketCap = useCallback((price: any, totalSupply: any) => {
     const circulatingSupply = getCirculatingSupply(price, totalSupply);
@@ -92,17 +94,25 @@ const Rocket: React.FC<RocketProps> = () => {
           <div>
             <label>Price VLO</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
-              $ {getVloPrice(price) <= 0 ? '--' : getVloPrice(price).toFixed(2)}
+              $ {getVloPrice(price) <= 0 ? '--' : getVloPrice(price).toFixed(4)}
             </div>
           </div>
           <div>
-            <label>Market cap</label>
+            {/*<label>Market cap</label>*/}
+            <label>Deluted Market Cap</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
-              $ {formatValue(getCirculatingMarketCap(price, totalSupply))}
+              {/*formatValue(getCirculatingMarketCap(price, totalSupply))*/}
+              $ {formatValue(getDelutedMarketCap(price, totalSupply))}
             </div>
           </div>
           <div>
-            <label>VLO in circulation</label>
+            <label>Circulating supply</label>
+            <div className="Rocket-data-list-stat">
+              {formatValue(getCirculatingSupply(price, totalSupply))}
+            </div>
+          </div>
+          <div>
+            <label>Max VLO supply</label>
             <div className="Rocket-data-list-stat">
               <TotalSupply />
             </div>

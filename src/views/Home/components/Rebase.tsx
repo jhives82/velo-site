@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import moment from 'moment';
 
 import Countdown, { CountdownRenderProps} from 'react-countdown'
+import { getCache, setCache, getDiffInSeconds } from 'utils/cache'
 import {
   Box,
   Card,
@@ -26,18 +27,24 @@ import UnlockWalletModal from 'components/UnlockWalletModal'
 import WalletModal from 'components/WalletModal'
 
 import useVelo from 'hooks/useVelo'
+import useFarming from 'hooks/useFarming'
+
+import './Rebase.css'
 
 import { getLastRebaseTimestamp, getNextRebaseTimestamp, getNextRebaseInSecondsRemaining } from 'velo-sdk/utils'
 
 const Rebase: React.FC = () => {
-  const velo = useVelo()
+  const { velo } = useVelo()
   const { account } = useWallet()
+
+  const {
+    lastRebaseTimestamp,
+    nextRebaseTimestamp,
+  } = useFarming()
 
   const [walletModalIsOpen, setWalletModalIsOpen] = useState(false)
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false)
 
-  const [lastRebaseTimestamp, setLastRebaseTimestamp] = useState(0)
-  const [nextRebaseTimestamp, setNextRebaseTimestamp] = useState(0)
   const [rebaseWarningModal, setRebaseWarningModal] = useState(false)
   const [time, setTime] = useState(0)
 
@@ -60,39 +67,6 @@ const Rebase: React.FC = () => {
     }, 500)
     return () => clearInterval(refreshInterval)
   }, [setTime])
-
-  const fetchNextRebase = useCallback( async() => {
-    if (!velo) return;
-    const nextRebaseTimestamp = await getNextRebaseTimestamp(velo);
-    if (nextRebaseTimestamp) {
-      setNextRebaseTimestamp(nextRebaseTimestamp)
-    } else {
-      setNextRebaseTimestamp(0)
-    }
-  }, [
-    setNextRebaseTimestamp,
-    velo
-  ])
-
-  const fetchLastRebase = useCallback( async() => {
-    if (!velo) return;
-    const lastRebaseTimestamp = await getLastRebaseTimestamp(velo);
-    if (lastRebaseTimestamp) {
-      setLastRebaseTimestamp(lastRebaseTimestamp)
-    } else {
-      setLastRebaseTimestamp(0)
-    }
-  }, [
-    setLastRebaseTimestamp,
-    velo
-  ])
-
-  useEffect(() => {
-    if (velo) {
-      fetchLastRebase()
-      fetchNextRebase()
-    }
-  }, [fetchNextRebase, velo])
 
   const handleRebaseClick = useCallback(async () => {
     if (!velo) return
@@ -150,6 +124,7 @@ const Rebase: React.FC = () => {
 
         {<div
           className="
+            Rocket-rebase-button--click-area
           "
           onClick={() => {
             if(account) {
@@ -164,14 +139,16 @@ const Rebase: React.FC = () => {
           }}
           />} 
         <Modal isOpen={rebaseWarningModal}>
-          <div className="my-4 px-2">
-            <CardIcon>⚠️</CardIcon>
-          </div>
-          <div className="my-4 px-2">
-            WARNING: Only 1 rebase transaction succeeds every 12 hours. This transaction will likely fail.
+          <div className="my-4 px-4">
+            <p>
+              Easy tiger... let's wait until this countdown has finished,<br />shall we?
+            </p>
+            <div className="Rocket-rebase-countdown">
+              {nextRebaseTimestamp > 0 && renderCountdown(nextRebaseTimestamp)}
+            </div>
           </div>
           <div
-            className="flex justify-end"
+            className="flex justify-center"
             style={{paddingRight: '24px', paddingLeft: '24px'}}
             >
             <Button
@@ -182,7 +159,7 @@ const Rebase: React.FC = () => {
             </Button>
             <Button
               onClick={handleRebaseClick}
-              classes="btn-theme ml-2"
+              classes="btn-theme ml-2 hidden"
             >
               Confirm rebase
             </Button>

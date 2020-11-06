@@ -53,12 +53,12 @@ export const stake = async (velo, poolName, amount, account, onTxHash) => {
   }
 }
 
-export const unstake = async (velo, poolName, amount, account, onTxHash) => {
+export const unstake = async (velo, poolName, amountInSatoshis, account, onTxHash) => {
   const poolContract = velo.contracts[poolName]
   let now = new Date().getTime() / 1000;
-  if (now >= 1597172400) {
+  if (true) {
     return poolContract.methods
-      .withdraw((new BigNumber(amount).times(new BigNumber(10).pow(18))).toString())
+      .withdraw(amountInSatoshis)
       .send({ from: account, gas: 250000 }, async (error, txHash) => {
         if (error) {
             onTxHash && onTxHash('')
@@ -179,6 +179,7 @@ export const getPoolBalance = async (velo, poolName) => {
 
 export const getVloBalanceForPool = async (velo, provider, poolName) => {
   const poolContract = velo.contracts[poolName];
+  if(! poolContract.options.address) return 0;
 
   try {
     const poolBalance = await getBalance(provider, veloAddress, poolContract.options.address)
@@ -246,7 +247,7 @@ export const getNextRebaseInSecondsRemaining = async (velo) => {
     // let offset = 28800; // 8am/8pm utc
     let offset = 0; // 8am/8pm utc
     let secondsToRebase = 0;
-    const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
+    // const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
     // console.log('lastRebaseTimestamp', lastRebaseTimestamp)
     if (now % interval > offset) {
         secondsToRebase = (interval - (now % interval)) + offset;
@@ -263,24 +264,27 @@ export const getNextRebaseTimestamp = async (velo) => {
   try {
     let now = await velo.web3.eth.getBlock('latest').then(res => res.timestamp);
     let interval = 43200; // 12 hours
-    // let offset = 28800; // 8am/8pm utc
     let offset = 0; // 8am/8pm utc
     let secondsToRebase = 0;
-    //START_REBASE_AT
-    const startRebaseTimestamp = await velo.contracts.rebaser.methods.START_REBASE_AT().call()
-    // const startRebaseTimestamp = 1606867200;
-    const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
+
+    // const startRebaseTimestamp = await velo.contracts.rebaser.methods.START_REBASE_AT().call()
+    // Hard code next rebase timestamp, because it saves RPC calls
+    const startRebaseTimestamp = 1606867200;
 
     if(now < startRebaseTimestamp) {
       return startRebaseTimestamp;
     }
+
+    const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
 
     if (now % interval > offset) {
         secondsToRebase = (interval - (now % interval)) + offset;
      } else {
         secondsToRebase = offset - (now % interval);
     }
+
     const nextRebaseTimestamp = Number(lastRebaseTimestamp) + Number(secondsToRebase);
+
     return (nextRebaseTimestamp <= 997176 ? Number(now) + Number(secondsToRebase) : nextRebaseTimestamp)
   } catch (e) {
     console.log(e)
@@ -415,7 +419,7 @@ export const currVested = async (velo, account) => {
 
 export const currUnclaimedDelegatorRewards = async (velo, account) => {
   let BASE = new BigNumber(10).pow(18);
-  let BASE24 = new BigNumber(10).pow(24);
+  // let BASE24 = new BigNumber(10).pow(24);
 
   let start = new BigNumber(1600444800);
   let duration = new BigNumber(90 * 86400);
@@ -433,7 +437,7 @@ export const currUnclaimedDelegatorRewards = async (velo, account) => {
 
 export const currUnclaimedMigratorVesting = async (velo, account) => {
   let BASE = new BigNumber(10).pow(18);
-  let BASE24 = new BigNumber(10).pow(24);
+  // let BASE24 = new BigNumber(10).pow(24);
 
   let start = new BigNumber(1600444800);
   let duration = new BigNumber(30 * 86400);
@@ -451,7 +455,7 @@ export const currUnclaimedMigratorVesting = async (velo, account) => {
 
 export const delegatorRewards = async (velo, account) => {
   let BASE = new BigNumber(10).pow(18);
-  let BASE24 = new BigNumber(10).pow(24);
+  // let BASE24 = new BigNumber(10).pow(24);
 
   let rewards = new BigNumber(await velo.contracts.migrator.methods.delegator_vesting(account).call());
   let amt = await veloToFragment(velo, rewards);
