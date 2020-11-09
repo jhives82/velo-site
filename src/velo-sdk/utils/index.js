@@ -179,6 +179,7 @@ export const getPoolBalance = async (velo, poolName) => {
 
 export const getVloBalanceForPool = async (velo, provider, poolName) => {
   const poolContract = velo.contracts[poolName];
+  if(! poolContract.options.address) return 0;
 
   try {
     const poolBalance = await getBalance(provider, veloAddress, poolContract.options.address)
@@ -246,7 +247,7 @@ export const getNextRebaseInSecondsRemaining = async (velo) => {
     // let offset = 28800; // 8am/8pm utc
     let offset = 0; // 8am/8pm utc
     let secondsToRebase = 0;
-    const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
+    // const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
     // console.log('lastRebaseTimestamp', lastRebaseTimestamp)
     if (now % interval > offset) {
         secondsToRebase = (interval - (now % interval)) + offset;
@@ -415,7 +416,7 @@ export const currVested = async (velo, account) => {
 
 export const currUnclaimedDelegatorRewards = async (velo, account) => {
   let BASE = new BigNumber(10).pow(18);
-  let BASE24 = new BigNumber(10).pow(24);
+  // let BASE24 = new BigNumber(10).pow(24);
 
   let start = new BigNumber(1600444800);
   let duration = new BigNumber(90 * 86400);
@@ -433,7 +434,7 @@ export const currUnclaimedDelegatorRewards = async (velo, account) => {
 
 export const currUnclaimedMigratorVesting = async (velo, account) => {
   let BASE = new BigNumber(10).pow(18);
-  let BASE24 = new BigNumber(10).pow(24);
+  // let BASE24 = new BigNumber(10).pow(24);
 
   let start = new BigNumber(1600444800);
   let duration = new BigNumber(30 * 86400);
@@ -451,7 +452,7 @@ export const currUnclaimedMigratorVesting = async (velo, account) => {
 
 export const delegatorRewards = async (velo, account) => {
   let BASE = new BigNumber(10).pow(18);
-  let BASE24 = new BigNumber(10).pow(24);
+  // let BASE24 = new BigNumber(10).pow(24);
 
   let rewards = new BigNumber(await velo.contracts.migrator.methods.delegator_vesting(account).call());
   let amt = await veloToFragment(velo, rewards);

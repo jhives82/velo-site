@@ -4,7 +4,9 @@ import BigNumber from 'bignumber.js'
 import { provider } from 'web3-core'
 import { useWallet } from 'use-wallet'
 import { bnToDec, decToBn } from 'utils'
+import { getCache, setCache, getDiffInSeconds } from 'utils/cache'
 import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk'
+import moment from 'moment'
 
 import ConfirmTransactionModal from 'components/ConfirmTransactionModal'
 import useApproval from 'hooks/useApproval'
@@ -29,12 +31,11 @@ import {
 } from 'velo-sdk/utils'
 
 import {
-  getUniswapPrice
+  getUniswapPrice,
+  getCoinGeckoPrices
 } from 'utils';
 
 import Context from './Context'
-
-const farmingStartTime = 1600545500*1000
 
 interface EarnedBalance {
   [key: string]: BigNumber;
@@ -93,7 +94,7 @@ const Provider: React.FC = ({ children }) => {
   const [totalSupply, setTotalSupply] = useState<BigNumber>()
   const [price, setPrice] = useState<Price>({})
 
-  const velo = useVelo()
+  const { velo } = useVelo()
   const { account, ethereum }: { account: string | null, ethereum: provider } = useWallet()
 
   let stakedBalances: {
@@ -142,6 +143,13 @@ const Provider: React.FC = ({ children }) => {
   ])
 
   const fetchEarnedBalance = useCallback(async (poolContracts: any) => {
+    const earnedBalanceFromCache = getCache('earnedBalance')
+    const diffInSeconds1 = getDiffInSeconds(earnedBalanceFromCache.timestamp)
+    if(earnedBalanceFromCache && earnedBalanceFromCache.timestamp) {
+      setEarnedBalance(earnedBalanceFromCache.data);
+      if(diffInSeconds1 <= 60*2) return;
+    }
+
     if (!account || !velo) return
     for(let poolName in poolContracts) {
       const balance = await getEarned(velo, velo.contracts[poolName], account)
@@ -151,6 +159,7 @@ const Provider: React.FC = ({ children }) => {
     }
    
     setEarnedBalance(earnedBalances)
+    setCache('earnedBalance', earnedBalances)
   }, [
     account,
     setEarnedBalance,
@@ -161,7 +170,21 @@ const Provider: React.FC = ({ children }) => {
 
   // Get total staked balance (of all addresses)
   const fetchTotalStakedBalance = useCallback(async () => {
+    const totalStakedBalanceFromCache = getCache('totalStakedBalance')
+    const diffInSeconds1 = getDiffInSeconds(totalStakedBalanceFromCache.timestamp)
+    if(totalStakedBalanceFromCache && totalStakedBalanceFromCache.timestamp && diffInSeconds1 <= 60*5) {
+      setTotalStakedBalance(new BigNumber(totalStakedBalanceFromCache.data));
+    }
+
+    const totalStakedForPoolFromCache = getCache('totalStakedForPool')
+    const diffInSeconds2 = getDiffInSeconds(totalStakedForPoolFromCache.timestamp)
+    if(totalStakedForPoolFromCache && totalStakedForPoolFromCache.timestamp) {
+      setTotalStakedForPool(totalStakedForPoolFromCache.data);
+      if(diffInSeconds2 <= 60*5) return;
+    }
+
     if (! velo) return;
+
     let total = 0;
     for(let poolName in poolContracts) {
       const totalStaked = await getTotalStakedForPool(velo, velo.contracts[poolName])
@@ -170,8 +193,11 @@ const Provider: React.FC = ({ children }) => {
         if(poolName == 'dai_pool') total += bnToDec(totalStaked);
       }
     }
+
     setTotalStakedBalance(decToBn(total));
+    setCache('totalStakedBalance', decToBn(total))
     setTotalStakedForPool(totalStakedForPools);
+    setCache('totalStakedForPool', totalStakedForPools)
   }, [
     account,
     setTotalStakedBalance,
@@ -182,6 +208,15 @@ const Provider: React.FC = ({ children }) => {
   ])
 
   const fetchStakedBalance = useCallback(async (poolContracts: any) => {
+    const stakedBalanceFromCache = getCache('stakedBalance')
+    const diffInSeconds = getDiffInSeconds(stakedBalanceFromCache.timestamp)
+    if(stakedBalanceFromCache && stakedBalanceFromCache.timestamp) {
+      if(stakedBalanceFromCache.data && stakedBalanceFromCache.data['dai_pool']) {
+        setStakedBalance(stakedBalanceFromCache.data);
+        if(diffInSeconds <= 50) return;
+      }
+    }
+
     if (!account || !velo) return
 
     for(let poolName in poolContracts) {
@@ -192,6 +227,7 @@ const Provider: React.FC = ({ children }) => {
     }
 
     setStakedBalance(stakedBalances)
+    setCache('stakedBalance', stakedBalance);
   }, [
     account,
     stakedBalance,
@@ -201,9 +237,18 @@ const Provider: React.FC = ({ children }) => {
   ])
 
   const fetchRelativeVelocity = useCallback(async () => {
+    const relativeVelocityFromCache = getCache('relativeVelocity')
+    const diffInSeconds1 = getDiffInSeconds(relativeVelocityFromCache.timestamp)
+    if(relativeVelocityFromCache && relativeVelocityFromCache.timestamp) {
+      setRelativeVelocity(relativeVelocityFromCache.data);
+      if(diffInSeconds1 <= 60*10) return;
+    }
+
     if (! velo) return;
+
     const relativeVelocity = await getRelativeVelocity(velo)
     setRelativeVelocity(relativeVelocity);
+    setCache('relativeVelocity', relativeVelocity)
   }, [
     velo,
     setRelativeVelocity
@@ -219,25 +264,35 @@ const Provider: React.FC = ({ children }) => {
 
   // Get total supply
   const fetchTotalSupply = useCallback(async () => {
+    const totalSupplyFromCache = getCache('totalSupply')
+    const diffInSeconds = getDiffInSeconds(totalSupplyFromCache.timestamp)
+    if(totalSupplyFromCache && totalSupplyFromCache.timestamp) {
+      setTotalSupply(totalSupplyFromCache.data);
+      if(diffInSeconds <= 60*5) return;
+    }
+
     if (! velo) return;
     const totalSupply = await getTotalSupply(velo)
     setTotalSupply(totalSupply);
+    setCache('totalSupply', totalSupply);
   }, [
     velo,
     setTotalSupply
   ])
 
   const fetchPrices = useCallback(async () => {
-    // VLO price in ETH
+    const pricesFromCache = getCache('prices')
+    const diffInSeconds = getDiffInSeconds(pricesFromCache.timestamp)
+    if(pricesFromCache && pricesFromCache.timestamp) {
+      setPrice(pricesFromCache.data);
+      if(diffInSeconds <= 60*5) return;
+    }
+
+    // VLO price in ETH, based on Uniswap
     const VLO_WETH: any = await getUniswapPrice(
       WETH[ChainId.MAINNET],
       new Token(ChainId.MAINNET, '0x98ad9B32dD10f8D8486927D846D4Df8BAf39Abe2', 18),// VLO
       new Token(ChainId.MAINNET, '0x98ad9B32dD10f8D8486927D846D4Df8BAf39Abe2', 18) // VLO
-    );
-    const YCRV_WETH: any = await getUniswapPrice(
-      WETH[ChainId.MAINNET],
-      new Token(ChainId.MAINNET, '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8', 18),// YCRV-LP
-      new Token(ChainId.MAINNET, '0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8', 18),// YCRV-LP
     );
     const WETH_DAI: any = await getUniswapPrice(
       WETH[ChainId.MAINNET],
@@ -247,9 +302,24 @@ const Provider: React.FC = ({ children }) => {
 
     if(VLO_WETH) prices['VLO_WETH'] = VLO_WETH;
     if(WETH_DAI) prices['WETH_DAI'] = WETH_DAI;
-    if(WETH_DAI) prices['YCRV_WETH'] = YCRV_WETH;
+
+    try {
+      // Get prices from CoinGecko
+      const coinGeckoPrices: any = await getCoinGeckoPrices();
+
+      // If we got CoinGecko prices, store them
+      if(coinGeckoPrices) {
+        for(let coinName in coinGeckoPrices) {
+          const priceData = coinGeckoPrices[coinName];
+          prices[`${coinName}`] = priceData.usd;
+        };
+      }
+    } catch (e) {
+      console.error('Error while getting CoinGecko prices', e)
+    }
 
     setPrice(prices)
+    setCache('prices', prices);
   }, [
     prices,
     setPrice,
@@ -350,24 +420,29 @@ const Provider: React.FC = ({ children }) => {
   ])
 
   const fetchPoolInfo = useCallback(async () => {
+    const poolInfosFromCache = getCache('poolInfos')
+    const diffInSeconds = getDiffInSeconds(poolInfosFromCache.timestamp)
+    if(poolInfosFromCache && poolInfosFromCache.timestamp) {
+      setPoolInfo(poolInfosFromCache.data);
+      if(diffInSeconds <= 60*5) return;
+    }
+
     if (!velo || !account) return;
 
     for(let poolName in poolContracts) {
-      const startTime = await getStartTime(velo, poolName);
+      // const startTime = await getStartTime(velo, poolName);
       const balance = await getPoolBalance(velo, poolName);
       const vloBalanceForPool = await getVloBalanceForPool(velo, ethereum, poolName);
       // const duration = await getPoolDuration(velo, poolName)
       const duration = 0
-      if(startTime) {
-        if(! poolInfos[poolName] ) {
-          poolInfos[poolName] = {
-            startTime: 0,
-            duration: 0,
-            balance: 0,
-            vloBalance: 0
-          };
-        }
-        poolInfos[poolName].startTime = startTime;
+      if(! poolInfos[poolName] ) {
+        poolInfos[poolName] = {
+          startTime: 0,
+          duration: 0,
+          balance: 0,
+          vloBalance: 0
+        };
+        // poolInfos[poolName].startTime = startTime;
         poolInfos[poolName].duration = duration;
         poolInfos[poolName].balance = balance;
         poolInfos[poolName].vloBalance = vloBalanceForPool;
@@ -375,6 +450,7 @@ const Provider: React.FC = ({ children }) => {
     }
 
     setPoolInfo(poolInfos)
+    setCache('poolInfos', poolInfos);
   }, [
     setPoolInfo,
     poolInfos,
@@ -411,14 +487,6 @@ const Provider: React.FC = ({ children }) => {
     return () => clearInterval(refreshInterval)
   }, [poolContracts, account])
 
-  // useEffect(() => {
-  //   fetchPrices();
-  //   const refreshInterval = setInterval(() => {
-  //     fetchPrices()
-  //   }, account ? 1000*60*3 : 1000*60*120)
-  //   return () => clearInterval(refreshInterval)
-  // }, [account])
-
   useEffect(() => {
     fetchRelativeVelocity()
     fetchTotalSupply()
@@ -430,7 +498,6 @@ const Provider: React.FC = ({ children }) => {
 
   return (
     <Context.Provider value={{
-      farmingStartTime,
       countdown,
       earnedBalance,
       isHarvesting,

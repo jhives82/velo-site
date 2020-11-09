@@ -1,14 +1,11 @@
-import React, {useCallback, useEffect} from 'react'
+import React, {useCallback} from 'react'
 import useFarming from '../../hooks/useFarming'
-import BigNumber from 'bignumber.js'
 import numeral from 'numeral'
-import { bnToDec, decToBn } from 'utils'
 
 import Rebase from 'views/Home/components/Rebase'
 import RelativeVelocity from 'views/Landing/components/RelativeVelocity'
 import TotalLockedValue from 'views/Landing/components/TotalLockedValue'
 import TotalSupply from 'views/Landing/components/TotalSupply'
-import VeloInCirculation from 'views/Landing/components/VeloInCirculation'
 import RocketFlame from './RocketFlame'
 
 import './Rocket.css';
@@ -102,7 +99,17 @@ const Rocket: React.FC<RocketProps> = () => {
             </div>
           </div>
           <div>
-            <label>VLO in circulation</label>
+            <label>Circulating supply</label>
+            <div className="Rocket-data-list-stat">
+              {formatValue(getCirculatingSupply(price, totalSupply))}
+            </div>
+            {/*<label>Total supply</label>
+            <div className="Rocket-data-list-stat">
+              <TotalSupply />
+            </div>*/}
+          </div>
+          <div>
+            <label>Max VLO supply</label>
             <div className="Rocket-data-list-stat">
               <TotalSupply />
             </div>

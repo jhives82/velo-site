@@ -84,6 +84,11 @@
 .Rocket-data-list > div:nth-child(5) {
   height: calc(600px * 0.1);
 }
+.Rocket-data-list > div:nth-child(6) {
+  height: calc(600px * 0.08);
+  justify-content: center;
+  line-height: 18px;
+}
 .Rocket-data-list-stat {
   font-size: 18px;
   font-weight: bold;

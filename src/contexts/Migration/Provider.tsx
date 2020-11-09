@@ -12,7 +12,7 @@ import Context from './Context'
 
 const Provider: React.FC = ({ children }) => {
   const { account } = useWallet()
-  const velo = useVelo()
+  const { velo } = useVelo()
   const [isMigrating, setIsMigrating] = useState(false)
   const [confirmTxModalIsOpen, setConfirmTxModalIsOpen] = useState(false)
 

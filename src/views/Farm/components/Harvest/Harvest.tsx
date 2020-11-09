@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-
+import BigNumber from 'bignumber.js'
 import numeral from 'numeral'
 import {
   Box,
@@ -35,7 +35,6 @@ const Harvest: React.FC<HarvestProps> = ({
     poolStatus,
     earnedBalance,
     isHarvesting,
-    isRedeeming,
     onHarvest,
   } = useFarming()
 
@@ -89,13 +88,12 @@ const Harvest: React.FC<HarvestProps> = ({
     }
   }, [
     isHarvesting,
-    isRedeeming,
     onHarvest,
   ])
 
   const formattedEarnedBalance = (earnedBalance: any) => {
     if (earnedBalance && earnedBalance[poolName]) {
-      return numeral(bnToDec(earnedBalance[poolName])).format('0.00a')
+      return numeral(bnToDec(new BigNumber(earnedBalance[poolName]))).format('0.00a')
     } else {
       return '--'
     }

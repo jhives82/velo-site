@@ -18,9 +18,9 @@ const ConfirmTransactionModal: React.FC<ModalProps> = ({
 
   const WalletLogo = useMemo(() => {
     if (connector === 'injected') {
-      return <img src={metamaskLogo} height={96} />
+      return <img src={metamaskLogo} height={96} alt="Metamask logo" />
     } else if (connector === 'walletconnect') {
-      return <img src={walletConnectLogo} height={72} />
+      return <img src={walletConnectLogo} height={72} alt="WalletConenct logo" />
     }
   }, [connector])
 
