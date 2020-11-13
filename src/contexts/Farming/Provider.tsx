@@ -365,17 +365,26 @@ const Provider: React.FC = ({ children }) => {
     const pricesFromCoinGecko = await fetchPricesFromCoinGecko();
     const pricesFromUniSwap = await fetchPricesFromUniswap();
 
+    const getVloPrice = (price: any) => {
+      if(! price) return 0;
+      if(price.VLO_WETH && price.WETH_DAI) {
+        return Number(price.VLO_WETH) * Number(price.WETH_DAI);
+      }
+      return 0;
+    }
+
     const allPrices = Object.assign({},
       pricesFromCoinGecko,
       pricesFromUniSwap,
       {
-        vlo: pricesFromUniSwap.VLO_WETH*1
+        vlo: getVloPrice(price)
       }
     );
 
     setPrice(allPrices)
     setCache('prices', allPrices);
   }, [
+    price,
     prices,
     setPrice,
     getUniswapPrice,
