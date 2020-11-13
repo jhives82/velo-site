@@ -308,16 +308,16 @@ const Provider: React.FC = ({ children }) => {
     setTotalSupply
   ])
 
-  const fetchPrices = useCallback(async () => {
-    const cacheSet = giveCacheToApp('prices', cacheDuration['prices'], setPrice);
-    if(cacheSet) return;
-
-    const pricesFromCache = getCache('prices')
-    const diffInSeconds = getDiffInSeconds(pricesFromCache.timestamp)
-    if(pricesFromCache && pricesFromCache.timestamp) {
-      setPrice(pricesFromCache.data);
-      if(diffInSeconds <= 60*5) return;
+  const getVloPrice = (price: any) => {
+    if(! price) return 0;
+    if(price.VLO_WETH && price.WETH_DAI) {
+      return Number(price.VLO_WETH) * Number(price.WETH_DAI);
     }
+    return 0;
+  }
+
+  const fetchPricesFromUniswap = async () => {
+    let pricePerCoin: any = [];
 
     // VLO price in ETH, based on Uniswap
     const VLO_WETH: any = await getUniswapPrice(
@@ -331,8 +331,14 @@ const Provider: React.FC = ({ children }) => {
       WETH[ChainId.MAINNET]
     );
 
-    if(VLO_WETH) prices['VLO_WETH'] = VLO_WETH;
-    if(WETH_DAI) prices['WETH_DAI'] = WETH_DAI;
+    if(VLO_WETH) pricePerCoin['VLO_WETH'] = VLO_WETH;
+    if(WETH_DAI) pricePerCoin['WETH_DAI'] = WETH_DAI;
+
+    return pricePerCoin;
+  }
+
+  const fetchPricesFromCoinGecko = async () => {
+    let pricePerCoin: any = [];
 
     try {
       // Get prices from CoinGecko
@@ -342,15 +348,33 @@ const Provider: React.FC = ({ children }) => {
       if(coinGeckoPrices) {
         for(let coinName in coinGeckoPrices) {
           const priceData = coinGeckoPrices[coinName];
-          prices[`${coinName}`] = priceData.usd;
+          pricePerCoin[`${coinName}`] = priceData.usd;
         };
       }
     } catch (e) {
       console.error('Error while getting CoinGecko prices', e)
     }
 
-    setPrice(prices)
-    setCache('prices', prices);
+    return pricePerCoin;
+  }
+
+  const fetchPrices = useCallback(async () => {
+    const cacheSet = giveCacheToApp('prices', cacheDuration['prices'], setPrice);
+    if(cacheSet && false) return;
+
+    const pricesFromCoinGecko = await fetchPricesFromCoinGecko();
+    const pricesFromUniSwap = await fetchPricesFromUniswap();
+
+    const allPrices = Object.assign({},
+      pricesFromCoinGecko,
+      pricesFromUniSwap,
+      {
+        vlo: pricesFromUniSwap.VLO_WETH*1
+      }
+    );
+
+    setPrice(allPrices)
+    setCache('prices', allPrices);
   }, [
     prices,
     setPrice,

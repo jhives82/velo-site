@@ -169,20 +169,19 @@ const FarmCard: React.FC<FarmCardProps> = ({
     return 0;
   }, [price])
 
-  const getTotalDepositedInTokens = useCallback((price: any, coinName: string) => {
+  const getTotalStakedInTokens = useCallback(() => {
     let totalDeposited = 0;
     if(totalStakedForPool && totalStakedForPool[getPoolName()]) {
       totalDeposited = bnToDec(new BigNumber(totalStakedForPool[getPoolName()]));
     }
     return totalDeposited;
   }, [
-    price,
     totalStakedForPool
   ])
 
   const getTotalDepositedInUsd = useCallback((price: any, coinName: string) => {
     const coinPriceInUsd = getPrice(price, coinName);
-    let totalDeposited = getTotalDepositedInTokens(price, coinName);
+    let totalDeposited = getTotalStakedInTokens();
     if(! coinPriceInUsd || ! totalDeposited) return 0;
     return Number(coinPriceInUsd) * Number(totalDeposited);
   }, [
@@ -313,14 +312,27 @@ const FarmCard: React.FC<FarmCardProps> = ({
 
   const expandedFarmCard = hasStakedForPool(getPoolName()) || farmCardIsExpanded;
 
-  const APR = () => {
-    // APR = ((perc_of_pool)(weekly_rate_in_usd * 52)) / 100
-    if(! coinName) return '--';
-    if(! price) return '--';
-    if(! stakedBalance || ! stakedBalance[getPoolName()]) return '--';
-    const totalDepositedInUsd = getTotalDepositedInUsd(price, coinName);
-    const totalStakedForPool = bnToDec(new BigNumber(stakedBalance[getPoolName()]))
-    return '--';
+  const getAPR = () => {
+    const defaultReturnValue = '--';
+    // Params validation
+    if(! coinName) return defaultReturnValue;
+    if(! price || ! price[veloCoinNameToCoinGeckoCoinName(coinName)]) return defaultReturnValue;
+    if(! stakedBalance || ! stakedBalance[getPoolName()]) return defaultReturnValue;
+
+    const stakedInTotal = getTotalStakedInTokens();
+    const stakedByUser = bnToDec(new BigNumber(stakedBalance[getPoolName()]))
+
+    const percentageStaked = (stakedByUser / stakedInTotal)
+    const weeklyVloRate = getEmissionRatePerWeek(getPoolName())
+    const vloPrice = price['vlo'];
+    const usdValueStakedByUser = stakedByUser * Number(price[veloCoinNameToCoinGeckoCoinName(coinName)]);
+
+    // formula: APR = ((perc_of_pool)*(weekly_rate_in_usd * 52)) / 100000
+    // i.e.     APR = ((100000/1550000)*(5000000*0.01*52))/100000
+    const APR = (Number(percentageStaked) * Number(weeklyVloRate) * Number(vloPrice) * 52) / Number(usdValueStakedByUser);
+
+    // Convert to percentages, therefor times 100. I.e. 0.2 -> 20%
+    return APR * 100;
   }
 
   return (
@@ -349,15 +361,18 @@ const FarmCard: React.FC<FarmCardProps> = ({
             Total deposited: {getTotalDepositedInUsd(price, coinName || '') > 0 ? <span>
               $ {format(getTotalDepositedInUsd(price, coinName || ''))}
             </span> : <span>
-              {format(getTotalDepositedInTokens(price, coinName || ''))} tokens
+              {format(getTotalStakedInTokens())} tokens
             </span>}
           </div>
           <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
           </div>
-          <div className="FarmCard-value-locked my-4 text-center hidden">
-            {APR}
-          </div>
+          {poolName != 'velo_eth_uni_pool' && poolName != 'velo_eth_blp_pool' && <div
+            className="FarmCard-value-locked my-4 text-center"
+            title="APR = (perc_of_pool * weekly_vlo_rate_in_usd * 52) / staked_usd"
+            >
+            APR = {format(getAPR())}
+          </div>}
         </div>
         {(! expandedFarmCard && poolAddress) && <div className={`FarmCard-contract p-2 -ml-4 -mr-4 ${! expandedFarmCard ? '' : ''}`}>
           <a href={`https://etherscan.io/address/${poolAddress}`} target="_blank" rel="external" className="FarmCard-contract-link">
