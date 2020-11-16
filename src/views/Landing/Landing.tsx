@@ -88,6 +88,8 @@ const Landing: React.FC = () => {
     <Page>
       <div className="Landing">
 
+        <QuickStats />
+
         <PageHeader />
 
         <br />

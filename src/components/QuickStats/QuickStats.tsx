@@ -24,12 +24,21 @@ const QuickStats: React.FC<QuickStatsProps> = () => {
 
   const {
     totalSupply,
-    price
+    price,
+    poolInfo
   } = useFarming()
 
   const getValueInTokens = (number: BigNumber, decimals = 18) => {
     return Number(number) / Math.pow(10, decimals)
   }
+
+  const formatValue = useCallback((value?: any) => {
+    if (value) {
+      return numeral(value).format('0.00a')
+    } else {
+      return '--'
+    }
+  }, [])
 
   const displayMarketCap = useCallback((value?: BigNumber) => {
     if (value) {
@@ -46,6 +55,11 @@ const QuickStats: React.FC<QuickStatsProps> = () => {
     }
     return 0;
   }, [price])
+
+  const getDelutedMarketCap = useCallback((price: any, totalSupply: any) => {
+    const veloPrice = getVloPrice(price);
+    return getValueInTokens(totalSupply) * veloPrice;
+  }, [price, poolInfo])
 
   return (
     <div className="
@@ -73,17 +87,17 @@ const QuickStats: React.FC<QuickStatsProps> = () => {
         <div>
           <label>Price VLO</label>
           <div className="QuickStats-data-list-stat" style={{color: '#f00'}}>
-            $ {getVloPrice(price) <= 0 ? '--' : getVloPrice(price).toFixed(2)}
+            $ {getVloPrice(price) <= 0 ? '--' : getVloPrice(price).toFixed(4)}
           </div>
         </div>
         <div>
-          <label>Market cap</label>
+          <label>Deluted Market Cap</label>
           <div className="QuickStats-data-list-stat" style={{color: '#f00'}}>
-            $ {(false && totalSupply) ? displayMarketCap(totalSupply) : '--'}
+            $ {formatValue(getDelutedMarketCap(price, totalSupply))}
           </div>
         </div>
         <div>
-          <label>Total supply</label>
+          <label>Max VLO supply</label>
           <div className="QuickStats-data-list-stat">
             <TotalSupply />
           </div>
