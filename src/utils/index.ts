@@ -85,6 +85,17 @@ export const getBalance = async (provider: provider, tokenAddress: string, userA
   }
 }
 
+export const getTotalContractSupply = async (provider: provider, tokenAddress: string): Promise<string> => {
+  const tokenContract = getERC20Contract(provider, tokenAddress)
+  
+  try {
+    const totalSupply: string = await tokenContract.methods.totalSupply().call()
+    return totalSupply
+  } catch (e) {
+    return '0'
+  }
+}
+
 // https://uniswap.org/docs/v2/javascript-SDK/pricing/
 export const getUniswapPrice = async (pair1Token: any, pair2Token: any, inputToken: any): Promise<string> => {
   const pair = await Fetcher.fetchPairData(
@@ -136,5 +147,5 @@ export const veloCoinNameToCoinGeckoCoinName = (veloCoinName: string) => {
     'ycrv': 'curve-fi-ydai-yusdc-yusdt-ytusd',
     'dai': 'dai'
   };
-  return conversionArray[veloCoinName] || '';
+  return conversionArray[veloCoinName] || veloCoinName;
 }

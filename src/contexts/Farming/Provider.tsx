@@ -7,6 +7,7 @@ import { bnToDec, decToBn } from 'utils'
 import { resetUserSpecificCache, getCache, setCache, getDiffInSeconds, giveCacheToApp } from 'utils/cache'
 import { ChainId, Token, WETH, Fetcher, Route } from '@uniswap/sdk'
 import moment from 'moment'
+import {addresses} from 'constants/tokenAddresses'
 
 import ConfirmTransactionModal from 'components/ConfirmTransactionModal'
 import useApproval from 'hooks/useApproval'
@@ -30,12 +31,15 @@ import {
   getVloBalanceForPool,
   getLastRebaseTimestamp,
   getNextRebaseTimestamp,
-  getNextRebaseInSecondsRemaining
+  getNextRebaseInSecondsRemaining,
+  getReserves,
+  getTotalSupplyForLpContract
 } from 'velo-sdk/utils'
 
 import {
   getUniswapPrice,
-  getCoinGeckoPrices
+  getCoinGeckoPrices,
+  getBalance,
 } from 'utils';
 
 import Context from './Context'
@@ -358,12 +362,42 @@ const Provider: React.FC = ({ children }) => {
     return pricePerCoin;
   }
 
+  const fetchPricesFromUniSwapPools = useCallback(async () => {
+    let pricePerCoin: any = [];
+
+    const uniReservesInEth = await getReserves(ethereum, addresses.velo_eth_uni);
+    const uniLpTokenBalance = await getTotalSupplyForLpContract(ethereum, addresses.velo_eth_uni);
+    // Get UniLP token value in WETH
+    if(uniLpTokenBalance && uniReservesInEth && uniReservesInEth.reserve1) {
+      const lpTokens = uniLpTokenBalance / Math.pow(10, 18);
+      const amountOfWeth = uniReservesInEth.reserve1 / Math.pow(10, 18);
+      pricePerCoin['velo_eth_uni_lp_token_value_in_weth'] = (amountOfWeth*2) / lpTokens;
+    }
+
+    // TODO https://etherscan.io/address/0xe52e551141d29e4d08a826ff029059f1fb5f6f52#readContract
+    // const blpReservesInEth: any = await getBalance(ethereum, addresses.weth, addresses.velo_eth_blp);
+    // const blpLpTokenBalance = await getTotalSupplyForLpContract(ethereum, addresses.velo_eth_blp);
+    // // Get UniLP token value in WETH
+    // if(blpLpTokenBalance && blpReservesInEth) {
+    //   const blpTokens = blpLpTokenBalance / Math.pow(10, 18);
+    //   console.log('blpReservesInEth', blpReservesInEth)
+    //   const amountOfWeth = blpReservesInEth / Math.pow(10, 18);
+    //   pricePerCoin['velo_eth_blp_lp_token_value_in_weth'] = (amountOfWeth*2) / blpTokens;
+    // }
+
+    return pricePerCoin;
+  }, [
+    getReserves,
+    ethereum,
+  ])
+
   const fetchPrices = useCallback(async () => {
     const cacheSet = giveCacheToApp('prices', cacheDuration['prices'], setPrice);
     if(cacheSet && false) return;
 
     const pricesFromCoinGecko = await fetchPricesFromCoinGecko();
     const pricesFromUniSwap = await fetchPricesFromUniswap();
+    const pricesFromUniSwapPools: any = await fetchPricesFromUniSwapPools();
 
     const getVloPrice = (price: any) => {
       if(! price) return 0;
@@ -373,11 +407,24 @@ const Provider: React.FC = ({ children }) => {
       return 0;
     }
 
-    const allPrices = Object.assign({},
+    const getUniLpPrice = (price: any, ethValuePerToken: number) => {
+      if(! price) return 0;
+      if(price.VLO_WETH && price.WETH_DAI) {
+        return Number(ethValuePerToken) * Number(price.WETH_DAI);
+      }
+      return 0;
+    }
+
+    let allPrices = Object.assign({},
       pricesFromCoinGecko,
       pricesFromUniSwap,
+      pricesFromUniSwapPools
+    );
+
+    allPrices = Object.assign({}, allPrices,
       {
-        vlo: getVloPrice(price)
+        vlo: getVloPrice(price),
+        velo_eth_uni: getUniLpPrice(price, pricesFromUniSwapPools['velo_eth_uni_lp_token_value_in_weth'])
       }
     );
 

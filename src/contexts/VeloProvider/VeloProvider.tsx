@@ -34,14 +34,11 @@ const VeloProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     let provider, randomBetween1And10 = Math.floor((Math.random() * 10) + 1);
-    if(true || randomBetween1And10 > 5) {//6 7 8 9 10
+    if(randomBetween1And10 > 6) {//7 8 9 10
       provider = ethereum || config.rpcUrl;
     } else {
       provider = ethereum;
     }
-    // const provider = ethereum || 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee';
-    // const provider = ethereum || 'https://eth-kovan.alchemyapi.io/v2/HGgrm9x6IQ9fI4oa48gzP-YSNmyVqaRL';
-    // const provider = ethereum || 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk';
     if (provider) {
       const veloLib = new Velo(
         provider,

@@ -1,6 +1,7 @@
 import {ethers} from 'ethers'
 import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
+import UniswapPairABI from 'constants/abi/UniswapPair.json'
 
 import {
   getBalance,
@@ -24,6 +25,32 @@ const GAS_LIMIT = {
 
 export const getPoolStartTime = async (poolContract) => {
   return await poolContract.methods.starttime().call()
+}
+
+export const getReserves = async (provider, tokenAddress) => {
+  const web3 = new Web3(provider)
+  let contract = new web3.eth.Contract(UniswapPairABI.abi)
+  contract.options.address = tokenAddress;
+
+  try {
+    const reserves = await contract.methods.getReserves().call()
+    return reserves
+  } catch (e) {
+    return '0'
+  }
+}
+
+export const getTotalSupplyForLpContract = async (provider, tokenAddress) => {
+  const web3 = new Web3(provider)
+  let contract = new web3.eth.Contract(UniswapPairABI.abi)
+  contract.options.address = tokenAddress;
+
+  try {
+    const totalSupply = await contract.methods.totalSupply().call()
+    return totalSupply
+  } catch (e) {
+    return '0'
+  }
 }
 
 export const stake = async (velo, poolName, amount, account, onTxHash) => {
@@ -184,6 +211,19 @@ export const getVloBalanceForPool = async (velo, provider, poolName) => {
   try {
     const poolBalance = await getBalance(provider, veloAddress, poolContract.options.address)
     return poolBalance;
+  } catch (e) {
+    console.log(e)
+    return 0
+  }
+}
+
+export const getBalanceForPool = async (velo, provider, poolName, tokenAddress) => {
+  const poolContract = velo.contracts[poolName];
+  if(! poolContract.options.address) return 0;
+
+  try {
+    const balance = await getBalance(provider, tokenAddress, poolContract.options.address)
+    return balance;
   } catch (e) {
     console.log(e)
     return 0

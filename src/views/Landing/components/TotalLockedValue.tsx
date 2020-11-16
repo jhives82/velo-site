@@ -52,6 +52,9 @@ const TotalLockedValue: React.FC = () => {
     if(totalStakedForPool && totalStakedForPool['ycrv_pool']) {
       totalDeposited += (ycrvPriceInDai * bnToDec(new BigNumber(totalStakedForPool['ycrv_pool'])));
     }
+    if(totalStakedForPool && totalStakedForPool['velo_eth_uni_pool']) {
+      totalDeposited += (getPrice(price, 'velo_eth_uni') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_uni_pool'])));
+    }
     if(! daiPriceInDai || ! ycrvPriceInDai || ! totalDeposited) return 0;
     return totalDeposited;
   }, [price, totalStakedForPool])

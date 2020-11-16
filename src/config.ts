@@ -20,10 +20,11 @@ if(_env == 'dev') {
 	config = {
 		_env: 'prod',
 		chainId: 1,
-		// rpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk',
-		rpcUrl: 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee',
-		// ethereumProvider: new AlchemyProvider('homestead', 't972NXo6MXqBNTxF3VGrBpvwlx9_roXk')
-		ethereumProvider: new InfuraProvider('homestead', 'e508c065786d4624a93f30b6e5c4bbee')
+		// rpcUrl: null,
+		rpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk',
+		// rpcUrl: 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee',
+		ethereumProvider: new AlchemyProvider('homestead', 't972NXo6MXqBNTxF3VGrBpvwlx9_roXk')
+		// ethereumProvider: new InfuraProvider('homestead', 'e508c065786d4624a93f30b6e5c4bbee')
 	}
 }
 

@@ -181,6 +181,9 @@ const FarmCard: React.FC<FarmCardProps> = ({
 
   const getTotalDepositedInUsd = useCallback((price: any, coinName: string) => {
     const coinPriceInUsd = getPrice(price, coinName);
+    // if(coinName == 'velo_eth_uni') {
+    //   console.log('price', price, coinName, 'coinPriceInUsd', coinPriceInUsd)
+    // }
     let totalDeposited = getTotalStakedInTokens();
     if(! coinPriceInUsd || ! totalDeposited) return 0;
     return Number(coinPriceInUsd) * Number(totalDeposited);
@@ -324,13 +327,13 @@ const FarmCard: React.FC<FarmCardProps> = ({
   }
 
   const getAPR = () => {
-    const defaultReturnValue = '--';
+    const defaultReturnValue = false;
     // Params validation
     if(! coinName) return defaultReturnValue;
     if(! price || ! price[veloCoinNameToCoinGeckoCoinName(coinName)]) return defaultReturnValue;
 
     const stakedInTotal = getTotalStakedInTokens();
-    const stakedUsdInTotal = getTotalDepositedInUsd(price, coinName || '');
+    const stakedUsdInTotal = getTotalDepositedInUsd(price, coinName || '')||0;
     const stakedByUser = getStakedTokensForUser()||0;
 
     const percentageStaked = (100000 / stakedUsdInTotal)
@@ -338,8 +341,8 @@ const FarmCard: React.FC<FarmCardProps> = ({
     const vloPrice = price['vlo'];
     const usdValueStakedByUser = getUsdValueStakedForUser();
 
-    // console.log(`(100000/${stakedUsdInTotal} * ${weeklyVloRate} * ${vloPrice} * 52) / 100000 * 100`)
-
+    // if(coinName == 'velo_eth_uni')
+    //   console.log(stakedUsdInTotal, "((Number(percentageStaked) * Number(weeklyVloRate) * Number(vloPrice) * 52) / 100000) * 100", percentageStaked, weeklyVloRate, vloPrice)
     // formula: APR = (((100000/tvl_pool_in_usd)*weekly_rate_in_usd * 52) / 100000) * 100
     // formula: APR = (((100000/tvl_pool_in_usd)*weekly_rate_in_usd * 52) / 100000) * 100
     const APR = ((Number(percentageStaked) * Number(weeklyVloRate) * Number(vloPrice) * 52) / 100000) * 100;
@@ -349,6 +352,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
   }
 
   const isFoundationPool = poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool'
+  const isEvilMisesPool = poolName == 'velo_eth_blp_pool'
 
   return (
     <div>
@@ -382,7 +386,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
           <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
           </div>
-          {! isFoundationPool && <div
+          {! isEvilMisesPool && getAPR() && <div
             className="FarmCard-value-locked my-4 text-center"
             >
             APR = {Number(getAPR()).toFixed(1)} %
@@ -401,7 +405,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
           <div className="FarmCard-value-locked my-4">
             Total staked: {formattedStakedBalance(stakedBalance)}
           </div>
-          {! isFoundationPool && <div className="FarmCard-value-locked my-4">
+          {! isEvilMisesPool && <div className="FarmCard-value-locked my-4">
             Total staked USD: $ {format(getUsdValueStakedForUser())}
           </div>}
 
