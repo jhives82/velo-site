@@ -53,6 +53,11 @@ button {
 
 .hidden { display: none; }
 
+.no-underline {
+  text-decoration: none;
+}
+
+.block { display:block; }
 @media(min-width: 641px) {
   .sm--hidden {
     display: none;

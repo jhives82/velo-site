@@ -17,4 +17,8 @@ export const addresses: any = {
   'velo_eth_uni': '0x259e558892783fd8941ebbeda694318c1c3d9263',//https://etherscan.io/token/0x259E558892783fd8941EBBeDa694318C1C3d9263?a=0x259E558892783fd8941EBBeDa694318C1C3d9263
   'velo_eth_blp': '0xe52e551141d29e4d08a826ff029059f1fb5f6f52',//https://etherscan.io/token/0xe52e551141d29e4d08a826ff029059f1fb5f6f52?a=0xe52e551141d29e4d08a826ff029059f1fb5f6f52
   'weth': '0x259e558892783fd8941ebbeda694318c1c3d9263',//https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2?a=0x259e558892783fd8941ebbeda694318c1c3d9263
+  'velo_eth_dai': '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
+  'velo_eth_usdc': '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
+  'velo_eth_usd': '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
+  'velo_eth_wbtc': '0xbb2b8038a1640196fbe3e38816f3e67cba72d940',
 }

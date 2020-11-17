@@ -71,7 +71,7 @@
   max-width: 100%;
 }
 
-.Landing-addVloTokenButton {
+.Landing-fixedMenu {
   position: absolute;
   z-index: 10;
   top: 0;

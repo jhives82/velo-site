@@ -13,6 +13,8 @@ import ConfirmTransactionModal from 'components/ConfirmTransactionModal'
 import useApproval from 'hooks/useApproval'
 import useVelo from 'hooks/useVelo'
 
+import config from 'config'
+
 import {
   getEarned,
   getStaked,
@@ -210,12 +212,7 @@ const Provider: React.FC = ({ children }) => {
     if (! velo) return;
 
     // Only check pools that are active atm
-    const poolsToInclude = [
-      'dai_pool',
-      'ycrv_pool',
-      'velo_eth_uni_pool',
-      'velo_eth_blp_pool'
-    ];
+    const poolsToInclude = config.activePools;
 
     let total = 0;
     for(let poolName in poolContracts) {
@@ -253,12 +250,7 @@ const Provider: React.FC = ({ children }) => {
     if (!account || !velo) return
 
     // Only check pools that are active atm
-    const poolsToInclude = [
-      'dai_pool',
-      'ycrv_pool',
-      'velo_eth_uni_pool',
-      'velo_eth_blp_pool'
-    ];
+    const poolsToInclude = config.activePools;
 
     for(let poolName in poolContracts) {
       if(poolsToInclude.indexOf(poolName) <= -1) continue;
@@ -291,6 +283,7 @@ const Provider: React.FC = ({ children }) => {
   ])
 
   const handleApprove = useCallback(() => {
+    console.log('approve?')
     setConfirmTxModalIsOpen(true)
     // onApprove()
   }, [
@@ -365,25 +358,18 @@ const Provider: React.FC = ({ children }) => {
   const fetchPricesFromUniSwapPools = useCallback(async () => {
     let pricePerCoin: any = [];
 
-    const uniReservesInEth = await getReserves(ethereum, addresses.velo_eth_uni);
-    const uniLpTokenBalance = await getTotalSupplyForLpContract(ethereum, addresses.velo_eth_uni);
-    // Get UniLP token value in WETH
-    if(uniLpTokenBalance && uniReservesInEth && uniReservesInEth.reserve1) {
-      const lpTokens = uniLpTokenBalance / Math.pow(10, 18);
-      const amountOfWeth = uniReservesInEth.reserve1 / Math.pow(10, 18);
-      pricePerCoin['velo_eth_uni_lp_token_value_in_weth'] = (amountOfWeth*2) / lpTokens;
-    }
+    for(let key in config.uniPoolTokens) {
+      const uniPoolTokenName = config.uniPoolTokens[key];
 
-    // TODO https://etherscan.io/address/0xe52e551141d29e4d08a826ff029059f1fb5f6f52#readContract
-    // const blpReservesInEth: any = await getBalance(ethereum, addresses.weth, addresses.velo_eth_blp);
-    // const blpLpTokenBalance = await getTotalSupplyForLpContract(ethereum, addresses.velo_eth_blp);
-    // // Get UniLP token value in WETH
-    // if(blpLpTokenBalance && blpReservesInEth) {
-    //   const blpTokens = blpLpTokenBalance / Math.pow(10, 18);
-    //   console.log('blpReservesInEth', blpReservesInEth)
-    //   const amountOfWeth = blpReservesInEth / Math.pow(10, 18);
-    //   pricePerCoin['velo_eth_blp_lp_token_value_in_weth'] = (amountOfWeth*2) / blpTokens;
-    // }
+      const uniReservesInEth = await getReserves(ethereum, addresses[uniPoolTokenName]);
+      const uniLpTokenBalance = await getTotalSupplyForLpContract(ethereum, addresses[uniPoolTokenName]);
+      // Get UniLP token value in WETH
+      if(uniLpTokenBalance && uniReservesInEth && uniReservesInEth.reserve1) {
+        const lpTokens = uniLpTokenBalance / Math.pow(10, 18);
+        const amountOfWeth = uniReservesInEth.reserve1 / Math.pow(10, 18);
+        pricePerCoin[uniPoolTokenName + '_token_value_in_weth'] = (amountOfWeth*2) / lpTokens;
+      }
+    }
 
     return pricePerCoin;
   }, [
@@ -421,10 +407,17 @@ const Provider: React.FC = ({ children }) => {
       pricesFromUniSwapPools
     );
 
-    allPrices = Object.assign({}, allPrices,
+    let uniPoolTokenPrices = [];
+    for(let key in config.uniPoolTokens) {
+      const uniPoolTokenName = config.uniPoolTokens[key];
+      uniPoolTokenPrices[uniPoolTokenName] = getUniLpPrice(price, pricesFromUniSwapPools[uniPoolTokenName + '_token_value_in_weth'])
+    }
+
+    allPrices = Object.assign({},
+      allPrices,
+      uniPoolTokenPrices,
       {
-        vlo: getVloPrice(price),
-        velo_eth_uni: getUniLpPrice(price, pricesFromUniSwapPools['velo_eth_uni_lp_token_value_in_weth'])
+        vlo: getVloPrice(price)
       }
     );
 

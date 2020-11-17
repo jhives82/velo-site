@@ -1,11 +1,9 @@
 import BigNumber from 'bignumber.js'
 
+interface Balances {
+  [key: string]: BigNumber;
+}
+
 export interface ContextValues {
-  veloBalance?: BigNumber,
-  daiBalance?: BigNumber,
-  ycrvBalance?: BigNumber,
-  veloEthBlpBalance?: BigNumber,
-  veloEthUniBalance?: BigNumber,
-  pumpBalance?: BigNumber,
-  yycrvUniLpBalance?: BigNumber
+  balance: Balances,
 }

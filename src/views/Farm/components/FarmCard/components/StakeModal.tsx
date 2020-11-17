@@ -32,29 +32,17 @@ const StakeModal: React.FC<StakeModalProps> = ({
 
   const [val, setVal] = useState('')
   const {
-    ycrvBalance,
-    veloBalance,
-    daiBalance,
-    pumpBalance,
-    veloEthBlpBalance,
-    veloEthUniBalance,
+    balance
   } = useBalances()
 
   const fullBalance = useMemo(() => {
-    if(coinName == 'pump') {
-      return getFullDisplayBalance(pumpBalance || new BigNumber(0), 0);
-    } else if(coinName == 'ycrv') {
-      return getFullDisplayBalance(ycrvBalance || new BigNumber(0), 0);
-    } else if (coinName == 'dai') {
-      return getFullDisplayBalance(daiBalance || new BigNumber(0), 0);
-    } else if (coinName == 'velo_eth_blp') {
-      return getFullDisplayBalance(veloEthBlpBalance || new BigNumber(0), 0);
-    } else if (coinName == 'velo_eth_uni') {
-      return getFullDisplayBalance(veloEthUniBalance || new BigNumber(0), 0);
-    } else {
-      return getFullDisplayBalance(new BigNumber(0), 0);
+    if(balance && balance[coinName || '']) {
+      return getFullDisplayBalance(balance[coinName || ''] || new BigNumber(0), 0);
     }
-  }, [ycrvBalance, daiBalance, veloEthBlpBalance, veloEthUniBalance])
+    return getFullDisplayBalance(new BigNumber(0), 0);
+  }, [
+    balance
+  ])
 
   const handleChange = useCallback((e: React.FormEvent<HTMLInputElement>) => {
     setVal(e.currentTarget.value)
@@ -69,13 +57,18 @@ const StakeModal: React.FC<StakeModalProps> = ({
   }, [onStake, val])
 
   const getSymbol = () => {
-    if(poolName == 'velo_eth_uni_pool') {
-      return 'VELO/ETH UNI-V2';
+    const poolNamesToConvert: any = {
+      'velo_eth_uni_pool': 'VLO/ETH UNI-V2',
+      'velo_eth_blp_pool': 'VLO/ETH BLP',
+      'velo_eth_dai_pool': 'ETH/DAI UNI-V2',
+      'velo_eth_usdc_pool': 'ETH/USDC UNI-V2',
+      'velo_eth_usd_pool': 'ETH/USDT UNI-V2',
+      'velo_eth_wbtc_pool': 'ETH/WBTC UNI-V2'
     }
-    if(poolName == 'velo_eth_blp_pool') {
-      return 'BLP VELO/ETH';
+    const converter = (poolName: string) => {
+      return poolNamesToConvert[poolName] || poolName.replace('_pool', '');
     }
-    return poolName.replace('_pool', '');
+    return converter(poolName);
   }
 
   return (

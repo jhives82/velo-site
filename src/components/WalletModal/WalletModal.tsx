@@ -30,7 +30,7 @@ const WalletModal: React.FC<ModalProps> = ({
 
   const { reset } = useWallet()
   const {
-    veloBalance
+    balance
   } = useBalances()
 
   const getDisplayBalance = useCallback((value?: BigNumber) => {
@@ -54,7 +54,7 @@ const WalletModal: React.FC<ModalProps> = ({
             <FancyValue
               icon="💃"
               label="VELO balance"
-              value={getDisplayBalance(veloBalance)}
+              value={getDisplayBalance(balance['velo'])}
             />
           </Box>
         </Split>

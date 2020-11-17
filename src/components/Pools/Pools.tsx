@@ -68,7 +68,8 @@ const Pools: React.FC = () => {
       icon: '/components/FarmCard/dai-icon.png',
       name: 'UNI-V2 LP ETH/DAI',
       pct: 6,
-      poolName: 'velo_eth_dai_pool'
+      poolName: 'velo_eth_dai_pool',
+      coinName: 'velo_eth_dai'
     },
     {
       title: 'UniUSDC',
@@ -76,7 +77,8 @@ const Pools: React.FC = () => {
       icon: 'https://static.coinpaprika.com/coin/usdc-usd-coin/logo.png?rev=10562849',
       name: 'UNI-V2 LP ETH/USDC',
       pct: 6,
-      poolName: 'velo_eth_usdc_pool'
+      poolName: 'velo_eth_usdc_pool',
+      coinName: 'velo_eth_usdc',
     },
     {
       title: 'UniUSDT',
@@ -84,7 +86,8 @@ const Pools: React.FC = () => {
       icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
       name: 'UNI-V2 LP ETH/USD',
       pct: 6,
-      poolName: 'velo_eth_usd_pool'
+      poolName: 'velo_eth_usd_pool',
+      coinName: 'velo_eth_usd',
     },
     {
       title: 'UniWBTC',
@@ -92,7 +95,8 @@ const Pools: React.FC = () => {
       icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3717.png',
       name: 'UNI-V2 LP ETH/WBTC',
       pct: 6,
-      poolName: 'velo_eth_wbtc_pool'
+      poolName: 'velo_eth_wbtc_pool',
+      coinName: 'velo_eth_wbtc',
     },
   ]
   const farmCoinsStage3 = [

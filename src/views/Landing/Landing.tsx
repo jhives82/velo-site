@@ -37,7 +37,7 @@ const Landing: React.FC = () => {
   const { status, connect } = useWallet()
   
   const {
-    veloBalance
+    balance
   } = useBalances()
 
   const {
@@ -50,7 +50,9 @@ const Landing: React.FC = () => {
     } else {
       return '--'
     }
-  }, [veloBalance])
+  }, [
+    // veloBalance
+  ])
 
   const veloTokenInfo: CoinInfo = {
     address: addressMap.VELO,
@@ -122,7 +124,7 @@ const Landing: React.FC = () => {
                 text-yellow-theme
                 font-bold
               ">
-                {getDisplayBalance(veloBalance)} VLO
+                {getDisplayBalance(balance['velo'])} VLO
               </div>
             </div>
             <div className="w-6">
@@ -161,7 +163,9 @@ const Landing: React.FC = () => {
           {status == 'connected' && <Pools />}
         </div>
 
-        {status == 'connected' && <div className="my-8">
+        {(true || status == 'connected') && <div className="
+          Landing-fixedMenu
+        ">
 
           <a
             onClick={() => {
@@ -169,11 +173,26 @@ const Landing: React.FC = () => {
             }}
             className="
               my-4
+              hidden
+              sm--block
               btn-theme
-              Landing-addVloTokenButton
             "
           >
             Add VLO token
+          </a>
+
+          <a
+            href="https://snapshot.page/#/velotoken"
+            rel="external"
+            target="_blank"
+            className="
+              hidden
+              sm--block
+              my-4
+              btn-theme
+            "
+            >
+            Governance
           </a>
 
         </div>}

@@ -22,8 +22,8 @@ import './Home.css';
 
 const Home: React.FC = () => {
   const { darkMode } = useTheme()
-  const { veloBalance } = useBalances()
-  const { vestedBalance } = useVesting()
+  // const { veloBalance } = useBalances()
+  // const { vestedBalance } = useVesting()
   return (
     <Page>
       <div className="Home">

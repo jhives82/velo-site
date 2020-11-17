@@ -336,12 +336,16 @@ const FarmCard: React.FC<FarmCardProps> = ({
     const stakedUsdInTotal = getTotalDepositedInUsd(price, coinName || '')||0;
     const stakedByUser = getStakedTokensForUser()||0;
 
+    if(! stakedUsdInTotal || stakedUsdInTotal <= 0) {
+      return defaultReturnValue;
+    }
+
     const percentageStaked = (100000 / stakedUsdInTotal)
     const weeklyVloRate = getEmissionRatePerWeek(getPoolName())
     const vloPrice = price['vlo'];
     const usdValueStakedByUser = getUsdValueStakedForUser();
 
-    // if(coinName == 'velo_eth_uni')
+    // if(coinName == 'velo_eth_dai')
     //   console.log(stakedUsdInTotal, "((Number(percentageStaked) * Number(weeklyVloRate) * Number(vloPrice) * 52) / 100000) * 100", percentageStaked, weeklyVloRate, vloPrice)
     // formula: APR = (((100000/tvl_pool_in_usd)*weekly_rate_in_usd * 52) / 100000) * 100
     // formula: APR = (((100000/tvl_pool_in_usd)*weekly_rate_in_usd * 52) / 100000) * 100
