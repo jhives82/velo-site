@@ -373,7 +373,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
       <Block classes={`
         FarmCard
         ${disabled ? 'disabled' : ''}
-        ${didStake(stakedBalance) ? ' is-glowing' : ''}
+        ${(didStake(stakedBalance) || earnedBalance) ? ' is-glowing' : ''}
         Block-expandable
       `} style={{
         borderColor: poolName == 'velo_eth_uni_pool' ? '#fd027c' : '#fff'

@@ -49,14 +49,14 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
     return new BigNumber(0);
   }
 
-  const fullBalanceNew = useMemo(() => {
-    if(balance && balance[coinName || '']) {
-      return getFullDisplayBalance(balance[coinName || ''] || new BigNumber(0), 0);
-    }
-    return getFullDisplayBalance(new BigNumber(0), 0);
-  }, [
-    balance
-  ])
+  // const fullBalanceNew = useMemo(() => {
+  //   if(balance && balance[coinName || '']) {
+  //     return getFullDisplayBalance(balance[coinName || ''] || new BigNumber(0), 0);
+  //   }
+  //   return getFullDisplayBalance(new BigNumber(0), 0);
+  // }, [
+  //   balance
+  // ])
 
   const displayFullBalance = (stakedBalance: any) => {
     if (stakedBalance && stakedBalance[poolName]) {

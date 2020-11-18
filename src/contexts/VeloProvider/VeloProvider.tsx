@@ -34,7 +34,7 @@ const VeloProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     let provider, randomBetween1And10 = Math.floor((Math.random() * 10) + 1);
-    if(false && randomBetween1And10 > 9) {//6 7 8 9 10
+    if(randomBetween1And10 > 9) {//6 7 8 9 10
       provider = ethereum || config.rpcUrl;
     } else {
       provider = ethereum;
