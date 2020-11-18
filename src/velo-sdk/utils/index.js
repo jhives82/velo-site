@@ -84,6 +84,7 @@ export const unstake = async (velo, poolName, amountInSatoshis, account, onTxHas
   const poolContract = velo.contracts[poolName]
   let now = new Date().getTime() / 1000;
   if (true) {
+    console.log('Go withdraw ' + amountInSatoshis + ' now');
     return poolContract.methods
       .withdraw(amountInSatoshis)
       .send({ from: account, gas: 250000 }, async (error, txHash) => {

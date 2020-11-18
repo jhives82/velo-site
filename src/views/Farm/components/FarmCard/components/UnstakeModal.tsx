@@ -39,7 +39,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
   } = useBalances()
 
   const [val, setVal] = useState('')
-  const [valInSatoshis, setValueInSatoshis] = useState('')
+  const [valueInSatoshis, setValueInSatoshis] = useState('')
   const { stakedBalance } = useFarming()
 
   const fullBalance = (stakedBalance: any) => {
@@ -84,11 +84,12 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
   ])
 
   const handleUnstakeClick = useCallback(() => {
-    onUnstake(poolName, valInSatoshis)
+    console.log('Going to unstake this valueInSatoshis: ', valueInSatoshis.toString())
+    onUnstake(poolName, valueInSatoshis.toString())
   }, [
     onUnstake,
     val,
-    valInSatoshis
+    valueInSatoshis
   ])
 
   const getSymbol = () => {

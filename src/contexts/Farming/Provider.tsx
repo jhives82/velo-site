@@ -501,7 +501,7 @@ const Provider: React.FC = ({ children }) => {
     velo
   ])
 
-  const handleUnstake = useCallback(async (poolName: string, amount: any) => {
+  const handleUnstake = useCallback(async (poolName: string, amount: string) => {
     if (!velo) return;
     if(! poolStatuses[poolName]) {
       poolStatuses[poolName] = {
@@ -511,6 +511,7 @@ const Provider: React.FC = ({ children }) => {
       }
     }
     setConfirmTxModalIsOpen(true)
+    console.log('Almost starting the unstake of ' + amount + ' for ' + poolName);
     await unstake(velo, poolName, amount, account, () => {
       console.log('unstake amount', amount)
       setConfirmTxModalIsOpen(false)
