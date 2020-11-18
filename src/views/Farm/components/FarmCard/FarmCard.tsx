@@ -390,9 +390,9 @@ const FarmCard: React.FC<FarmCardProps> = ({
           marginTop: '20px',
           marginBottom: '60px'
         }}>
-          <div className="FarmCard-value-locked my-4">
-            Total deposited: {format(getTotalStakedInTokens())} tokens
-          </div>
+          {/* <div className="FarmCard-value-locked my-4"> */}
+          {/*   Total deposited: {format(getTotalStakedInTokens())} tokens */}
+          {/* </div> */}
           {getTotalDepositedInUsd(price, coinName || '') > 0 && <div className="FarmCard-value-locked my-4">
             Total deposited: 
               $ {format(getTotalDepositedInUsd(price, coinName || ''))}

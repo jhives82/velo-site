@@ -3,6 +3,7 @@ import useFarming from '../../../hooks/useFarming'
 import BigNumber from 'bignumber.js'
 import useVelo from 'hooks/useVelo'
 
+
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
 import {
@@ -14,6 +15,8 @@ const TotalLockedValue: React.FC = () => {
 
   // Init wallet
   const { velo } = useVelo()
+	
+  const { status, connect } = useWallet()
 
   const {
     price,
@@ -75,7 +78,7 @@ const TotalLockedValue: React.FC = () => {
 
   return (
     <div className="TotalLockedValue inline-block">
-      $ {(getTotalDeposited(price) && getTotalDeposited(price) > 0) ? format(getTotalDeposited(price)) : '--'}
+	    $ {(status == 'connected' && getTotalDeposited(price) && getTotalDeposited(price) > 0) ? format(getTotalDeposited(price)) : '--'}
     </div>
   )
 }
