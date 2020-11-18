@@ -292,17 +292,26 @@ const FarmCard: React.FC<FarmCardProps> = ({
     status,
   ])
 
+  const getStakedBalance = (stakedBalance: any) => {
+    if (stakedBalance && stakedBalance[getPoolName()]) {
+      return bnToDec(new BigNumber(stakedBalance[getPoolName()]));
+    }
+    return 0;
+  }
+
   const formattedStakedBalance = (stakedBalance: any) => {
     if (stakedBalance && stakedBalance[getPoolName()]) {
-      return numeral(bnToDec(new BigNumber(stakedBalance[getPoolName()]))).format('0.00a')
+      // return bnToDec(new BigNumber(stakedBalance[getPoolName()])).toFixed(2)
+      const formatted = numeral(bnToDec(new BigNumber(stakedBalance[getPoolName()]))).format('0.00a');
+      return isNaN(Number(formatted)) ? 0 : formatted;
     } else {
       return '--'
     }
   }
 
   const didStake = (stakedBalance: any) => {
-    const balance = formattedStakedBalance(stakedBalance);
-    return (balance != '0.00' && balance != '--');
+    const balance = getStakedBalance(stakedBalance);
+    return balance;
   }
 
   const getEmissionRatePerWeek = (poolName: string) => {
@@ -321,8 +330,8 @@ const FarmCard: React.FC<FarmCardProps> = ({
   }
 
   const getUsdValueStakedForUser = () => {
-    if(! coinName) return;
-    if(! price || ! price[veloCoinNameToCoinGeckoCoinName(coinName)]) return;
+    if(! coinName) return 0;
+    if(! price || ! price[veloCoinNameToCoinGeckoCoinName(coinName)]) return 0;
     return (getStakedTokensForUser()||0) * Number(price[veloCoinNameToCoinGeckoCoinName(coinName)]);
   }
 
@@ -357,6 +366,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
 
   const isFoundationPool = poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool'
   const isEvilMisesPool = poolName == 'velo_eth_blp_pool'
+  const isDoubleReturnName = poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool'
 
   return (
     <div>
@@ -381,12 +391,12 @@ const FarmCard: React.FC<FarmCardProps> = ({
           marginBottom: '60px'
         }}>
           <div className="FarmCard-value-locked my-4">
-            Total deposited: {getTotalDepositedInUsd(price, coinName || '') > 0 ? <span>
-              $ {format(getTotalDepositedInUsd(price, coinName || ''))}
-            </span> : <span>
-              {format(getTotalStakedInTokens())} tokens
-            </span>}
+            Total deposited: {format(getTotalStakedInTokens())} tokens
           </div>
+          {getTotalDepositedInUsd(price, coinName || '') > 0 && <div className="FarmCard-value-locked my-4">
+            Total deposited: 
+              $ {format(getTotalDepositedInUsd(price, coinName || ''))}
+          </div>}
           <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
           </div>
@@ -416,7 +426,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
           <div className="
             flex justify-between mt-2
           ">
-            {didStake(stakedBalance) && UnstakeButton}
+            {didStake(stakedBalance) ? UnstakeButton : ''}
             {StakeButton}
           </div>
           {earnedBalance && <div className="mt-4">

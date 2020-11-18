@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useMemo } from 'react'
 import numeral from 'numeral'
 import { bnToDec, decToBn } from 'utils'
+import { getFullDisplayBalance } from 'utils'
 
 import BigNumber from 'bignumber.js'
 import {
@@ -16,6 +17,7 @@ import {
 
 import TokenInput from 'components/TokenInput'
 
+import useBalances from 'hooks/useBalances'
 import useFarming from 'hooks/useFarming'
 
 interface UnstakeModalProps extends ModalProps {
@@ -32,6 +34,10 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
   onUnstake,
 }) => {
 
+  const {
+    balance
+  } = useBalances()
+
   const [val, setVal] = useState('')
   const [valInSatoshis, setValueInSatoshis] = useState('')
   const { stakedBalance } = useFarming()
@@ -43,9 +49,19 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
     return new BigNumber(0);
   }
 
+  const fullBalanceNew = useMemo(() => {
+    if(balance && balance[coinName || '']) {
+      return getFullDisplayBalance(balance[coinName || ''] || new BigNumber(0), 0);
+    }
+    return getFullDisplayBalance(new BigNumber(0), 0);
+  }, [
+    balance
+  ])
+
   const displayFullBalance = (stakedBalance: any) => {
     if (stakedBalance && stakedBalance[poolName]) {
-      return numeral(bnToDec(stakedBalance[poolName])).format('0.00a')
+      const formatted = numeral(bnToDec(stakedBalance[poolName])).format('0.00a')
+      return isNaN(Number(formatted)) ? bnToDec(stakedBalance[poolName]).toFixed(6) : formatted;
     }
     return '0';
   }
@@ -60,7 +76,7 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
     const fullBalanceInSatoshis = fullBalance(stakedBalance)
     setValueInSatoshis(fullBalanceInSatoshis)
     const fullBalanceInTokens = bnToDec(fullBalanceInSatoshis)
-    setVal(fullBalanceInTokens.toString())
+    setVal(fullBalanceInTokens.toFixed(100))
   }, [
     fullBalance,
     setVal,
@@ -76,10 +92,18 @@ const UnstakeModal: React.FC<UnstakeModalProps> = ({
   ])
 
   const getSymbol = () => {
-    if(poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool') {
-      return 'ETH';
+    const poolNamesToConvert: any = {
+      'velo_eth_uni_pool': 'VLO/ETH UNI-V2',
+      'velo_eth_blp_pool': 'VLO/ETH BLP',
+      'velo_eth_dai_pool': 'ETH/DAI UNI-V2',
+      'velo_eth_usdc_pool': 'ETH/USDC UNI-V2',
+      'velo_eth_usd_pool': 'ETH/USDT UNI-V2',
+      'velo_eth_wbtc_pool': 'ETH/WBTC UNI-V2'
     }
-    return poolName.replace('_pool', '');
+    const converter = (poolName: string) => {
+      return poolNamesToConvert[poolName] || poolName.replace('_pool', '');
+    }
+    return converter(poolName);
   }
 
   return (

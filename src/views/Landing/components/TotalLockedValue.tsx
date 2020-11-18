@@ -55,6 +55,18 @@ const TotalLockedValue: React.FC = () => {
     if(totalStakedForPool && totalStakedForPool['velo_eth_uni_pool']) {
       totalDeposited += (getPrice(price, 'velo_eth_uni') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_uni_pool'])));
     }
+    if(totalStakedForPool && totalStakedForPool['velo_eth_dai_pool']) {
+      totalDeposited += (getPrice(price, 'velo_eth_dai') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_dai_pool'])));
+    }
+    if(totalStakedForPool && totalStakedForPool['velo_eth_usdc_pool']) {
+      totalDeposited += (getPrice(price, 'velo_eth_usdc') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_usdc_pool'])));
+    }
+    if(totalStakedForPool && totalStakedForPool['velo_eth_usd_pool']) {
+      totalDeposited += (getPrice(price, 'velo_eth_usd') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_usd_pool'])));
+    }
+    if(totalStakedForPool && totalStakedForPool['velo_eth_wbtc_pool']) {
+      totalDeposited += (getPrice(price, 'velo_eth_wbtc') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_wbtc_pool'])));
+    }
     if(! daiPriceInDai || ! ycrvPriceInDai || ! totalDeposited) return 0;
     return totalDeposited;
   }, [price, totalStakedForPool])

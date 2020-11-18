@@ -363,10 +363,14 @@ const Provider: React.FC = ({ children }) => {
 
       const uniReservesInEth = await getReserves(ethereum, addresses[uniPoolTokenName]);
       const uniLpTokenBalance = await getTotalSupplyForLpContract(ethereum, addresses[uniPoolTokenName]);
+
+      // Get reserve0 or reserve1, depends on pool
+      const reserveKey = uniPoolTokenName == 'velo_eth_usd' ? 'reserve0' : 'reserve1'
+
       // Get UniLP token value in WETH
-      if(uniLpTokenBalance && uniReservesInEth && uniReservesInEth.reserve1) {
+      if(uniLpTokenBalance && uniReservesInEth && uniReservesInEth[reserveKey]) {
         const lpTokens = uniLpTokenBalance / Math.pow(10, 18);
-        const amountOfWeth = uniReservesInEth.reserve1 / Math.pow(10, 18);
+        const amountOfWeth = uniReservesInEth[reserveKey] / Math.pow(10, 18);
         pricePerCoin[uniPoolTokenName + '_token_value_in_weth'] = (amountOfWeth*2) / lpTokens;
       }
     }
@@ -395,7 +399,7 @@ const Provider: React.FC = ({ children }) => {
 
     const getUniLpPrice = (price: any, ethValuePerToken: number) => {
       if(! price) return 0;
-      if(price.VLO_WETH && price.WETH_DAI) {
+      if(price.WETH_DAI) {
         return Number(ethValuePerToken) * Number(price.WETH_DAI);
       }
       return 0;

@@ -7,13 +7,17 @@ import {
 } from '@ethersproject/providers'
 
 const providers = [
-	{
-		rpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk',
-		ethereumProvider: new AlchemyProvider('homestead', 't972NXo6MXqBNTxF3VGrBpvwlx9_roXk')
-	},
+	// {
+	// 	rpcUrl: 'https://eth-mainnet.alchemyapi.io/v2/t972NXo6MXqBNTxF3VGrBpvwlx9_roXk',
+	// 	ethereumProvider: new AlchemyProvider('homestead', 't972NXo6MXqBNTxF3VGrBpvwlx9_roXk')
+	// },
 	{
 		rpcUrl: 'https://mainnet.infura.io/v3/e508c065786d4624a93f30b6e5c4bbee',
 		ethereumProvider: new InfuraProvider('homestead', 'e508c065786d4624a93f30b6e5c4bbee')
+	},
+	{
+		rpcUrl: 'https://mainnet.infura.io/v3/073f9193d9cc43d493f0fb5d4ae1b5d5',
+		ethereumProvider: new InfuraProvider('homestead', '073f9193d9cc43d493f0fb5d4ae1b5d5')
 	}	
 ]
 const randomProvider = providers[Math.floor((Math.random() * providers.length))];
