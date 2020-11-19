@@ -292,9 +292,9 @@ const FarmCard: React.FC<FarmCardProps> = ({
     status,
   ])
 
-  const getStakedBalance = (stakedBalance: any) => {
-    if (stakedBalance && stakedBalance[getPoolName()]) {
-      return bnToDec(new BigNumber(stakedBalance[getPoolName()]));
+  const getBalance = (balance: any) => {
+    if (balance && balance[getPoolName()]) {
+      return bnToDec(new BigNumber(balance[getPoolName()]));
     }
     return 0;
   }
@@ -309,9 +309,24 @@ const FarmCard: React.FC<FarmCardProps> = ({
     }
   }
 
+  const formattedEarnedBalance = (balance: any) => {
+    if (balance && balance[getPoolName()]) {
+      // return bnToDec(new BigNumber(balance[getPoolName()])).toFixed(2)
+      const formatted = Number(bnToDec(new BigNumber(balance[getPoolName()]))).toFixed(2);
+      return isNaN(Number(formatted)) ? 0 : formatted;
+    } else {
+      return '--'
+    }
+  }
+
   const didStake = (stakedBalance: any) => {
-    const balance = getStakedBalance(stakedBalance);
+    const balance = getBalance(stakedBalance);
     return balance;
+  }
+
+  const hasEarned = (earnedBalance: any) => {
+    const earned = getBalance(earnedBalance);
+    return earned;
   }
 
   const getEmissionRatePerWeek = (poolName: string) => {
@@ -322,7 +337,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
     return 2000000;
   }
 
-  const expandedFarmCard = hasStakedForPool(getPoolName()) || farmCardIsExpanded;
+  const expandedFarmCard = hasStakedForPool(getPoolName()) || hasEarned(earnedBalance) || farmCardIsExpanded;
 
   const getStakedTokensForUser = () => {
     if(! stakedBalance || ! getPoolName() || ! stakedBalance[getPoolName()]) return;
@@ -416,7 +431,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
 
         {expandedFarmCard && <div className="mb-4 relative">
           <div className="FarmCard-value-locked my-4">
-            VLO earned: {formattedStakedBalance(earnedBalance)}
+            VLO earned: {formattedEarnedBalance(earnedBalance)}
           </div>
           <div className="FarmCard-value-locked my-4">
             Total staked: {formattedStakedBalance(stakedBalance)}
