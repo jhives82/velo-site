@@ -221,7 +221,10 @@ const Pools: React.FC = () => {
             Deposit stable tokens (USDC, USDT, DAI, TUSD) in the <a href="https://www.curve.fi/iearn/deposit" target="_blank" className="text-white">Y pool</a> on Curve.fi to receive yCRV tokens. Stake DAI or yCRV in one of the staking contracts to be the first to farm VELO token (VLO). 
           </div>}
           coins={farmCoinsStage0}
-          disabled={moment() < moment.unix(stage0Start).utc()}
+          disabled={
+            moment() < moment.unix(stage0Start).utc()
+            || moment() > moment.unix(stage0End).utc()
+          }
           timestampStartDistribution={stage0Start}
           timestampEndDistribution={stage0End}
           duration={stage0Duration}
@@ -236,7 +239,10 @@ const Pools: React.FC = () => {
             Add liquidity to the VLO-ETH pair on <a href="https://info.uniswap.org/pair/0x259E558892783fd8941EBBeDa694318C1C3d9263" target="_blank" className="text-white">Uniswap</a> (50/50) or <a href="https://pools.balancer.exchange/#/pool/0xE52E551141D29e4D08A826ff029059f1fB5F6f52/" target="_blank" className="text-white">Balancer</a> (98/2) to get VLO- ETH-V2 LP tokens or BPT tokens. Deposit those LP or BPT tokens in one of the pools below to earn more VELO token (VLO).
           </div>}
           coins={farmCoinsStage1}
-          disabled={moment() < moment.unix(stage1Start).utc()}
+          disabled={
+            moment() < moment.unix(stage1Start).utc()
+            || moment() > moment.unix(stage1End).utc()
+          }
           timestampStartDistribution={stage1Start}
           timestampEndDistribution={stage1End}
           duration={stage1Duration}
@@ -251,7 +257,10 @@ const Pools: React.FC = () => {
             Add liquidity to the <a href="https://app.uniswap.org/#/uni/ETH/0x6B175474E89094C44Da98b954EedeAC495271d0F" target="_blank" className="text-white">DAI-ETH</a>, <a href="https://app.uniswap.org/#/uni/ETH/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" target="_blank" className="text-white">USDC-ETH</a>, <a href="https://app.uniswap.org/#/uni/ETH/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599" target="_blank" className="text-white">WBTC-ETH</a> or <a href="https://app.uniswap.org/#/uni/ETH/0xdAC17F958D2ee523a2206206994597C13D831ec7" target="_blank" className="text-white">ETH-USDT</a> pairs on Uniswap to get LP tokens. Deposit those tokens in one of the pools below to earn more VELO token (VLO). 
           </div>}
           coins={farmCoinsStage2}
-          disabled={moment() < moment.unix(stage2Start).utc()}
+          disabled={
+            moment() < moment.unix(stage2Start).utc()
+            || moment() > moment.unix(stage2End).utc()
+          }
           timestampStartDistribution={stage2Start}
           timestampEndDistribution={stage2End}
           duration={stage2Duration}
@@ -266,7 +275,10 @@ const Pools: React.FC = () => {
             Deposit different DeFi tokens in one of the pools below to earn more VELO token (VLO).
           </div>}
           coins={farmCoinsStage3}
-          disabled={moment() < moment.unix(stage3Start).utc()}
+          disabled={
+            moment() < moment.unix(stage3Start).utc()
+            || moment() > moment.unix(stage3End).utc()
+          }
           timestampStartDistribution={stage3Start}
           timestampEndDistribution={stage3Start}
           duration={stage3Duration}

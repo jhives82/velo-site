@@ -6,7 +6,11 @@ import useVelo from 'hooks/useVelo'
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
 
-const TotalSupply: React.FC = () => {
+interface Props {
+  value?: any,
+}
+
+const TotalSupply: React.FC<Props> = ({ value }) => {
 
   // Init wallet
   const { reset } = useWallet()

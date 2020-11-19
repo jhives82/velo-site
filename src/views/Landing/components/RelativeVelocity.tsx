@@ -7,7 +7,11 @@ import { bnToDec } from 'utils'
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
 
-const RelativeVelocity: React.FC = () => {
+interface Props {
+  value?: any,
+}
+
+const RelativeVelocity: React.FC<Props> = ({ value }) => {
 
   // Init wallet
   const {
@@ -16,7 +20,8 @@ const RelativeVelocity: React.FC = () => {
 
   return (
     <div className="RelativeVelocity inline-block">
-      {relativeVelocity ? numeral(bnToDec(new BigNumber(relativeVelocity))).format('0.00a') : '--'}%
+      {(value && ! relativeVelocity) ? numeral(bnToDec(new BigNumber(value))).format('0.00a') + '%' : ''}
+      {relativeVelocity ? numeral(bnToDec(new BigNumber(relativeVelocity))).format('0.00a') + '%' : ''}
     </div>
   )
 }

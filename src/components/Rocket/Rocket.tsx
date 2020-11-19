@@ -1,6 +1,7 @@
-import React, {useCallback} from 'react'
+import React, {useCallback, useState, useEffect} from 'react'
 import useFarming from '../../hooks/useFarming'
 import numeral from 'numeral'
+import {createClient} from 'contentful'
 
 import Rebase from 'views/Home/components/Rebase'
 import RelativeVelocity from 'views/Landing/components/RelativeVelocity'
@@ -20,7 +21,22 @@ interface RocketProps {
   // param: () => void
 }
 
+interface RocketData {
+  'relativeVelocity': number,
+  'lockedInPools': number,
+  'vloPrice': number,
+  'delutedMarketCap': number,
+  'circulatingSupply': number,
+  'maxVloSupply': number,
+}
+
+const client = createClient({
+  space: 'adq9qdsxjgw7',
+  accessToken: 'n-7-zCo1GiwVHr2fRjX9V6LMTyj3c8rFFI1HCwVJLPs'
+})
+
 const Rocket: React.FC<RocketProps> = () => {
+  const [rocketData, setRocketData] = useState<RocketData>()
 
   const {
     totalSupply,
@@ -71,6 +87,22 @@ const Rocket: React.FC<RocketProps> = () => {
     return 0;
   }, [price])
 
+  const fetchRocketData = async () => {
+    const rocketDataFromContentful: any = await client.getEntry('4tExdtqS5PoXitC15X6utV');
+    if(rocketDataFromContentful && rocketDataFromContentful.fields) {
+      setRocketData(rocketDataFromContentful.fields);
+      return rocketDataFromContentful.fields;
+    }
+    return {};
+  }
+
+  useEffect(() => {
+    fetchRocketData()
+    return () => {}
+  }, [
+    fetchRocketData
+  ])
+
   return (
     <div className="
       Rocket
@@ -82,44 +114,38 @@ const Rocket: React.FC<RocketProps> = () => {
           <div>
             <label>Relative velocity</label>
             <div className="Rocket-data-list-stat">
-              <RelativeVelocity />
+              {rocketData && <RelativeVelocity value={rocketData ? rocketData['relativeVelocity'] : null} />}
             </div>
           </div>
           <div>
             <label>Locked in pools</label>
             <div className="Rocket-data-list-stat">
-              <TotalLockedValue />
+              {rocketData && <TotalLockedValue value={rocketData? rocketData['lockedInPools'] : null} />}
             </div>
           </div>
           <div>
             <label>Price VLO</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
-              $ {getVloPrice(price) <= 0 ? '--' : getVloPrice(price).toFixed(4)}
+              $ {getVloPrice(price) <= 0 ? Number(rocketData ? rocketData['vloPrice'] : 0).toFixed(4) : getVloPrice(price).toFixed(4)}
             </div>
           </div>
           <div>
-            {/*<label>Market cap</label>*/}
             <label>Deluted Market Cap</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
-              {/*formatValue(getCirculatingMarketCap(price, totalSupply))*/}
-              $ {formatValue(getDelutedMarketCap(price, totalSupply))}
+              $ {getDelutedMarketCap(price, totalSupply) ? formatValue(rocketData ? rocketData['delutedMarketCap'] : 0) : formatValue(getDelutedMarketCap(price, totalSupply))}
             </div>
           </div>
           <div>
             <label>Circulating supply</label>
             <div className="Rocket-data-list-stat">
-              {formatValue(getCirculatingSupply(price, totalSupply))}
+              {getCirculatingSupply(price, totalSupply) ? formatValue(getCirculatingSupply(price, totalSupply)) : formatValue(rocketData ? rocketData['circulatingSupply'] : 0)}
             </div>
           </div>
           <div>
             <label>Max VLO supply</label>
             <div className="Rocket-data-list-stat">
-              <TotalSupply />
+              {rocketData && <TotalSupply value={rocketData ? rocketData['maxVloSupply'] : null} />}
             </div>
-            {/*<label>Total supply</label>
-            <div className="Rocket-data-list-stat">
-              <TotalSupply />
-            </div>*/}
           </div>
         </div>
       </div>

@@ -390,9 +390,11 @@ const FarmCard: React.FC<FarmCardProps> = ({
           marginTop: '20px',
           marginBottom: '60px'
         }}>
-          {/* <div className="FarmCard-value-locked my-4"> */}
-          {/*   Total deposited: {format(getTotalStakedInTokens())} tokens */}
-          {/* </div> */}
+          {poolName == 'velo_eth_blp_pool' && <div>
+            <div className="FarmCard-value-locked my-4">
+               Total deposited: {format(getTotalStakedInTokens())} tokens
+            </div>
+          </div>}
           {getTotalDepositedInUsd(price, coinName || '') > 0 && <div className="FarmCard-value-locked my-4">
             Total deposited: 
               $ {format(getTotalDepositedInUsd(price, coinName || ''))}
@@ -400,7 +402,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
           <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
           </div>
-          {! isEvilMisesPool && getAPR() && <div
+          {! isEvilMisesPool && ! disabled && getAPR() && <div
             className="FarmCard-value-locked my-4 text-center"
             >
             APR = {Number(getAPR()).toFixed(1)} %
@@ -427,14 +429,14 @@ const FarmCard: React.FC<FarmCardProps> = ({
             flex justify-between mt-2
           ">
             {didStake(stakedBalance) ? UnstakeButton : ''}
-            {StakeButton}
+            {! disabled && StakeButton}
           </div>
           {earnedBalance && <div className="mt-4">
             <Harvest
               poolName={getPoolName()}
               />
           </div>}
-          {disabled &&
+          {(disabled && ! isApproved) &&
             <div className="absolute top-0 right-0 bottom-0 left-0" />
           }
         </div>}

@@ -3,7 +3,6 @@ import useFarming from '../../../hooks/useFarming'
 import BigNumber from 'bignumber.js'
 import useVelo from 'hooks/useVelo'
 
-
 import { useWallet } from 'use-wallet'
 import numeral from 'numeral'
 import {
@@ -11,7 +10,11 @@ import {
   veloCoinNameToCoinGeckoCoinName
 } from 'utils'
 
-const TotalLockedValue: React.FC = () => {
+interface Props {
+  value?: any,
+}
+
+const TotalLockedValue: React.FC<Props> = ({ value }) => {
 
   // Init wallet
   const { velo } = useVelo()
@@ -78,7 +81,12 @@ const TotalLockedValue: React.FC = () => {
 
   return (
     <div className="TotalLockedValue inline-block">
-	    $ {(status == 'connected' && getTotalDeposited(price) && getTotalDeposited(price) > 0) ? format(getTotalDeposited(price)) : '--'}
+	    {status != 'connected' && value && <div>
+        $ {format(value)}
+      </div>}
+      {status == 'connected' && price && <div>
+        $ {(getTotalDeposited(price) && getTotalDeposited(price) > 0) ? format(getTotalDeposited(price)) : '--'}
+      </div>}
     </div>
   )
 }

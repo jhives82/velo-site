@@ -39,8 +39,9 @@ const Rebase: React.FC = () => {
 
   const {
     lastRebaseTimestamp,
-    nextRebaseTimestamp,
   } = useFarming()
+
+  const nextRebaseTimestamp = 1606867200;
 
   const [walletModalIsOpen, setWalletModalIsOpen] = useState(false)
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false)
