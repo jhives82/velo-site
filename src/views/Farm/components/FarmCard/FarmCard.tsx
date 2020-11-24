@@ -181,9 +181,6 @@ const FarmCard: React.FC<FarmCardProps> = ({
 
   const getTotalDepositedInUsd = useCallback((price: any, coinName: string) => {
     const coinPriceInUsd = getPrice(price, coinName);
-    // if(coinName == 'velo_eth_uni') {
-    //   console.log('price', price, coinName, 'coinPriceInUsd', coinPriceInUsd)
-    // }
     let totalDeposited = getTotalStakedInTokens();
     if(! coinPriceInUsd || ! totalDeposited) return 0;
     return Number(coinPriceInUsd) * Number(totalDeposited);

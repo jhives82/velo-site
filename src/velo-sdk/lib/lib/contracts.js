@@ -69,7 +69,6 @@ export class Contracts {
     this.velo_eth_wbtc_pool = new this.web3.eth.Contract(VeloCompPoolJson.abi);
     // Stage 3
     this.comp_pool = new this.web3.eth.Contract(VeloCompPoolJson.abi);
-    // this.lend_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
     this.aave_pool = new this.web3.eth.Contract(VeloLendPoolJson.abi);
     this.link_pool = new this.web3.eth.Contract(VeloLinkPoolJson.abi);
     this.snx_pool = new this.web3.eth.Contract(VeloSnxPoolJson.abi);
@@ -77,6 +76,7 @@ export class Contracts {
     this.pickle_pool = new this.web3.eth.Contract(VeloPicklePoolJson.abi);
     this.dough_pool = new this.web3.eth.Contract(VeloDoughPoolJson.abi);
     this.yfi_pool = new this.web3.eth.Contract(VeloYfiPoolJson.abi);
+    
     this.migrator = new this.web3.eth.Contract(MigratorJson.abi);
     this.rebaser = new this.web3.eth.Contract(VELORebaserJson.abi);
 
@@ -110,7 +110,6 @@ export class Contracts {
       { contract: this.velo_eth_wbtc_pool, json: VeloCrvPoolJson },
       // Stage 3
       { contract: this.comp_pool, json: VeloCrvPoolJson },
-      // { contract: this.lend_pool, json: VeloCrvPoolJson },
       { contract: this.aave_pool, json: VeloCrvPoolJson },
       { contract: this.link_pool, json: VeloCrvPoolJson },
       { contract: this.snx_pool, json: VeloCrvPoolJson },
@@ -145,7 +144,6 @@ export class Contracts {
     this.velo_eth_wbtc_pool.options.address = addressMap["velo_eth_wbtc_pool"];
     // Stage 3
     this.comp_pool.options.address = addressMap["comp_pool"];
-    // this.lend_pool.options.address = addressMap["lend_pool"];
     this.aave_pool.options.address = addressMap["aave_pool"];
     this.link_pool.options.address = addressMap["link_pool"];
     this.snx_pool.options.address = addressMap["snx_pool"];

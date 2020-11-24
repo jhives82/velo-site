@@ -20,7 +20,7 @@ const RelativeVelocity: React.FC<Props> = ({ value }) => {
 
   return (
     <div className="RelativeVelocity inline-block">
-      {(value && ! relativeVelocity) ? numeral(bnToDec(new BigNumber(value))).format('0.00a') + '%' : ''}
+      {(value && ! relativeVelocity) ? numeral(value).format('0.00a') + '%' : ''}
       {relativeVelocity ? numeral(bnToDec(new BigNumber(relativeVelocity))).format('0.00a') + '%' : ''}
     </div>
   )

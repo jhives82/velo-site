@@ -21,4 +21,13 @@ export const addresses: any = {
   'velo_eth_usdc': '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
   'velo_eth_usd': '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
   'velo_eth_wbtc': '0xbb2b8038a1640196fbe3e38816f3e67cba72d940',
+  // DeFi LinkUp Pools
+  'comp': '0xc00e94cb662c3520282e6f5717214004a7f26888',
+  'aave': '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+  'link': '0x514910771af9ca656af840dff83e8264ecf986ca',
+  'snx': '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
+  'sushi': '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2',
+  'pickle': '0x429881672b9ae42b8eba0e26cd9c73711b891ca5',
+  'dough': '0xad32a8e6220741182940c5abf610bde99e737b2d',
+  'yfi': '0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e',
 }

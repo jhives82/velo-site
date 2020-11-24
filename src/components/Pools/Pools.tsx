@@ -105,56 +105,72 @@ const Pools: React.FC = () => {
       emoticon: '🤖',
       icon: 'https://static.coinpaprika.com/coin/comp-compoundd/logo.png?rev=10603555',
       name: 'COMP',
-      pct: 2
+      pct: 2,
+      poolName: 'comp_pool',
+      coinName: 'comp',
     },
     {
       title: 'BRAVE AAVE',
       emoticon: '👻',
       icon: 'https://static.coinpaprika.com/coin/aave-new/logo.png?rev=10615311',
       name: 'AAVE',
-      pct: 2
+      pct: 2,
+      poolName: 'aave_pool',
+      coinName: 'aave',
     },
     {
       title: 'GOBLIN LINK',
       emoticon: '👺',
       icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1975.png',
       name: 'LINK',
-      pct: 2
+      pct: 2,
+      poolName: 'link_pool',
+      coinName: 'link',
     },
     {
       title: 'SLEEPY SYNTH',
       emoticon: '💊',
       icon: '/components/FarmCard/snx-icon.png',
       name: 'SNX',
-      pct: 2
+      pct: 2,
+      poolName: 'snx_pool',
+      coinName: 'snx',
     },
     {
       icon: '/components/FarmCard/sushi-icon.png',
       emoticon: '🍣',
       title: 'SUPER SUSHI',
       name: 'SUSHI',
-      pct: 2
+      pct: 2,
+      poolName: 'sushi_pool',
+      coinName: 'sushi',
     },
     {
       icon: '/components/FarmCard/pickle-icon.png',
       emoticon: '🥒',
       title: 'PICKLE RICK',
       name: 'PICKLE',
-      pct: 2
+      pct: 2,
+      poolName: 'pickle_pool',
+      coinName: 'pickle',
     },
     {
       title: 'DEFI PIE',
       emoticon: '🥧',
       icon: 'https://raw.githubusercontent.com/pie-dao/brand/master/DOUGH%20Token/DOUGH2v.png',
       name: 'DOUGH',
-      pct: 2
+      pct: 2,
+      poolName: 'dough_pool',
+      coinName: 'dough',
     },
     {
       icon: 'https://static.coinpaprika.com/coin/yfi-yearnfinance/logo.png?rev=10607907',
       emoticon: '👽',
       title: 'ALIEN ANDRE',
       name: 'YFI',
-      pct: 2
+      pct: 2,
+      poolName: 'yfi_pool',
+      coinName: 'yfi',
     },
   ]
   const { velo, walletStatus } = useVelo()

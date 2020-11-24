@@ -48,6 +48,15 @@ if(_env == 'dev') {
 	      'velo_eth_usdc_pool',
 	      'velo_eth_usd_pool',
 	      'velo_eth_wbtc_pool',
+	      // Farm coins stage 3 (DeFi LinkUp Pools)
+	      'comp_pool',
+	      'aave_pool',
+	      'link_pool',
+	      'snx_pool',
+	      'sushi_pool',
+	      'pickle_pool',
+	      'dough_pool',
+	      'yfi_pool',
 	    ],
 		uniPoolTokens: [
 	      'velo_eth_uni',

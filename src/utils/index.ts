@@ -145,7 +145,15 @@ export const veloCoinNameToCoinGeckoCoinName = (veloCoinName: string) => {
     [veloCoinName: string]: string
   } = {
     'ycrv': 'curve-fi-ydai-yusdc-yusdt-ytusd',
-    'dai': 'dai'
+    'dai': 'dai',
+    'comp': 'compound-governance-token',
+    'aave': 'aave',
+    'link': 'chainlink',
+    'snx': 'havven',
+    'sushi': 'sushi',
+    'pickle': 'pickle-finance',
+    'dough': 'piedao-dough-v2',
+    'yfi': 'yearn-finance',
   };
   return conversionArray[veloCoinName] || veloCoinName;
 }
