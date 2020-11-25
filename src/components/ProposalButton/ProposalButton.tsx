@@ -73,6 +73,7 @@ const ProposalButton: React.FC = () => {
 
   const fetchVotes = async () => {
     const proposalData = await getProposalData(velo);
+    console.log('proposalData', proposalData)
     setVotesFor(Number(new BigNumber(proposalData.forVotes).dividedBy(10**18)))
     setVotesAgainst(Number(new BigNumber(proposalData.againstVotes).dividedBy(10**18)))
     return;
@@ -178,7 +179,7 @@ const ProposalButton: React.FC = () => {
               <Button
                 onClick={async () => {
                   setIsUserDelegating(true)
-                  const response = await vote(velo, account);
+                  const response = await vote(velo, account, false);
                   setUserVoteValue('against')
                 }}
                 classes="
@@ -191,7 +192,7 @@ const ProposalButton: React.FC = () => {
               <Button
                 onClick={async () => {
                   setIsUserDelegating(true)
-                  const response = await vote(velo, account);
+                  const response = await vote(velo, account, true);
                   setUserVoteValue('for')
                 }}
                 classes="
@@ -205,7 +206,7 @@ const ProposalButton: React.FC = () => {
 
           </div>
 
-          {didUserDelegate && (votesFor > 0 || votesAgainst > 0) && <div>
+          {(votesFor > 0 || votesAgainst > 0) && <div>
             {userVoteValue == 'for' && <div className="mt-4" style={{background: 'rgba(255,255,255,0.1)', padding: '5px 0 20px 0'}}>
               <h2 className="mt-8 text-green font-bold">You voted FOR</h2>
               <p>

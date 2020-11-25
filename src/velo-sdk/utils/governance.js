@@ -4,17 +4,16 @@ const getGovContractAddress = (velo) => {
 	return velo.contracts.gov.options.address
 }
 
-export const vote = async (velo, account) => {
-  return velo.contracts.gov.methods.castVote(1, true).send({ from: account })
+export const vote = async (velo, account, trueOrFalse) => {
+  return velo.contracts.gov.methods.castVote(1, trueOrFalse).send({ from: account })
 }
 
 export const delegate = async (velo, account) => {
-	console.log('velo', velo, velo.contracts.velo)
-  return velo.contracts.velo.methods.delegate(getGovContractAddress(velo)).send({from: account, gas: 320000 })
+  return velo.contracts.velo.methods.delegate(account).send({from: account, gas: 320000 })
 }
 
 export const didDelegate = async (velo, account) => {
-  return await velo.contracts.velo.methods.delegates(account).call() === getGovContractAddress(velo)
+  return await velo.contracts.velo.methods.delegates(account).call() === account
 }
 
 export const getVotes = async (velo) => {
