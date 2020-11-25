@@ -112,7 +112,15 @@ export const getCoinGeckoPrices = async (): Promise<any> => {
   let response = await CoinGeckoClient.simple.price({
     ids: [
       'dai',
-      'curve-fi-ydai-yusdc-yusdt-ytusd'
+      'curve-fi-ydai-yusdc-yusdt-ytusd',
+      'compound-governance-token',
+      'aave',
+      'chainlink',
+      'havven',
+      'sushi',
+      'pickle-finance',
+      'piedao-dough-v2',
+      'yearn-finance',
     ],
     vs_currencies: ['usd'],
   });
