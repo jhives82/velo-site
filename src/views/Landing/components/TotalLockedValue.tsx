@@ -73,6 +73,25 @@ const TotalLockedValue: React.FC<Props> = ({ value }) => {
     if(totalStakedForPool && totalStakedForPool['velo_eth_wbtc_pool']) {
       totalDeposited += (getPrice(price, 'velo_eth_wbtc') * bnToDec(new BigNumber(totalStakedForPool['velo_eth_wbtc_pool'])));
     }
+
+    const poolsDeFiLinkUp = [
+      'comp_pool',
+      'aave_pool',
+      'link_pool',
+      'snx_pool',
+      'sushi_pool',
+      'pickle_pool',
+      'dough_pool',
+      'yfi_pool',
+    ]
+
+    for(let key in poolsDeFiLinkUp) {
+      const pool = poolsDeFiLinkUp[key];
+      if(totalStakedForPool && totalStakedForPool[pool]) {
+        totalDeposited += (getPrice(price, pool.replace('_pool', '')) * bnToDec(new BigNumber(totalStakedForPool[pool])));
+      }
+    }
+
     if(! daiPriceInDai || ! ycrvPriceInDai || ! totalDeposited) return 0;
     return totalDeposited;
   }, [price, totalStakedForPool])

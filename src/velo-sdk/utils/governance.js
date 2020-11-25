@@ -5,11 +5,11 @@ const getGovContractAddress = (velo) => {
 }
 
 export const vote = async (velo, account, trueOrFalse) => {
-  return velo.contracts.gov.methods.castVote(1, trueOrFalse).send({ from: account })
+  return await velo.contracts.gov.methods.castVote(1, trueOrFalse).send({ from: account })
 }
 
 export const delegate = async (velo, account) => {
-  return velo.contracts.velo.methods.delegate(account).send({from: account, gas: 320000 })
+  return await velo.contracts.velo.methods.delegate(account).send({from: account, gas: 320000 })
 }
 
 export const didDelegate = async (velo, account) => {
