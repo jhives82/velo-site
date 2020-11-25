@@ -19,6 +19,7 @@ import QuickStats from '../../components/QuickStats/QuickStats'
 
 import PendingHarvest from './components/PendingHarvest'
 import SocialIcons from 'components/SocialIcons/SocialIcons'
+import ProposalButton from 'components/ProposalButton/ProposalButton'
 
 import useFarming from 'hooks/useFarming'
 import useBalances from 'hooks/useBalances'
@@ -194,6 +195,8 @@ const Landing: React.FC = () => {
             >
             Governance
           </a>
+
+          {status == 'connected' && <ProposalButton />}
 
         </div>}
 

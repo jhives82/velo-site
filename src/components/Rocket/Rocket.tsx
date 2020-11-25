@@ -100,7 +100,6 @@ const Rocket: React.FC<RocketProps> = () => {
     fetchRocketData()
     return () => {}
   }, [
-    fetchRocketData
   ])
 
   return (

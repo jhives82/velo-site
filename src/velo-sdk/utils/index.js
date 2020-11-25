@@ -3,6 +3,8 @@ import Web3 from 'web3'
 import BigNumber from 'bignumber.js'
 import UniswapPairABI from 'constants/abi/UniswapPair.json'
 
+import './governance.js'
+
 import {
   getBalance,
 } from 'utils';
@@ -393,23 +395,6 @@ export const getStats = async (velo) => {
     targetPrice,
     totalSupply
   }
-}
-
-export const vote = async (velo, account) => {
-  return velo.contracts.gov.methods.castVote(0, true).send({ from: account })
-}
-
-export const delegate = async (velo, account) => {
-  return velo.contracts.velo.methods.delegate("0x683A78bA1f6b25E29fbBC9Cd1BFA29A51520De84").send({from: account, gas: 320000 })
-}
-
-export const didDelegate = async (velo, account) => {
-  return await velo.contracts.velo.methods.delegates(account).call() === '0x683A78bA1f6b25E29fbBC9Cd1BFA29A51520De84'
-}
-
-export const getVotes = async (velo) => {
-  const votesRaw = new BigNumber(await velo.contracts.velo.methods.getCurrentVotes("0x683A78bA1f6b25E29fbBC9Cd1BFA29A51520De84").call()).dividedBy(10**24)
-  return votesRaw
 }
 
 export const getScalingFactor = async (velo) => {

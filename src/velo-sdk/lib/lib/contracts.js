@@ -6,6 +6,8 @@ import ERC20Json from '../clean_build/contracts/IERC20.json';
 import YAMJson from '../clean_build/contracts/YAMDelegator.json';
 import VELOJson from '../clean_build/contracts/VELODelegator.json';
 import VELORebaserJson from '../clean_build/contracts/VELORebaser.json';
+import GovernorAlphaJson from '../clean_build/contracts/GovernorAlpha.json';
+import YAMGovJson from '../clean_build/contracts/GovernorAlpha.json';
 
 // Stage 0
 import VeloDaiPoolJson from '../clean_build/contracts/VELO_DAI_Pool.json';
@@ -79,6 +81,7 @@ export class Contracts {
     
     this.migrator = new this.web3.eth.Contract(MigratorJson.abi);
     this.rebaser = new this.web3.eth.Contract(VELORebaserJson.abi);
+    this.gov = new this.web3.eth.Contract(GovernorAlphaJson.abi);
 
     this.setProvider(provider, networkId);
     this.setDefaultAccount(this.web3.eth.defaultAccount);
@@ -95,6 +98,7 @@ export class Contracts {
     const contracts = [
       { contract: this.velo, json: VELOJson },
       { contract: this.rebaser, json: VELORebaserJson },
+      { contract: this.gov, json: GovernorAlphaJson },
       { contract: this.migrator, json: MigratorJson },
 
       // Stage 0
@@ -153,6 +157,7 @@ export class Contracts {
     this.yfi_pool.options.address = addressMap["yfi_pool"];
 
     this.rebaser.options.address = addressMap["VELORebaser"];
+    this.gov.options.address = addressMap["VELOGovernorAlpha"];
 
     this.pools = [
     ]
