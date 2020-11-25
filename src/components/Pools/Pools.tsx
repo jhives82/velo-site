@@ -296,7 +296,7 @@ const Pools: React.FC = () => {
             || moment() > moment.unix(stage3End).utc()
           }
           timestampStartDistribution={stage3Start}
-          timestampEndDistribution={stage3Start}
+          timestampEndDistribution={stage3End}
           duration={stage3Duration}
           percentageDistributed={0}
           percentageToDistribute={16}
