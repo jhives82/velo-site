@@ -131,7 +131,7 @@ const Rocket: React.FC<RocketProps> = () => {
           <div>
             <label>Deluted Market Cap</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
-              $ {getDelutedMarketCap(price, totalSupply) ? formatValue(rocketData ? rocketData['delutedMarketCap'] : 0) : formatValue(getDelutedMarketCap(price, totalSupply))}
+              $ {getDelutedMarketCap(price, totalSupply) ? formatValue(getDelutedMarketCap(price, totalSupply)) : formatValue(rocketData ? rocketData['delutedMarketCap'] : 0)}
             </div>
           </div>
           <div>

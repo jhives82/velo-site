@@ -39,7 +39,7 @@ export const addressMap = {
   velo_eth_wbtc_pool : "0x4956eC9832bae781A40A90b0F1D92fdfc22e5a05",
   // Stage 3
   comp_pool : "0xA5b13F2d5E412FA6700B49f2805CA8C67F85EeC3",
-  aave_pool : "0x77161d840419e7545e8c352bff4E0Ea89f52f47d",
+  aave_pool : "0xC51512b82629446ddDDe6519644Aa905D6B02Ace",
   link_pool : "0x77161d840419e7545e8c352bff4E0Ea89f52f47d",
   snx_pool : "0x9fa6bE5cf2145C938a93104C67154c34B9B24eC3",
   sushi_pool : "0xf983F04434002fc60E29C2dbf1db8a8D9f0119eD",
