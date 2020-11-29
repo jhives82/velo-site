@@ -196,7 +196,7 @@ const Landing: React.FC = () => {
             Governance
           </a>
 
-          <a
+          {/*<a
             href="https://snapshot.page/#/velotoken/proposal/QmcwXaWp3SKN7XsQXFUeyXT8cCeyaivJJ9yM2N3146vnJv"
             rel="external"
             target="_blank"
@@ -209,7 +209,7 @@ const Landing: React.FC = () => {
             "
             >
             Mises Legacy Proposal
-          </a>
+          </a>*/}
 
           {(false && status == 'connected') && <ProposalButton />}
 

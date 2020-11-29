@@ -57,6 +57,8 @@ if(_env == 'dev') {
 	      'pickle_pool',
 	      'dough_pool',
 	      'yfi_pool',
+	      // Stage 4
+	      'velo_eth_uni_legacy_pool',
 	    ],
 		uniPoolTokens: [
 	      'velo_eth_uni',

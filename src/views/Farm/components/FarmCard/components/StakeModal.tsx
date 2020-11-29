@@ -63,7 +63,9 @@ const StakeModal: React.FC<StakeModalProps> = ({
       'velo_eth_dai_pool': 'ETH/DAI UNI-V2',
       'velo_eth_usdc_pool': 'ETH/USDC UNI-V2',
       'velo_eth_usd_pool': 'ETH/USDT UNI-V2',
-      'velo_eth_wbtc_pool': 'ETH/WBTC UNI-V2'
+      'velo_eth_wbtc_pool': 'ETH/WBTC UNI-V2',
+      // Stage 4
+      'velo_eth_uni_legacy_pool': 'VLO/ETH UNI-V2',
     }
     const converter = (poolName: string) => {
       return poolNamesToConvert[poolName] || poolName.replace('_pool', '');

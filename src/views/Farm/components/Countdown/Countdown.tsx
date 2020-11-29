@@ -57,7 +57,7 @@ const Countdown: React.FC<CountdownProps> = ({
           {percentageToDistribute}% ENDED
         </div>}
         {isInFuture && <div>
-          {percentageToDistribute}%
+          {percentageToDistribute > 0 && <span>{percentageToDistribute}%</span>}
           STARTS IN {renderCountdown(timestampStartDistribution)}
         </div>}
         {(! isInFuture && ! hasEnded) && <div>

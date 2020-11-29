@@ -29,5 +29,5 @@ export const addresses: any = {
   'sushi': '0x6b3595068778dd592e39a122f4f5a5cf09c90fe2',
   'pickle': '0x429881672b9ae42b8eba0e26cd9c73711b891ca5',
   'dough': '0xad32a8e6220741182940c5abf610bde99e737b2d',
-  'yfi': '0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e',
+  'yfi': '0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e'
 }

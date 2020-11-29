@@ -19,7 +19,8 @@ import useVelo from 'hooks/useVelo'
 
 import {
   bnToDec,
-  veloCoinNameToCoinGeckoCoinName
+  veloCoinNameToCoinGeckoCoinName,
+  secondsToWeeks
 } from 'utils'
 
 import './FarmCard.css';
@@ -331,6 +332,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
     if(poolName == 'velo_eth_uni_pool') return 15000000;
     if(poolName == 'velo_eth_blp_pool') return 5000000;
     if(poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool') return 3000000;
+    if(poolName == 'velo_eth_uni_legacy_pool') return secondsToWeeks(317097919837645865).toFixed(0);
     return 2000000;
   }
 
@@ -376,7 +378,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
     return APR;
   }
 
-  const isFoundationPool = poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool'
+  // const isFoundationPool = poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool'
   const isEvilMisesPool = poolName == 'velo_eth_blp_pool'
   const isDoubleReturnName = poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool'
 
@@ -388,7 +390,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
         ${(didStake(stakedBalance) || earnedBalance) ? ' is-glowing' : ''}
         Block-expandable
       `} style={{
-        borderColor: poolName == 'velo_eth_uni_pool' ? '#fd027c' : '#fff'
+        borderColor: poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_uni_legacy_pool' ? '#fd027c' : '#fff'
       }}>
         <img src={icon} alt="Coin icon" className="FarmCard-icon mt-1" style={{marginTop: '50px'}}/>
         <h1 className="FarmCard-title my-2 mt-4">
@@ -411,9 +413,9 @@ const FarmCard: React.FC<FarmCardProps> = ({
             Total deposited: 
               $ {format(getTotalDepositedInUsd(price, coinName || ''))}
           </div>}
-          <div className="FarmCard-value-locked my-4">
+          {poolName != 'velo_eth_uni_legacy_pool' && <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
-          </div>
+          </div>}
           {! isEvilMisesPool && ! disabled && getAPR() && <div
             className="FarmCard-value-locked my-4 text-center"
             >

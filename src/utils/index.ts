@@ -165,3 +165,7 @@ export const veloCoinNameToCoinGeckoCoinName = (veloCoinName: string) => {
   };
   return conversionArray[veloCoinName] || veloCoinName;
 }
+
+export const secondsToWeeks = (seconds: number) => {
+  return seconds / 60 / 60 / 24 / 7;
+}

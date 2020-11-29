@@ -78,6 +78,8 @@ export class Contracts {
     this.pickle_pool = new this.web3.eth.Contract(VeloPicklePoolJson.abi);
     this.dough_pool = new this.web3.eth.Contract(VeloDoughPoolJson.abi);
     this.yfi_pool = new this.web3.eth.Contract(VeloYfiPoolJson.abi);
+    // Stage 4
+    this.velo_eth_uni_legacy_pool = new this.web3.eth.Contract(VeloVeloEthUniPoolJson.abi);
     
     this.migrator = new this.web3.eth.Contract(MigratorJson.abi);
     this.rebaser = new this.web3.eth.Contract(VELORebaserJson.abi);
@@ -121,6 +123,8 @@ export class Contracts {
       { contract: this.pickle_pool, json: VeloCrvPoolJson },
       { contract: this.dough_pool, json: VeloCrvPoolJson },
       { contract: this.yfi_pool, json: VeloCrvPoolJson },
+      // Stage 4
+      { contract: this.velo_eth_uni_legacy_pool, json: VeloCrvPoolJson },
     ]
 
     contracts.forEach(contract => this.setContractProvider(
@@ -155,6 +159,8 @@ export class Contracts {
     this.pickle_pool.options.address = addressMap["pickle_pool"];
     this.dough_pool.options.address = addressMap["dough_pool"];
     this.yfi_pool.options.address = addressMap["yfi_pool"];
+    // Stage 4
+    this.velo_eth_uni_legacy_pool.options.address = addressMap["velo_eth_uni_legacy_pool"];
 
     this.rebaser.options.address = addressMap["VELORebaser"];
     this.gov.options.address = addressMap["VELOGovernorAlpha"];

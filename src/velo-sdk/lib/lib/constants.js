@@ -46,6 +46,8 @@ export const addressMap = {
   pickle_pool : "0x48fCD461BDeB3804DB71172d656e159cfD315cb8",
   dough_pool : "0xE2aD03c1be6aA64d896A08500639226f386F50F4",
   yfi_pool : "0x240aB92E5474692b8fE2E7535E6AD48c27fb77f3",
+  // Stage 4
+  velo_eth_uni_legacy_pool : "0x3d3Fddb7B10F46938F8a644D4612Af2827C1e577",
 
   pump_pool: "0x3DF4ff9800AF9B91580E7b1223CbFcaf59E86491",
 
