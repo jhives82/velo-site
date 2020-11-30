@@ -38,10 +38,9 @@ const Rebase: React.FC = () => {
   const { account } = useWallet()
 
   const {
+    nextRebaseTimestamp,
     lastRebaseTimestamp,
   } = useFarming()
-
-  const nextRebaseTimestamp = 1606867200;
 
   const [walletModalIsOpen, setWalletModalIsOpen] = useState(false)
   const [unlockModalIsOpen, setUnlockModalIsOpen] = useState(false)
@@ -98,16 +97,16 @@ const Rebase: React.FC = () => {
     const paddedMinutes = remainingMinutes < 10 ? `0${remainingMinutes}` : remainingMinutes
     const paddedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds
 
-    if(nextRebaseTimestamp > moment().unix() && lastRebaseTimestamp != 0) {
+    if(nextRebaseTimestamp < moment().unix()) {
       return <div>
         00<div className="colon">&nbsp;:&nbsp;</div>00<div className="colon">&nbsp;:&nbsp;</div>00
       </div>
     }
 
-    if(remainingDays >= 1) {
+    if(remainingDays == 1) {
       return (
         <div>
-          {remainingDays}<div className="colon">&nbsp;:&nbsp;</div>{paddedHours}<div className="colon">&nbsp;:&nbsp;</div>{paddedMinutes}
+          {Number(paddedHours)+24}<div className="colon">&nbsp;:&nbsp;</div>{paddedMinutes}<div className="colon">&nbsp;:&nbsp;</div>{paddedSeconds}
         </div>
       )
     }
@@ -141,9 +140,12 @@ const Rebase: React.FC = () => {
           />} 
         <Modal isOpen={rebaseWarningModal}>
           <div className="my-4 px-4">
-            <p>
+            {nextRebaseTimestamp > moment().unix() && <p>
               Easy tiger... let's wait until this countdown has finished,<br />shall we?
-            </p>
+            </p>}
+            {nextRebaseTimestamp < moment().unix() && <p>
+              You can now rebase. Rebasing is possible once in the 12 hours. Use your power wisely.
+            </p>}
             <div className="Rocket-rebase-countdown">
               {nextRebaseTimestamp > 0 && renderCountdown(nextRebaseTimestamp)}
             </div>
@@ -160,7 +162,7 @@ const Rebase: React.FC = () => {
             </Button>
             <Button
               onClick={handleRebaseClick}
-              classes="btn-theme ml-2 hidden"
+              classes={`btn-theme ml-2 ${nextRebaseTimestamp < moment().unix() ? 'block': 'hidden'}`}
             >
               Confirm rebase
             </Button>

@@ -266,7 +266,7 @@ const Pools: React.FC = () => {
           />
       </div>
       <div className="py-4" style={{
-        marginTop: '64px'
+        marginTop: '100px'
       }}>
         🦄 🌈 🦸‍ 🌈 🦄
       </div>

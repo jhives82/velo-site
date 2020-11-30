@@ -2,6 +2,7 @@ import React, {useCallback, useState, useEffect} from 'react'
 import useFarming from '../../hooks/useFarming'
 import numeral from 'numeral'
 import {createClient} from 'contentful'
+import moment from 'moment';
 
 import Rebase from 'views/Home/components/Rebase'
 import RelativeVelocity from 'views/Landing/components/RelativeVelocity'
@@ -41,7 +42,9 @@ const Rocket: React.FC<RocketProps> = () => {
   const {
     totalSupply,
     price,
-    poolInfo
+    poolInfo,
+    nextRebaseTimestamp,
+    lastRebaseTimestamp
   } = useFarming()
 
   const getValueInTokens = (number: any, decimals = 18) => {
@@ -148,7 +151,11 @@ const Rocket: React.FC<RocketProps> = () => {
           </div>
         </div>
       </div>
-      <div className="Rocket-fire-wrapper animate__animated animate__swing" style={{
+      <div className={`
+        Rocket-fire-wrapper
+        animate__animated
+        ${nextRebaseTimestamp > 0 && nextRebaseTimestamp < moment().unix() ? 'animate__shakeY animate__repeat-3' : 'animate__swing'}
+      `} style={{
         position: 'relative',
         top: '-120px'
       }}>

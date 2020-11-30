@@ -310,25 +310,31 @@ export const getNextRebaseTimestamp = async (velo) => {
     let offset = 0; // 8am/8pm utc
     let secondsToRebase = 0;
 
-    // const startRebaseTimestamp = await velo.contracts.rebaser.methods.START_REBASE_AT().call()
+    const startRebaseTimestamp = await velo.contracts.rebaser.methods.START_REBASE_AT().call()
     // Hard code next rebase timestamp, because it saves RPC calls
-    const startRebaseTimestamp = 1606867200;
+    // const startRebaseTimestamp = 1606867200;
 
     if(now < startRebaseTimestamp) {
       return startRebaseTimestamp;
     }
 
-    const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
+    const lastRebaseTimestamp = await getLastRebaseTimestamp(velo)
+    // const lastRebaseTimestamp = await velo.contracts.rebaser.methods.lastRebase().call()
+    console.log('lastRebaseTimestamp', lastRebaseTimestamp)
 
-    if (now % interval > offset) {
-        secondsToRebase = (interval - (now % interval)) + offset;
-     } else {
-        secondsToRebase = offset - (now % interval);
-    }
+    // if (now % interval > offset) {
+    //     secondsToRebase = (interval - (now % interval)) + offset;
+    //  } else {
+    //     secondsToRebase = offset - (now % interval);
+    // }
 
-    const nextRebaseTimestamp = Number(lastRebaseTimestamp) + Number(secondsToRebase);
+    // secondsToRebase = interval - (now % interval);
 
-    return (nextRebaseTimestamp <= 997176 ? Number(now) + Number(secondsToRebase) : nextRebaseTimestamp)
+    // const nextRebaseTimestamp = Number(lastRebaseTimestamp) + Number(secondsToRebase);
+    const nextRebaseTimestamp = Number(lastRebaseTimestamp) + 43200;
+
+    return nextRebaseTimestamp;
+    // return (nextRebaseTimestamp <= 997176 ? Number(now) + Number(secondsToRebase) : nextRebaseTimestamp)
   } catch (e) {
     console.log(e)
   }
@@ -441,6 +447,10 @@ export const currVested = async (velo, account) => {
   let vested = new BigNumber(await velo.contracts.migrator.methods.vested(account).call());
   let amt = await veloToFragment(velo, vested);
   return amt.dividedBy(BASE);
+}
+
+export const getMisesLegacyPoolRewardRate = async (velo, account) => {
+  return new BigNumber(await velo.contracts.velo_eth_uni_legacy_pool.methods.rewardRate().call());
 }
 
 export const currUnclaimedDelegatorRewards = async (velo, account) => {

@@ -209,7 +209,8 @@ const Provider: React.FC = ({ children }) => {
       if(diffInSeconds2 <= 60*5) return;
     }
 
-    if (! velo) return;
+    // Don't fetch if no account is set
+    if (! velo || ! account) return;
 
     // Only check pools that are active atm
     const poolsToInclude = config.activePools;
@@ -247,7 +248,7 @@ const Provider: React.FC = ({ children }) => {
       }
     }
 
-    if (!account || !velo) return
+    if (!account || !velo) return;
 
     // Only check pools that are active atm
     const poolsToInclude = config.activePools;
@@ -272,13 +273,15 @@ const Provider: React.FC = ({ children }) => {
     const cacheSet = giveCacheToApp('relativeVelocity', cacheDuration['relativeVelocity'], setRelativeVelocity);
     if(cacheSet) return;
 
-    if (! velo) return;
+    // Don't fetch if no account is set
+    if (! velo || !account) return;
 
     const relativeVelocity = await getRelativeVelocity(velo)
     setRelativeVelocity(relativeVelocity);
     setCache('relativeVelocity', relativeVelocity)
   }, [
     velo,
+    account,
     setRelativeVelocity
   ])
 
@@ -296,12 +299,15 @@ const Provider: React.FC = ({ children }) => {
     const cacheSet = giveCacheToApp('totalSupply', cacheDuration['totalSupply'], setTotalSupply);
     if(cacheSet) return;
 
-    if (! velo) return;
+    // Don't fetch prices if no account is set
+    if (! velo || !account) return;
+
     const totalSupply = await getTotalSupply(velo)
     setTotalSupply(totalSupply);
     setCache('totalSupply', totalSupply);
   }, [
     velo,
+    account,
     setTotalSupply
   ])
 
@@ -385,6 +391,9 @@ const Provider: React.FC = ({ children }) => {
     const cacheSet = giveCacheToApp('prices', cacheDuration['prices'], setPrice);
     if(cacheSet && false) return;
 
+    // Don't fetch prices if no account is set
+    if (!velo || !account) return;
+
     const pricesFromCoinGecko = await fetchPricesFromCoinGecko();
     const pricesFromUniSwap = await fetchPricesFromUniswap();
     const pricesFromUniSwapPools: any = await fetchPricesFromUniSwapPools();
@@ -432,6 +441,7 @@ const Provider: React.FC = ({ children }) => {
     prices,
     setPrice,
     getUniswapPrice,
+    account,
     velo
   ])
 
@@ -567,7 +577,7 @@ const Provider: React.FC = ({ children }) => {
     account
   ])
 
-  const fetchNextRebase = useCallback( async() => {
+  const fetchNextRebase = useCallback( async(velo) => {
     const fromCache = getCache('nextRebaseTimestamp')
     const diffInSeconds = getDiffInSeconds(fromCache.timestamp)
     if(fromCache && fromCache.timestamp && diffInSeconds <= 60*2) {
@@ -589,7 +599,7 @@ const Provider: React.FC = ({ children }) => {
     velo
   ])
 
-  const fetchLastRebase = useCallback( async() => {
+  const fetchLastRebase = useCallback( async(velo) => {
     const fromCache = getCache('lastRebase')
     const diffInSeconds = getDiffInSeconds(fromCache.timestamp)
     if(fromCache && fromCache.timestamp && diffInSeconds <= 60*2) {
@@ -610,11 +620,21 @@ const Provider: React.FC = ({ children }) => {
     velo
   ])
 
-  useEffect(() => {
+  
+  const fetchRebaseData = useCallback(async () => {
     if (! velo) return;
-    fetchLastRebase()
-    fetchNextRebase()
-  }, [fetchNextRebase, velo])
+    fetchLastRebase(velo)
+    fetchNextRebase(velo)
+  }, [
+    account,
+    velo
+  ])
+
+  useEffect(() => {
+    fetchRebaseData()
+  }, [
+    velo
+  ])
 
   useEffect(() => {
     fetchPoolContracts()

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import useFarming from '../../../../hooks/useFarming'
 import Countdown, { CountdownRenderProps} from 'react-countdown'
 import numeral from 'numeral'
@@ -20,8 +20,13 @@ import useVelo from 'hooks/useVelo'
 import {
   bnToDec,
   veloCoinNameToCoinGeckoCoinName,
-  secondsToWeeks
+  getEmissionRatePerWeek_fromSeconds
 } from 'utils'
+
+import {
+  getMisesLegacyPoolRewardRate
+} from 'velo-sdk/utils'
+
 
 import './FarmCard.css';
 
@@ -67,9 +72,10 @@ const FarmCard: React.FC<FarmCardProps> = ({
   const [stakeModalIsOpen, setStakeModalIsOpen] = useState(false)
   const [unstakeModalIsOpen, setUnstakeModalIsOpen] = useState(false)
   const [farmCardIsExpanded, setFarmCardIsExpanded] = useState(false)
+  const [misesLegacyPoolRewardRate, setMisesLegacyPoolRewardRate] = useState<BigNumber>(new BigNumber(0))
 
   const { velo } = useVelo()
-  const { status } = useWallet()
+  const { account, status } = useWallet()
 
   const {
     poolContracts,
@@ -105,6 +111,22 @@ const FarmCard: React.FC<FarmCardProps> = ({
     if(typeof(stakedBalance[poolName]) == 'string') return Number(stakedBalance[poolName]) > 0;
     return stakedBalance[poolName].toNumber() > 0
   }
+
+  const fetchMisesLegacyPoolRewardRate = useCallback(async () => {
+    if(! account || ! velo) return;
+    const rate = await getMisesLegacyPoolRewardRate(velo, account);
+    setMisesLegacyPoolRewardRate(rate);
+  }, [
+    account,
+    velo
+  ])
+
+  useEffect(() => {
+    fetchMisesLegacyPoolRewardRate()
+  }, [
+    velo,
+    account
+  ])
 
   const handleDismissStakeModal = useCallback(() => {
     setStakeModalIsOpen(false)
@@ -332,7 +354,9 @@ const FarmCard: React.FC<FarmCardProps> = ({
     if(poolName == 'velo_eth_uni_pool') return 15000000;
     if(poolName == 'velo_eth_blp_pool') return 5000000;
     if(poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool') return 3000000;
-    if(poolName == 'velo_eth_uni_legacy_pool') return secondsToWeeks(317097919837645865).toFixed(0);
+    if(poolName == 'velo_eth_uni_legacy_pool') return getEmissionRatePerWeek_fromSeconds(
+      new BigNumber(misesLegacyPoolRewardRate).dividedBy(new BigNumber(10).pow(18)).toNumber()
+    ).toFixed(0);
     return 2000000;
   }
 
@@ -378,6 +402,43 @@ const FarmCard: React.FC<FarmCardProps> = ({
     return APR;
   }
 
+  // You use the APR, which is based on 100K USD, but instead of yearly, you calculate it daily, then you compound it 356 times. So for example: per day, based on 100K one can make a 0.26% APR per day. The APY becomes: (1+0.0026)^365
+  // But to calculate the APY you need the DPR
+  // Daily rate not the weekly rate. This is without th *7.
+  // And use the formula as discussed before to compound the yield.
+
+  const getDPR = () => {
+    const defaultReturnValue = false;
+    // Params validation
+    if(! coinName) return defaultReturnValue;
+    if(! price || ! price[veloCoinNameToCoinGeckoCoinName(coinName)]) return defaultReturnValue;
+
+    const stakedInTotal = getTotalStakedInTokens();
+    const stakedUsdInTotal = getTotalDepositedInUsd(price, coinName || '')||0;
+    const stakedByUser = getStakedTokensForUser()||0;
+
+    const weeklyVloRate = getEmissionRatePerWeek(getPoolName())
+    const vloPrice = price['vlo'];
+
+    // When tvl_pool_in_usd = 0, you will always get 100% of the pool as such the projected DPR simplifies to: (daily_rate_in_usd * current_price_of_velo) / 100_000
+    if(! stakedUsdInTotal || stakedUsdInTotal <= 0) {
+      return ((Number(weeklyVloRate)/7) * Number(vloPrice)) / 100000;
+    }
+
+    const percentageStaked = Math.min(100000 / stakedUsdInTotal, 1)
+    const usdValueStakedByUser = getUsdValueStakedForUser();
+
+    // formula: DPR = (min(1, (100_000 / tvl_pool_in_usd))*daily_rate_in_usd * current_price_of_velo) / 100_000
+    const DPR = ((Number(percentageStaked) * (Number(weeklyVloRate)/7) * Number(vloPrice)) / 100000);
+
+    return DPR;
+  }
+
+  const getAPY = () => {
+    const APY = Math.pow(1 + (getDPR() || 0), 365);
+    return APY;
+  }
+
   // const isFoundationPool = poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool'
   const isEvilMisesPool = poolName == 'velo_eth_blp_pool'
   const isDoubleReturnName = poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool'
@@ -413,13 +474,18 @@ const FarmCard: React.FC<FarmCardProps> = ({
             Total deposited: 
               $ {format(getTotalDepositedInUsd(price, coinName || ''))}
           </div>}
-          {poolName != 'velo_eth_uni_legacy_pool' && <div className="FarmCard-value-locked my-4">
+          <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
-          </div>}
-          {! isEvilMisesPool && ! disabled && getAPR() && <div
+          </div>
+          {poolName != 'velo_eth_uni_legacy_pool' && ! isEvilMisesPool && ! disabled && getAPR() && <div
             className="FarmCard-value-locked my-4 text-center"
             >
             APR = {Number(getAPR()).toFixed(1)} %
+          </div>}
+          {poolName == 'velo_eth_uni_legacy_pool' && getDPR() && <div
+            className="FarmCard-value-locked my-4 text-center"
+            >
+            APY = {Number(getAPY()).toFixed(1)} %
           </div>}
         </div>
         {(! expandedFarmCard && poolAddress) && <div className={`FarmCard-contract p-2 -ml-4 -mr-4 ${! expandedFarmCard ? '' : ''}`}>
