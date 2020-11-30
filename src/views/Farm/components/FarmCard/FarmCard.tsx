@@ -442,6 +442,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
   // const isFoundationPool = poolName == 'velo_eth_uni_pool' || poolName == 'velo_eth_blp_pool'
   const isEvilMisesPool = poolName == 'velo_eth_blp_pool'
   const isDoubleReturnName = poolName == 'velo_eth_dai_pool' || poolName == 'velo_eth_usdc_pool' || poolName == 'velo_eth_usd_pool' || poolName == 'velo_eth_wbtc_pool'
+  const isLegacyPool = poolName == 'velo_eth_uni_legacy_pool'
 
   return (
     <div>
@@ -498,9 +499,9 @@ const FarmCard: React.FC<FarmCardProps> = ({
           <div className="FarmCard-value-locked my-4">
             VLO earned: {formattedEarnedBalance(earnedBalance)}
           </div>
-          <div className="FarmCard-value-locked my-4">
+          {! isLegacyPool && <div className="FarmCard-value-locked my-4">
             Total staked: {formattedStakedBalance(stakedBalance)}
-          </div>
+          </div>}
           {! isEvilMisesPool && <div className="FarmCard-value-locked my-4">
             Total staked USD: $ {format(getUsdValueStakedForUser())}
           </div>}
