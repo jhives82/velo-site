@@ -435,7 +435,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
   }
 
   const getAPY = () => {
-    const APY = Math.pow(1 + (getDPR() || 0), 365);
+    const APY = (Math.pow(1 + (getDPR() || 0), 365) - 1) * 100;
     return APY;
   }
 
