@@ -33,7 +33,12 @@ import './Rebase.css'
 
 import { getLastRebaseTimestamp, getNextRebaseTimestamp, getNextRebaseInSecondsRemaining } from 'velo-sdk/utils'
 
-const Rebase: React.FC = () => {
+interface RebaseProps {
+  size?: string
+}
+
+
+const Rebase: React.FC<RebaseProps> = (size) => {
   const { velo } = useVelo()
   const { account } = useWallet()
 
@@ -135,7 +140,8 @@ const Rebase: React.FC = () => {
           }}
           style={{
             height: '100%',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            transform: size && size == 'bigger' ? 'scale(2)' : ''
           }}
           />} 
         <Modal isOpen={rebaseWarningModal}>
@@ -170,7 +176,7 @@ const Rebase: React.FC = () => {
         </Modal>
 
       </div>
-      <div className="Rocket-rebase-countdown">
+      <div className="Rocket-rebase-countdown" style={size && size == 'bigger' ? {transform: 'scale(2)'} : {}}>
         {nextRebaseTimestamp > 0 && renderCountdown(nextRebaseTimestamp)}
         {nextRebaseTimestamp <= 0 && (<div>00<div className="colon">&nbsp;:&nbsp;</div>00<div className="colon">&nbsp;:&nbsp;</div>00</div>)}
       </div>

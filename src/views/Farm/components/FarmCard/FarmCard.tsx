@@ -466,7 +466,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
           marginTop: '20px',
           marginBottom: '60px'
         }}>
-          {poolName == 'velo_eth_blp_pool' && <div>
+          {poolName == 'velo_eth_blp_pool' && status == 'connected' && <div>
             <div className="FarmCard-value-locked my-4">
                Total deposited: {format(getTotalStakedInTokens())} tokens
             </div>
@@ -475,19 +475,19 @@ const FarmCard: React.FC<FarmCardProps> = ({
             Total deposited: 
               $ {format(getTotalDepositedInUsd(price, coinName || ''))}
           </div>}
-          <div className="FarmCard-value-locked my-4">
+          {getEmissionRatePerWeek(getPoolName()) > 0 && <div className="FarmCard-value-locked my-4">
             VLO release/week: {getEmissionRatePerWeek(getPoolName())}
-          </div>
+          </div>}
           {poolName != 'velo_eth_uni_legacy_pool' && ! isEvilMisesPool && ! disabled && getAPR() && <div
             className="FarmCard-value-locked my-4 text-center"
             >
             APR = {Number(getAPR()).toFixed(1)} %
-          </div>}
+          </div> || ''}
           {poolName == 'velo_eth_uni_legacy_pool' && getDPR() && <div
             className="FarmCard-value-locked my-4 text-center"
             >
             APY = {Number(getAPY()).toFixed(1)} %
-          </div>}
+          </div> || ''}
         </div>
         {(! expandedFarmCard && poolAddress) && <div className={`FarmCard-contract p-2 -ml-4 -mr-4 ${! expandedFarmCard ? '' : ''}`}>
           <a href={`https://etherscan.io/address/${poolAddress}`} target="_blank" rel="external" className="FarmCard-contract-link">

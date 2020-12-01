@@ -178,6 +178,7 @@ const Provider: React.FC = ({ children }) => {
 
     if (!account || !velo) return
     for(let poolName in poolContracts) {
+      console.log('poolName', poolName)
       const balance = await getEarned(velo, velo.contracts[poolName], account)
       if(balance) {
         earnedBalances[poolName] = balance;

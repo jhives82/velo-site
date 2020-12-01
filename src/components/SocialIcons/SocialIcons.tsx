@@ -9,6 +9,7 @@ const SocialIcons: React.FC<SocialIconsProps> = () => {
   return (
     <div className="SocialIcons">
       <div className="SocialIcons-social-channels">
+
         <a rel="noopener noreferrer" href="https://twitter.com/SuperMises" target="_blank">
           <img src="/views/Home/social-media-elements-twitter.svg" alt="Twitter icon" />
         </a>
@@ -27,6 +28,46 @@ const SocialIcons: React.FC<SocialIconsProps> = () => {
         <a rel="noopener noreferrer" href="https://t.me/Velotoken" target="_blank">
           <img src="/views/Home/social-media-elements-telegram.svg" alt="Telegram icon" />
         </a>
+      </div>
+      <div className="
+        mx-auto my-4 flex justify-around
+      " style={{
+        transform: 'scale(1.2)',
+        width: '200px',
+        opacity: '0.8',
+        margin: '40px auto'
+      }}>
+
+        <a
+          href="https://info.uniswap.org/pair/0x259E558892783fd8941EBBeDa694318C1C3d9263"
+          rel="external"
+          target="_blank"
+          className="text-white"
+          title="Trade VLO at UniSwap"
+          >
+          <img src="https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png" />
+        </a>
+
+        <a
+          href="https://sushiswap.fi/pair/0xd9DdFF07eBdCF5595998F9F195EDd705D1bD1AbC"
+          rel="external"
+          target="_blank"
+          className="text-white"
+          title="Trade VLO at SushiSwap"
+          style={{
+            width: '58px',
+            height: '58px',
+            background: '#fff',
+            borderRadius: '100%',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            display: 'flex',
+            fontSize: '30px'
+          }}
+          >
+          🍣
+        </a>
+
       </div>
     </div>
   )

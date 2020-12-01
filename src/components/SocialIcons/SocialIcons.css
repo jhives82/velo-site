@@ -11,7 +11,7 @@
 }
 
 .SocialIcons-social-channels > * {
-  display: block;
+  display: flex;
   margin: 0 10px;
   max-width: 50px;
 }
@@ -34,7 +34,7 @@
 .SocialIcons-github-image {
   filter: invert(100%);
   opacity: 0.45;
-  margin-top: -9px;
+  height: 45px;
 }
 
 .SocialIcons-social-channels > *:hover {

@@ -5,11 +5,16 @@ export const resetUserSpecificCache = () => {
   localStorage.removeItem('VLO__stakedBalance')
 }
 
+const setCfCache = (key: string, data: any) => {
+  return;
+}
+
 export const setCache = (key: string, data: any) => {
 	localStorage.setItem(`VLO__${key}`, JSON.stringify({
 		data: data,
 		timestamp: moment().unix()
 	}))
+  setCfCache(key, data);
 }
 
 export const getCache = (key: string) => {

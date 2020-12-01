@@ -7,6 +7,7 @@
   max-width: 100%;
   min-height: 850px;
   font-size: 15px;
+  overflow-x: hidden;
 }
 
 @media(min-width: 641px) {

@@ -15,6 +15,7 @@ import VeloProvider from 'contexts/VeloProvider'
 import useLocalStorage from 'hooks/useLocalStorage'
 
 import Landing from 'views/Landing'
+import LandingMisesLegacy from 'views/LandingMisesLegacy'
 import AppFooter from 'components/AppFooter/AppFooter'
 
 import './App.css'
@@ -36,6 +37,9 @@ const App: React.FC = () => {
         }}>
           <Switch>
             <Route exact path="/">
+              <LandingMisesLegacy />
+            </Route>
+            <Route exact path="/closed">
               <Landing />
             </Route>
           </Switch>

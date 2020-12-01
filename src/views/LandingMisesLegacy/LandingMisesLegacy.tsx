@@ -2,6 +2,8 @@ import React, { useCallback} from 'react'
 import BigNumber from 'bignumber.js'
 import { NavLink } from 'react-router-dom'
 import { addressMap } from 'velo-sdk/lib/lib/constants.js';
+import moment from 'moment';
+
 // import {
 //   getTotalSupply,
 // } from 'velo-sdk/utils'
@@ -12,22 +14,28 @@ import numeral from 'numeral'
 import Page from 'components/Page'
 import PageHeader from 'components/PageHeader'
 import WalletButton from 'components/TopBar/components/WalletButton'
+import Rebase from 'views/Home/components/Rebase'
 
 import Pools from '../../components/Pools/Pools'
 import Block from '../../components/Block/Block'
 import Rocket from '../../components/Rocket/Rocket'
 import QuickStats from '../../components/QuickStats/QuickStats'
-
-import PendingHarvest from './components/PendingHarvest'
 import SocialIcons from 'components/SocialIcons/SocialIcons'
 import ProposalButton from 'components/ProposalButton/ProposalButton'
+
+import Pool from 'views/Farm/components/Pool/Pool'
+
+import PendingHarvest from '../Landing/components/PendingHarvest'
+
+import RebaseBlock from './components/RebaseBlock'
 
 import useFarming from 'hooks/useFarming'
 import useBalances from 'hooks/useBalances'
 
-import './Landing.css';
+import '../Landing/Landing.css';
+import './LandingMisesLegacy.css';
 
-const Landing: React.FC = () => {
+const LandingMisesLegacy: React.FC = () => {
 
   interface CoinInfo {
     address: string,
@@ -87,6 +95,22 @@ const Landing: React.FC = () => {
       }
     })
   };
+
+  const farmCoinsStage4 = [
+    {
+      title: 'MISES LEGACY',
+      emoticon: '🦸‍',
+      icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png',
+      name: 'VLO/ETH UNI-V2',
+      pct: 30,
+      poolName: 'velo_eth_uni_legacy_pool',
+      coinName: 'velo_eth_uni',
+    },
+  ]
+
+  const stage4Start = 1606737600;
+  const stage4Duration = 31536000;
+  const stage4End = Number(stage4Start) + stage4Duration;
 
   return (
     <Page>
@@ -162,7 +186,33 @@ const Landing: React.FC = () => {
 
         <div className="my-1">
           {status != 'connected' && <WalletButton />}
-          {true && <Pools />}
+          {<div className="
+            flex
+            justify-between
+            flex-wrap
+            px-4
+          ">
+            <div className="flex-1 relative">
+              <Pool
+                title="MISES LEGACY POOL"
+                description={<div>
+                  Add liquidity to the VLO-ETH pair on <a href="https://info.uniswap.org/pair/0x259E558892783fd8941EBBeDa694318C1C3d9263" target="_blank" className="text-white">Uniswap</a> to get VLO-ETH-V2 LP tokens.
+                  Deposit those in the Pool below to get your share of the on going velocity determined rewards (VLO)
+                </div>}
+                coins={farmCoinsStage4}
+                disabled={
+                  moment() < moment.unix(stage4Start).utc()
+                  || moment() > moment.unix(stage4End).utc()
+                }
+                timestampStartDistribution={stage4Start}
+                timestampEndDistribution={stage4End}
+                duration={stage4Duration}
+                percentageDistributed={0}
+                percentageToDistribute={0}
+                />
+            </div>
+          </div>}
+
         </div>
 
         {(true || status == 'connected') && <div className="
@@ -185,7 +235,7 @@ const Landing: React.FC = () => {
 
           <NavLink
             exact
-            to="/"
+            to="/closed"
             className="
               hidden
               sm--block
@@ -193,7 +243,7 @@ const Landing: React.FC = () => {
               btn-theme
             "
             >
-            Mises Legacy Pool
+            Closed pools
           </NavLink>
 
           <a
@@ -221,4 +271,4 @@ const Landing: React.FC = () => {
   )
 }
 
-export default Landing
+export default LandingMisesLegacy
