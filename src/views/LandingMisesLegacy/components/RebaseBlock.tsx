@@ -145,7 +145,7 @@ const RebaseBlock: React.FC = () => {
     </div>}
     <div className="FarmCard-value-locked my-4 py-4">
     	<div className="FarmCard-name flex-1">
-    		Deluted Market Cap: 
+    		Diluted Market Cap: 
     	</div>
     	<div className="flex-1 font-bold" style={{fontSize: '18px', marginTop: '10px'}}>
     		$ {getDelutedMarketCap(price, totalSupply) ? formatValue(getDelutedMarketCap(price, totalSupply)) : formatValue(rocketData ? rocketData['delutedMarketCap'] : 0)}
@@ -188,7 +188,7 @@ const RebaseBlock: React.FC = () => {
             </div>
           </div>
           <div>
-            <label>Deluted Market Cap</label>
+            <label>Diluted Market Cap</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
               $ {getDelutedMarketCap(price, totalSupply) ? formatValue(getDelutedMarketCap(price, totalSupply)) : formatValue(rocketData ? rocketData['delutedMarketCap'] : 0)}
             </div>

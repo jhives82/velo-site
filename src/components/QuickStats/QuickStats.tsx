@@ -91,7 +91,7 @@ const QuickStats: React.FC<QuickStatsProps> = () => {
           </div>
         </div>
         <div>
-          <label>Deluted Market Cap</label>
+          <label>Diluted Market Cap</label>
           <div className="QuickStats-data-list-stat" style={{color: '#f00'}}>
             $ {formatValue(getDelutedMarketCap(price, totalSupply))}
           </div>

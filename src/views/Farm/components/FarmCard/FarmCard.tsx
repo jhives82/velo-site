@@ -483,7 +483,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
             >
             APR = {Number(getAPR()).toFixed(1)} %
           </div> || ''}
-          {poolName == 'velo_eth_uni_legacy_pool' && getDPR() && <div
+          {poolName == 'velo_eth_uni_legacy_pool' && getAPY() && <div
             className="FarmCard-value-locked my-4 text-center"
             >
             APY = {Number(getAPY()).toFixed(1)} %
@@ -517,7 +517,7 @@ const FarmCard: React.FC<FarmCardProps> = ({
               poolName={getPoolName()}
               />
           </div>}
-          {(disabled && ! isApproved) &&
+          {(false && disabled && ! isApproved) &&
             <div className="absolute top-0 right-0 bottom-0 left-0" />
           }
         </div>}

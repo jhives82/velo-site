@@ -122,7 +122,7 @@ const Rocket: React.FC<RocketProps> = () => {
           <div>
             <label>Locked in pools</label>
             <div className="Rocket-data-list-stat">
-              {<TotalLockedValue />}
+              {rocketData && <TotalLockedValue value={rocketData? rocketData['lockedInPools'] : null} />}
             </div>
           </div>
           <div>
@@ -132,7 +132,7 @@ const Rocket: React.FC<RocketProps> = () => {
             </div>
           </div>
           <div>
-            <label>Deluted Market Cap</label>
+            <label>Diluted Market Cap</label>
             <div className="Rocket-data-list-stat" style={{color: '#f00'}}>
               $ {getDelutedMarketCap(price, totalSupply) ? formatValue(getDelutedMarketCap(price, totalSupply)) : formatValue(0)}
             </div>
