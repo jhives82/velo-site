@@ -100,8 +100,6 @@ const TotalLockedValue: React.FC<Props> = ({ value }) => {
     return totalDeposited;
   }, [price, totalStakedForPool])
 
-  // {totalStakedBalance ? format(totalStakedBalance) : '--'}
-
   return (
     <div className="TotalLockedValue inline-block">
 	    {status != 'connected' && value && <div>

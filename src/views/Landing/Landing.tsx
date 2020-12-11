@@ -15,7 +15,7 @@ import WalletButton from 'components/TopBar/components/WalletButton'
 
 import Pools from '../../components/Pools/Pools'
 import Block from '../../components/Block/Block'
-import Rocket from '../../components/Rocket/Rocket'
+import Rocket from '../../components/Rocket/RocketNew'
 import QuickStats from '../../components/QuickStats/QuickStats'
 
 import PendingHarvest from './components/PendingHarvest'

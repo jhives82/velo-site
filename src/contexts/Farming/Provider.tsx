@@ -210,7 +210,8 @@ const Provider: React.FC = ({ children }) => {
     }
 
     // Don't fetch if no account is set
-    if (! velo || ! account) return;
+    if (! velo) return;
+    // if (! velo || ! account) return;
 
     // Only check pools that are active atm
     const poolsToInclude = config.activePools;
@@ -274,7 +275,8 @@ const Provider: React.FC = ({ children }) => {
     if(cacheSet) return;
 
     // Don't fetch if no account is set
-    if (! velo || !account) return;
+    // if (! velo || !account) return;
+    if (! velo) return;
 
     const relativeVelocity = await getRelativeVelocity(velo)
     setRelativeVelocity(relativeVelocity);
@@ -300,7 +302,8 @@ const Provider: React.FC = ({ children }) => {
     if(cacheSet) return;
 
     // Don't fetch prices if no account is set
-    if (! velo || !account) return;
+    // if (! velo || !account) return;
+    if (! velo) return;
 
     const totalSupply = await getTotalSupply(velo)
     setTotalSupply(totalSupply);
@@ -388,11 +391,12 @@ const Provider: React.FC = ({ children }) => {
   ])
 
   const fetchPrices = useCallback(async () => {
-    const cacheSet = giveCacheToApp('prices', cacheDuration['prices'], setPrice);
-    if(cacheSet && false) return;
+    // const cacheSet = giveCacheToApp('prices', cacheDuration['prices'], setPrice);
+    // if(cacheSet && false) return;
 
     // Don't fetch prices if no account is set
-    if (!velo || !account) return;
+    if (!velo) return;
+    // if (!velo || !account) return;
 
     const pricesFromCoinGecko = await fetchPricesFromCoinGecko();
     const pricesFromUniSwap = await fetchPricesFromUniswap();
@@ -409,7 +413,7 @@ const Provider: React.FC = ({ children }) => {
     const getUniLpPrice = (price: any, ethValuePerToken: number) => {
       if(! price) return 0;
       if(price.WETH_DAI) {
-        return Number(ethValuePerToken) * Number(price.WETH_DAI);
+        return Number(ethValuePerToken) * Number(price.WETH_DAI) || 0;
       }
       return 0;
     }
@@ -548,7 +552,8 @@ const Provider: React.FC = ({ children }) => {
     const cacheSet = giveCacheToApp('poolInfos', cacheDuration['poolInfos'], setPoolInfo);
     if(cacheSet) return;
 
-    if (!velo || !account) return;
+    if (!velo) return;
+    // if (!velo || !account) return;
 
     for(let poolName in poolContracts) {
       const balance = await getPoolBalance(velo, poolName);
@@ -645,7 +650,7 @@ const Provider: React.FC = ({ children }) => {
 
   useEffect(() => {
     // Only fetch if wallet is connected
-    if(! account) return;
+    // if(! account) return;
 
     const goFetch = () => {
       const accountFromCache = getCache('account')
