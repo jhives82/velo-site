@@ -302,8 +302,8 @@ const Provider: React.FC = ({ children }) => {
     if(cacheSet) return;
 
     // Don't fetch prices if no account is set
-    // if (! velo || !account) return;
-    if (! velo) return;
+    if (! velo || !account) return;
+    // if (! velo) return;
 
     const totalSupply = await getTotalSupply(velo)
     setTotalSupply(totalSupply);

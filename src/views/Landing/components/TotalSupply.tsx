@@ -33,7 +33,7 @@ const TotalSupply: React.FC<Props> = ({ value }) => {
 
   return (
     <div className="TotalSupply inline-block">
-      {getDisplayBalance(totalSupply)}
+      {! totalSupply ? numeral(value).format('0.00a') : getDisplayBalance(totalSupply)}
     </div>
   )
 }
