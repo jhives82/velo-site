@@ -110,7 +110,8 @@ const LandingMisesLegacy: React.FC = () => {
 
   const stage4Start = 1606737600;
   const stage4Duration = 31536000;
-  const stage4End = Number(stage4Start) + stage4Duration;
+  const stage4End = 1639333909;
+  // const stage4End = Number(stage4Start) + stage4Duration;
 
   return (
     <Page>
